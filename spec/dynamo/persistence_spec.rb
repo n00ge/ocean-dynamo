@@ -138,7 +138,7 @@ describe CloudModel do
   end
 
   it "should have a method update_attributes" do
-    @i.created_by.should == nil
+    @i.created_by.should == ""
     @i.finished_at.should == nil
     @i.update_attributes(created_by: "Egon", finished_at: Time.now).should == true
     @i.created_by.should == "Egon"
@@ -150,7 +150,7 @@ describe CloudModel do
   end
 
   it "should have a method update_attributes!" do
-    @i.created_by.should == nil
+    @i.created_by.should == ""
     @i.finished_at.should == nil
     @i.update_attributes!(created_by: "Egon", finished_at: Time.now).should == true
     @i.created_by.should == "Egon"

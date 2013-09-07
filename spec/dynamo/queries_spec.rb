@@ -114,7 +114,7 @@ describe CloudModel do
 
 
     it "should barf on an unsupported data type" do
-      expect { @i.deserialize_attribute(nil, {}, type: :nowai) }.to raise_error(OceanDynamo::UnsupportedType)
+      expect { @i.deserialize_attribute(-1, {}, type: :nowai) }.to raise_error(OceanDynamo::UnsupportedType)
     end
   end
 

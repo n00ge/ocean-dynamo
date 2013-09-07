@@ -240,18 +240,21 @@ module OceanDynamo
     attr_reader :dynamo_item
 
 
-    def initialize(attributes={})
+    def initialize(attrs={})
       run_callbacks :initialize do
         @attributes = HashWithIndifferentAccess.new
-        fields.each do |name, v| 
-          write_attribute(name, evaluate_default(v[:default])) unless read_attribute(name)
+        fields.each do |name, md| 
+          write_attribute(name, evaluate_default(md[:default], md[:type]))
           self.class.class_eval "def #{name}; read_attribute('#{name}'); end"
           self.class.class_eval "def #{name}=(value); write_attribute('#{name}', value); end"
           if fields[name][:type] == :boolean
             self.class.class_eval "def #{name}?; read_attribute('#{name}'); end"
           end
         end
-        super
+        if attrs
+          attrs.delete_if { |k, v| !fields.has_key?(k) }
+        end
+        super(attrs)
         @dynamo_item = nil
         @destroyed = false
         @new_record = true
@@ -352,8 +355,8 @@ module OceanDynamo
     def deserialize_attribute(value, metadata, 
                               type: metadata[:type], 
                               default: metadata[:default])
-      if value == nil && default != nil && type != :string
-        return evaluate_default(default)
+      if value == nil && type != :string
+        return evaluate_default(default, type)
       end
       case type
       when :string
@@ -445,7 +448,8 @@ module OceanDynamo
       run_callbacks :commit do
         run_callbacks :save do
           run_callbacks :create do
-            write_attribute(table_hash_key, SecureRandom.uuid) if read_attribute(table_hash_key) == nil
+            k = read_attribute(table_hash_key)
+            write_attribute(table_hash_key, SecureRandom.uuid) if k == "" || k == nil
             t = Time.now
             self.created_at ||= t
             self.updated_at ||= t
@@ -516,10 +520,11 @@ module OceanDynamo
 
     protected
 
-    def evaluate_default(v)
-      return v.call if v.is_a?(Proc)
-      return v.clone if v.is_a?(Array) || v.is_a?(String)   # Instances need their own copy
-      v
+    def evaluate_default(default, type)
+      return default.call if default.is_a?(Proc)
+      return "" if default == nil && type == :string
+      return default.clone if default.is_a?(Array) || default.is_a?(String)   # Instances need their own copy
+      default
     end
 
 
