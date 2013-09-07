@@ -14,21 +14,21 @@ Gem::Specification.new do |s|
   s.description = 
 "== ocean-dynamo
 
-This is the ocean-dynamo ruby gem, implementing a highly scalable Amazon DynamoDB near drop-in 
+This is the OceanDynamo ruby gem, implementing a highly scalable Amazon DynamoDB near drop-in 
 replacement for ActiveRecord.
 
-Ocean-dynamo will use secondary indices to retrieve related table items, 
+OceanDynamo will use secondary indices to retrieve related table items, 
 which means it will scale without limits. (NB: this is a pre-release which as yet doesn't
 implement relations, but they are underway.)
 
-As one important use case for ocean-dynamo is to facilitate the conversion of SQL based
+As one important use case for OceanDynamo is to facilitate the conversion of SQL based
 ActiveRecord models to DynamoDB based models, it is important that the syntax and semantics
-of ocean-dynamo's operations are as close as possible to those of ActiveRecord. This means
+of OceanDynamo's operations are as close as possible to those of ActiveRecord. This means
 that all callbacks should be available, before, around and after, and that they should be
 called in the same order as in ActiveRecord. Ocean-dynamo follows this pattern closely and
 is of course based on ActiveModel.
 
-The attribute and persistence layer of ocean-dynamo is modeled on that of ActiveRecord:
+The attribute and persistence layer of OceanDynamo is modeled on that of ActiveRecord:
 there's +save+, +save!+, +create+, +update+, +update!+, +update_attribute+ and all the other
 methods you're used to. The design goal is always to implement as much as possible of the
 ActiveRecord interface, without sacrificing scalability. This makes the task of switching from
