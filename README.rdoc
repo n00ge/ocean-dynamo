@@ -1,0 +1,110 @@
+== ocean-dynamo
+
+This is the <tt>ocean-dynamo</tt> ruby gem, implementing a highly scalable Amazon DynamoDB 
+near drop-in replacement for ActiveRecord.
+
+Ocean-dynamo requires Ruby 2.0 and Ruby on Rails 4.0.0 or later.
+
+{<img src="https://badge.fury.io/rb/ocean-rails.png" alt="Gem Version" />}[http://badge.fury.io/rb/ocean-dynamo]
+
+
+=== Why not use Dynamoid?
+
+At the present time, Dynamoid stores UUIDs to related records as
+sets in each record. This means that records will grow larger as they accumulate relations.
+Since objects should be kept as small as possible im DynamoDB in order to be retrieved 
+quickly, cheaply and efficiently, and also have a maximum size of 64K, this means that 
+Dynamoid won't scale in its present state. As we are building a system which must scale 
+to massive storage proportions and we operate under commercial time constraints, we can't 
+use Dynamoid.
+
+<tt>ocean-dynamo</tt>, in contrast, will use secondary indices to retrieve related table items, 
+which means it will scale without limits. (NB: this is a pre-release which as yet doesn't
+implement relations, but they are underway as we need them for Ocean.)
+
+As one important use case for +ocean-dynamo+ is to facilitate the conversion of SQL based
+ActiveRecord models to DynamoDB based models, it is important that the syntax and semantics
+of <tt>ocean-dynamo</tt>'s operations are as close as possible to those of ActiveRecord. This means
+that all callbacks should be available, before, around and after, and that they should be
+called in the same order as in ActiveRecord. <tt>ocean-dynamo</tt> follows this pattern closely and
+is of course based on ActiveModel.
+
+The attribute and persistence layer of <tt>ocean-dynamo</tt> is modeled on that of ActiveRecord:
+there's +save+, +save!+, +create+, +update+, +update!+, +update_attribute+ and all the other
+methods you're used to. The design goal is always to implement as much as possible of the
+ActiveRecord interface, without sacrificing scalability. This makes the task of switching from
+SQL to no-SQL much easier.
+
+
+=== Documentation
+* Ocean-dynamo gem API: http://rdoc.info/github/OceanDev/ocean-dynamo/frames
+* Ocean-dynamo gem on Rubygems: https://rubygems.org/gems/ocean-dynamo
+* Ocean-dynamo source and wiki: https://github.org/OceanDev/ocean-dynamo
+
+See also Ocean, a Rails framework for creating highly scalable SOAs in the cloud, in which
+<tt>ocean-dynamo</tt> is used as a central component:
+* http://wiki.oceanframework.net
+
+
+=== Running the specs
+
+To run the specs for the <tt>ocean-dynamo</tt> gem, you must first install the bundle. It will download
+a gem called +fake_dynamo+, which runs a local, in-memory functional clone of Amazon DynamoDB.
+We use +fake_dynamo+ during development and testing.
+
+First of all, copy the AWS configuration file from the template:
+
+ cp spec/dummy/config/aws.yml.example spec/dummy/config/aws.yml
+
+NB: +aws.yml+ is excluded from source control. This allows you to enter your AWS credentials
+safely. Note that +aws.yml.example+ is under source control: don't edit it.
+
+Make sure your have version 0.1.3 of the +fake_dynamo+ gem. It implements the +2011-12-05+ version
+of the DynamoDB API. We're not yet using the +2012-08-10+ version, as the +aws-sdk+ ruby gem
+doesn't fully support it. We'll make the change as soon as +aws-sdk+ is updated. Reportedly,
+it's in the works.
+
+Next, start +fake_dynamo+:
+
+  fake_dynamo --port 4567
+
+If this returns errors, make sure that <tt>/usr/local/var/fake_dynamo</tt> exists and
+is writable:
+
+ sudo mkdir -p /usr/local/var/fake_dynamo
+ sudo chown peterb:staff /usr/local/var/fake_dynamo
+
+When +fake_dynamo+ runs normally, open another window and issue the following command:
+
+ curl -X DELETE http://localhost:4567
+
+This will reset the +fake_dynamo+ database. It's not a required operation when starting
++fake_dynamo+; we're just using it here as a test that the installation works. It will
+be issued automatically as part of the test suite, so don't expect test data to survive
+between runs.
+
+With +fake_dynamo+ running, you should now be able to do
+
+ rspec
+
+All tests should pass.
+
+
+=== Rails console
+
+The Rails console is available from the built-in dummy application:
+
+ cd spec/dummy
+ rails console
+
+You may need to initialise the table connection (for each table):
+
+ CloudModel.establish_db_connection
+
+This will, amongst other things, also create the CloudModel table if it doesn't already
+exist. On Amazon, this will take a little while. With +fake_dynamo+, it's practically
+instant.
+
+When you leave the console, you must navigate back to the Rails directory (<tt>cd ../..</tt>)
+in order to be able to run RSpec again.
+
