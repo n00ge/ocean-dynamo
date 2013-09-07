@@ -21,9 +21,27 @@ describe CloudModel do
     @i.new_record?.should == true
   end
 
+
   it "should have a predicate persisted?" do
     @i.persisted?.should == false
   end
+
+  it "persisted? should return false when the instance is new" do
+    @i.persisted?.should == false
+  end
+
+  it "persisted? should return true when the instance is neither new nor destroyed" do
+    @i.persisted?.should == false
+    @i.save!
+    @i.persisted?.should == true
+  end
+
+  it "persisted? should return false when the instance has been deleted" do
+    @i.persisted?.should == false
+    @i.destroy
+    @i.persisted?.should == false
+  end
+
 
   it "should have a method reload" do
     @i.update_attributes gratuitous_float: 3333.3333
@@ -65,22 +83,6 @@ describe CloudModel do
   it "save! should raise RecordNotSaved if the record wasn't saved" do
     @i.stub(:create_or_update).and_return(false)
     expect { @i.save! }.to raise_error(OceanDynamo::RecordNotSaved)
-  end
-
-  it "persisted? should return false when the instance is new" do
-    @i.persisted?.should == false
-  end
-
-  it "persisted? should return true when the instance is neither new nor destroyed" do
-    @i.persisted?.should == false
-    @i.save!
-    @i.persisted?.should == true
-  end
-
-  it "persisted? should return false when the instance has been deleted" do
-    @i.persisted?.should == false
-    @i.destroy
-    @i.persisted?.should == false
   end
 
   it "should set @destroyed when an instance is destroyed" do

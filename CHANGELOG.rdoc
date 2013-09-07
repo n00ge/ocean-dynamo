@@ -1,3 +1,12 @@
+== v0.1.2
+
+* OceanDynamo#valid? now takes #new_record? into account. 
+* Documentation changes.
+
+== v0.1.1
+
+* Documentation changes.
+
 == v0.1.0
 
 * Initial release via Rubygems.org.

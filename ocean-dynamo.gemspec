@@ -17,10 +17,6 @@ Gem::Specification.new do |s|
 This is the OceanDynamo ruby gem, implementing a highly scalable Amazon DynamoDB near drop-in 
 replacement for ActiveRecord.
 
-OceanDynamo will use secondary indices to retrieve related table items, 
-which means it will scale without limits. (NB: this is a pre-release which as yet doesn't
-implement relations, but they are underway.)
-
 As one important use case for OceanDynamo is to facilitate the conversion of SQL based
 ActiveRecord models to DynamoDB based models, it is important that the syntax and semantics
 of OceanDynamo's operations are as close as possible to those of ActiveRecord. This means
@@ -33,6 +29,13 @@ there's +save+, +save!+, +create+, +update+, +update!+, +update_attribute+ and a
 methods you're used to. The design goal is always to implement as much as possible of the
 ActiveRecord interface, without sacrificing scalability. This makes the task of switching from
 SQL to no-SQL much easier.
+
+OceanDynamo will use secondary indices to retrieve related table items, 
+which means it will scale without limits. (NB: this is a pre-release which as yet doesn't
+implement relations, but they are underway.)
+
+Due to its similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
+Furthermore, future versions will keep track of and delete instances after tests.
 
 See also Ocean, a Rails framework for creating highly scalable SOAs in the cloud, in which
 ocean-dynamo is used as a central component: http://wiki.oceanframework.net"

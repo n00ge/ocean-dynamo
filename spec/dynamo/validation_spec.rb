@@ -53,5 +53,16 @@ describe Bang do
   end
 
 
+  it "valid? should take new_record? into account" do
+    @i.valid?.should == true
+    @i.save!
+    @i.soso = false
+    @i.valid?.should == false
+  end
+
+
+
+
+
 end
 

@@ -401,6 +401,13 @@ module OceanDynamo
     end
 
 
+    def valid?(context = nil)
+      context ||= (new_record? ? :create : :update)
+      output = super(context)
+      errors.empty? && output
+    end 
+
+
     def save
       begin
         create_or_update
