@@ -484,7 +484,7 @@ module OceanDynamo
         @dynamo_item.delete
       end
       @destroyed = true
-      freeze
+      #freeze
     end
 
 

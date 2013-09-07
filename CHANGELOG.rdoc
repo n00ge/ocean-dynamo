@@ -1,3 +1,7 @@
+== v0.1.3
+
+* #delete and #destroy no longer freeze the instance. 
+
 == v0.1.2
 
 * OceanDynamo#valid? now takes #new_record? into account. 
