@@ -1,6 +1,6 @@
 == v0.1.8
 
-* 
+* Sets of integers and floats work now. Edge case involving defaults eliminated.
 
 == v0.1.7
 
