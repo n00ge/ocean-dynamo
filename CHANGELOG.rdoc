@@ -1,3 +1,11 @@
+== v0.1.7
+
+* 
+
+== v0.1.6
+
+* Initialisation improved.
+
 == v0.1.5
 
 * Loading and inheritance class variable issue solved.

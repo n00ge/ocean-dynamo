@@ -342,7 +342,7 @@ module OceanDynamo
       return nil if value == nil
       case type
       when :string
-        value == "" ? nil : value
+        ["", []].include?(value) ? nil : value
       when :integer
         value
       when :float
@@ -378,7 +378,7 @@ module OceanDynamo
       case type
       when :string
         return "" if value == nil
-        value
+        value.is_a?(Set) ? value.to_a : value
       when :integer
         return nil if value == nil
         value.is_a?(Array) ? value.collect(&:to_i) : value.to_i
@@ -540,7 +540,7 @@ module OceanDynamo
     def evaluate_default(default, type)
       return default.call if default.is_a?(Proc)
       return "" if default == nil && type == :string
-      return default.clone if default.is_a?(Array) || default.is_a?(String)   # Instances need their own copy
+      return default.clone if default.is_a?(Array) || default.is_a?(String)   # Instances need their own copies
       default
     end
 
