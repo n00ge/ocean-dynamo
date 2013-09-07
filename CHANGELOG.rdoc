@@ -1,3 +1,7 @@
+== v0.1.4
+
+* :string defaulting now correct. 
+
 == v0.1.3
 
 * #delete and #destroy no longer freeze the instance. 
