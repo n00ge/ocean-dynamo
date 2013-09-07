@@ -1,6 +1,8 @@
 == v0.1.7
 
-* 
+* String sets serialised and deserialised correctly. More to come for the other set types. 
+  Might need to introduce a :set data type in order to avoid deserialising [] as "" (which
+  are, after all, equivalent).
 
 == v0.1.6
 
