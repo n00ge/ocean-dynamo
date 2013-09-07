@@ -7,7 +7,7 @@ module OceanDynamo
     [:created_at,   :datetime], 
     [:updated_at,   :datetime],
     [:lock_version, :integer, default: 0]
-  ]
+  ].freeze
 
   class DynamoError < StandardError; end
 
@@ -33,6 +33,10 @@ module OceanDynamo
     # ---------------------------------------------------------
 
     class_attribute :dynamo_client, instance_writer: false
+    self.dynamo_client = nil
+
+
+
     class_attribute :dynamo_table, instance_writer: false
     class_attribute :dynamo_items, instance_writer: false
 
@@ -44,9 +48,13 @@ module OceanDynamo
     class_attribute :table_range_key, instance_writer: false
 
     class_attribute :table_read_capacity_units, instance_writer: false
+    self.table_read_capacity_units = 10
+
     class_attribute :table_write_capacity_units, instance_writer: false
+    self.table_write_capacity_units = 5
 
     class_attribute :fields, instance_writer: false
+    self.fields = HashWithIndifferentAccess.new
 
 
     def self.set_table_name(name)
@@ -72,9 +80,14 @@ module OceanDynamo
     end
 
 
+    #
+    # This is where the class is initialized
+    #
     def self.primary_key(hash_key, range_key=nil)
+      self.fields = HashWithIndifferentAccess.new
       self.table_hash_key = hash_key
       self.table_range_key = range_key
+      DEFAULT_FIELDS.each { |k, name, **pairs| field k, name, **pairs }
       # Find a better place to do the following initialisation:
       set_table_name compute_table_name unless self.table_name
       nil
@@ -99,7 +112,7 @@ module OceanDynamo
 
 
     def self.establish_db_connection
-      setup_dynamo      
+      setup_dynamo  
       if dynamo_table.exists?
         wait_until_table_is_active
       else
@@ -112,6 +125,9 @@ module OceanDynamo
     def self.setup_dynamo
       #self.dynamo_client = AWS::DynamoDB::Client.new(:api_version => '2012-08-10') 
       self.dynamo_client ||= AWS::DynamoDB.new
+
+      # TODO Create a non-inherited class accessor (SOLVE THAT PROBLEM!) called dynamo_tables
+
       self.dynamo_table = dynamo_client.tables[table_full_name]
       self.dynamo_items = dynamo_table.items
     end
@@ -213,19 +229,6 @@ module OceanDynamo
     define_model_callbacks :destroy
     define_model_callbacks :commit, only: :after
     define_model_callbacks :touch
-
-
-    # ---------------------------------------------------------
-    #
-    #  Class initialisation, done once at load time
-    #
-    # ---------------------------------------------------------
-
-    self.table_read_capacity_units = 10
-    self.table_write_capacity_units = 5
-
-    self.fields = HashWithIndifferentAccess.new
-    DEFAULT_FIELDS.each { |k, name, **pairs| Base.field k, name, **pairs }
 
 
     # ---------------------------------------------------------
@@ -515,6 +518,15 @@ module OceanDynamo
         self
       end
     end
+
+
+    # ---------------------------------------------------------
+    #
+    #  Class initialisation, done once at load time
+    #
+    # ---------------------------------------------------------
+
+    # DEFAULT_FIELDS.each { |k, name, **pairs| field k, name, **pairs }
 
 
 

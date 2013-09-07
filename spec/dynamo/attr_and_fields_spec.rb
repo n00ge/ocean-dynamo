@@ -228,6 +228,30 @@ describe CloudModel do
         it "unknown fields should not be stored at all" do
           i = CloudModel.new(quux: 23, flouf: "nyx", blipp: nil, token: "store me")
           i.attributes.keys.should == i.fields.keys
+          i.attributes.keys.should == [
+            "created_at", 
+            "updated_at", 
+            "lock_version", 
+            "uuid", 
+            "credentials", 
+            "token", 
+            "steps", 
+            "max_seconds_in_queue", 
+            "default_poison_limit", 
+            "default_step_time", 
+            "created_by", 
+            "updated_by", 
+            "destroy_at", 
+            "started_at", 
+            "last_completed_step", 
+            "succeeded", 
+            "failed", 
+            "poison", 
+            "finished_at", 
+            "gratuitous_float", 
+            "zalagadoola", 
+            "list"
+          ]
           i.token.should == "store me"
         end
       end
