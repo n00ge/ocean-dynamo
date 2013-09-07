@@ -1,3 +1,7 @@
+== v0.1.5
+
+* Loading and inheritance class variable issue solved.
+
 == v0.1.4
 
 * :string defaulting now correct. 
