@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/OceanDev/ocean-dynamo"
   s.summary     = "This gem implements common Ocean behaviour for Ruby and Ruby on Rails."
   s.description = 
-"== ocean-dynamo
+"== OceanDynamo
 
 This is the OceanDynamo ruby gem, implementing a highly scalable Amazon DynamoDB near drop-in 
 replacement for ActiveRecord.
