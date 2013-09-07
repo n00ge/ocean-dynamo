@@ -35,17 +35,26 @@ module OceanDynamo
     class_attribute :dynamo_client, instance_writer: false
     self.dynamo_client = nil
 
-
-
     class_attribute :dynamo_table, instance_writer: false
+    self.dynamo_table = nil
+
     class_attribute :dynamo_items, instance_writer: false
+    self.dynamo_items = nil
 
     class_attribute :table_name, instance_writer: false
+    self.table_name = nil
+
     class_attribute :table_name_prefix, instance_writer: false
+    self.table_name_prefix = nil
+
     class_attribute :table_name_suffix, instance_writer: false
+    self.table_name_suffix = nil
 
     class_attribute :table_hash_key, instance_writer: false
+    self.table_hash_key = nil
+
     class_attribute :table_range_key, instance_writer: false
+    self.table_range_key = nil
 
     class_attribute :table_read_capacity_units, instance_writer: false
     self.table_read_capacity_units = 10
@@ -54,7 +63,7 @@ module OceanDynamo
     self.table_write_capacity_units = 5
 
     class_attribute :fields, instance_writer: false
-    self.fields = HashWithIndifferentAccess.new
+    self.fields = nil
 
 
     def self.set_table_name(name)
@@ -84,6 +93,12 @@ module OceanDynamo
     # This is where the class is initialized
     #
     def self.primary_key(hash_key, range_key=nil)
+      self.dynamo_client = nil
+      self.dynamo_table = nil
+      self.dynamo_items = nil
+      self.table_name = nil
+      self.table_name_prefix = nil
+      self.table_name_suffix = nil
       self.fields = HashWithIndifferentAccess.new
       self.table_hash_key = hash_key
       self.table_range_key = range_key
@@ -254,15 +269,17 @@ module OceanDynamo
             self.class.class_eval "def #{name}?; read_attribute('#{name}'); end"
           end
         end
-        if attrs
-          attrs.delete_if { |k, v| !fields.has_key?(k) }
-        end
-        super(attrs)
+
         @dynamo_item = nil
         @destroyed = false
         @new_record = true
         raise NoPrimaryKeyDeclared unless table_hash_key
       end
+
+      if attrs
+          attrs.delete_if { |k, v| !fields.has_key?(k) }
+      end
+      super(attrs)
     end
 
 
@@ -518,15 +535,6 @@ module OceanDynamo
         self
       end
     end
-
-
-    # ---------------------------------------------------------
-    #
-    #  Class initialisation, done once at load time
-    #
-    # ---------------------------------------------------------
-
-    # DEFAULT_FIELDS.each { |k, name, **pairs| field k, name, **pairs }
 
 
 
