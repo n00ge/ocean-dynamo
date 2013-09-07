@@ -5,7 +5,7 @@ near drop-in replacement for ActiveRecord.
 
 Ocean-dynamo requires Ruby 2.0 and Ruby on Rails 4.0.0 or later.
 
-{<img src="https://badge.fury.io/rb/ocean-rails.png" alt="Gem Version" />}[http://badge.fury.io/rb/ocean-dynamo]
+{<img src="https://badge.fury.io/rb/ocean-dynamo.png" alt="Gem Version" />}[http://badge.fury.io/rb/ocean-dynamo]
 
 
 === Why not use Dynamoid?
