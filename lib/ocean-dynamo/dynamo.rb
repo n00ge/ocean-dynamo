@@ -7,7 +7,7 @@ module OceanDynamo
     [:created_at,   :datetime], 
     [:updated_at,   :datetime],
     [:lock_version, :integer, default: 0]
-  ].freeze
+  ]
 
   class DynamoError < StandardError; end
 
@@ -68,14 +68,17 @@ module OceanDynamo
 
     def self.set_table_name(name)
       self.table_name = name
+      true
     end
 
     def self.set_table_name_prefix(prefix)
       self.table_name_prefix = prefix
+      true
     end
 
     def self.set_table_name_suffix(suffix)
       self.table_name_suffix = suffix
+      true
     end
 
 
@@ -96,15 +99,13 @@ module OceanDynamo
       self.dynamo_client = nil
       self.dynamo_table = nil
       self.dynamo_items = nil
-      self.table_name = nil
+      self.table_name = compute_table_name
       self.table_name_prefix = nil
       self.table_name_suffix = nil
       self.fields = HashWithIndifferentAccess.new
       self.table_hash_key = hash_key
       self.table_range_key = range_key
       DEFAULT_FIELDS.each { |k, name, **pairs| field k, name, **pairs }
-      # Find a better place to do the following initialisation:
-      set_table_name compute_table_name unless self.table_name
       nil
     end
 
@@ -269,16 +270,12 @@ module OceanDynamo
             self.class.class_eval "def #{name}?; read_attribute('#{name}'); end"
           end
         end
-
         @dynamo_item = nil
         @destroyed = false
         @new_record = true
         raise NoPrimaryKeyDeclared unless table_hash_key
       end
-
-      if attrs
-          attrs.delete_if { |k, v| !fields.has_key?(k) }
-      end
+      attrs &&  attrs.delete_if { |k, v| !fields.has_key?(k) }
       super(attrs)
     end
 
