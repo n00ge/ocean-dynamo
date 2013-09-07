@@ -1,3 +1,7 @@
+== v0.1.8
+
+* 
+
 == v0.1.7
 
 * String sets serialised and deserialised correctly. More to come for the other set types. 

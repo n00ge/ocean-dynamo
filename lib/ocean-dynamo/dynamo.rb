@@ -344,9 +344,9 @@ module OceanDynamo
       when :string
         ["", []].include?(value) ? nil : value
       when :integer
-        value
+        value == [] ? nil : value
       when :float
-        value
+        value == [] ? nil : value
       when :boolean
         value ? "true" : "false"
       when :datetime
@@ -372,19 +372,19 @@ module OceanDynamo
     def deserialize_attribute(value, metadata, 
                               type: metadata[:type], 
                               default: metadata[:default])
-      if value == nil && type != :string
-        return evaluate_default(default, type)
-      end
+      # if value == nil && type != :string
+      #   return evaluate_default(default, type)
+      # end
       case type
       when :string
         return "" if value == nil
         value.is_a?(Set) ? value.to_a : value
       when :integer
         return nil if value == nil
-        value.is_a?(Array) ? value.collect(&:to_i) : value.to_i
+        value.is_a?(Set) || value.is_a?(Array) ? value.collect(&:to_i) : value.to_i
       when :float
         return nil if value == nil
-        value.is_a?(Array) ? value.collect(&:to_f) : value.to_f
+        value.is_a?(Set) || value.is_a?(Array) ? value.collect(&:to_f) : value.to_f
       when :boolean
         case value
         when "true"

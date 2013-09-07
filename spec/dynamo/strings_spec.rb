@@ -47,7 +47,8 @@ describe CloudModel do
             "finished_at", 
             "gratuitous_float", 
             "zalagadoola", 
-            "list"
+            "list",
+            "int"
           ]
           i.token.should == "store me"
         end

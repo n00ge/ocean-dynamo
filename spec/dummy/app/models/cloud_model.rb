@@ -23,6 +23,7 @@ class CloudModel < OceanDynamo::Base
   field :gratuitous_float,     :float,       default: 3.141592
   field :zalagadoola,          :string,      default: "Menchikaboola"
   field :list,                 :string,      default: [1, 2, 3]
+  field :int,                  :integer,     default: 1066
 
 
   # Validations
