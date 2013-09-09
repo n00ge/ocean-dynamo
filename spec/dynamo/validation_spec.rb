@@ -4,11 +4,11 @@ class Bang < OceanDynamo::Base
 
   primary_key :uuid
 
-  field :uuid
-  field :v,    :float,  default: 1.0
-  field :must, :string, default: "mandatory"
-  field :soso, :string, default: "updated"
-  field :hate, :string, default: "exceptional"
+  attribute :uuid
+  attribute :v,    :float,  default: 1.0
+  attribute :must, :string, default: "mandatory"
+  attribute :soso, :string, default: "updated"
+  attribute :hate, :string, default: "exceptional"
 
   validates :must, presence: true
   validates :soso, presence: { on: :update }

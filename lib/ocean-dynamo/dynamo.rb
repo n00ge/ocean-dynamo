@@ -71,10 +71,12 @@ module OceanDynamo
       true
     end
 
+
     def self.set_table_name_prefix(prefix)
       self.table_name_prefix = prefix
       true
     end
+
 
     def self.set_table_name_suffix(suffix)
       self.table_name_suffix = suffix
@@ -105,7 +107,7 @@ module OceanDynamo
       self.fields = HashWithIndifferentAccess.new
       self.table_hash_key = hash_key
       self.table_range_key = range_key
-      DEFAULT_FIELDS.each { |k, name, **pairs| field k, name, **pairs }
+      DEFAULT_FIELDS.each { |k, name, **pairs| attribute k, name, **pairs }
       nil
     end
 
@@ -120,7 +122,7 @@ module OceanDynamo
     end
 
 
-    def self.field(name, type=:string, **pairs)
+    def self.attribute(name, type=:string, **pairs)
       attr_accessor name
       fields[name] = {type:    type, 
                       default: pairs[:default]}
@@ -141,9 +143,6 @@ module OceanDynamo
     def self.setup_dynamo
       #self.dynamo_client = AWS::DynamoDB::Client.new(:api_version => '2012-08-10') 
       self.dynamo_client ||= AWS::DynamoDB.new
-
-      # TODO Create a non-inherited class accessor (SOLVE THAT PROBLEM!) called dynamo_tables
-
       self.dynamo_table = dynamo_client.tables[table_full_name]
       self.dynamo_items = dynamo_table.items
     end
@@ -188,6 +187,7 @@ module OceanDynamo
       setup_dynamo
       true
     end
+
 
     def self.delete_table
       return false unless dynamo_table.exists? && dynamo_table.status == :active
@@ -313,7 +313,8 @@ module OceanDynamo
     def to_key
       return nil unless persisted?
       key = respond_to?(:id) && id
-      key ? [key] : nil
+      return nil unless key
+      table_range_key ? [key, read_attribute(table_range_key)] : [key]
     end
 
 
@@ -372,9 +373,6 @@ module OceanDynamo
     def deserialize_attribute(value, metadata, 
                               type: metadata[:type], 
                               default: metadata[:default])
-      # if value == nil && type != :string
-      #   return evaluate_default(default, type)
-      # end
       case type
       when :string
         return "" if value == nil
@@ -431,7 +429,7 @@ module OceanDynamo
     def save
       begin
         create_or_update
-      rescue RecordInvalid
+      rescue RecordInvalid, RecordNotSaved
         false
       end
     end

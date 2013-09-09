@@ -2,8 +2,8 @@ class Voom < OceanDynamo::Base
 
   primary_key :uuid, false
 
-  field :uuid
-  field :logged, :serialized, default: []
+  attribute :uuid
+  attribute :logged, :serialized, default: []
 
 
   def log(str)
