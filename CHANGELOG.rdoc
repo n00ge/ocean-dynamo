@@ -1,3 +1,9 @@
+== v0.1.10
+
+* Exception hierarchy mirroring ActiveRecord.
+* Save rescues only RecordInvalid.
+* Protected method perform_validations added, for further reorg.
+
 == v0.1.9
 
 * "field" is now "attribute".

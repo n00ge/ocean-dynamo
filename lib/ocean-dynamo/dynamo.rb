@@ -11,13 +11,46 @@ module OceanDynamo
 
   class DynamoError < StandardError; end
 
-  class NoPrimaryKeyDeclared < DynamoError; end
+  class UnknownPrimaryKey < DynamoError; end
+
   class UnknownTableStatus < DynamoError; end
+
   class UnsupportedType < DynamoError; end
-  class RecordInvalid < DynamoError; end
-  class RecordNotSaved < DynamoError; end
+
+  class SerializationTypeMismatch < DynamoError; end
+
+  class ConnectionNotEstablished < DynamoError; end
+
   class RecordNotFound < DynamoError; end
-  class RecordInConflict < DynamoError; end
+
+  class RecordNotSaved < DynamoError; end
+
+  class RecordInvalid < DynamoError; end     
+
+  class RecordNotDestroyed < DynamoError; end
+
+  class StatementInvalid < DynamoError; end
+  
+  class WrappedDatabaseException < StatementInvalid; end
+    class RecordNotUnique < WrappedDatabaseException; end   
+    class InvalidForeignKey < WrappedDatabaseException; end
+
+  class StaleObjectError < DynamoError; end
+ 
+  class ReadOnlyRecord < DynamoError; end
+
+  class DangerousAttributeError < DynamoError; end
+
+  class UnknownAttributeError < NoMethodError; end
+
+  class AttributeAssignmentError < DynamoError; end
+
+  class MultiparameterAssignmentErrors < DynamoError; end
+
+
+
+
+
 
 
   class Base
@@ -273,7 +306,7 @@ module OceanDynamo
         @dynamo_item = nil
         @destroyed = false
         @new_record = true
-        raise NoPrimaryKeyDeclared unless table_hash_key
+        raise UnknownPrimaryKey unless table_hash_key
       end
       attrs &&  attrs.delete_if { |k, v| !fields.has_key?(k) }
       super(attrs)
@@ -430,7 +463,7 @@ module OceanDynamo
     def save
       begin
         create_or_update
-      rescue RecordInvalid, RecordNotSaved
+      rescue RecordInvalid
         false
       end
     end
@@ -541,6 +574,11 @@ module OceanDynamo
       return "" if default == nil && type == :string
       return default.clone if default.is_a?(Array) || default.is_a?(String)   # Instances need their own copies
       default
+    end
+
+
+    def perform_validations(options={}) # :nodoc:
+      options[:validate] == false || valid?(options[:context])
     end
 
 
