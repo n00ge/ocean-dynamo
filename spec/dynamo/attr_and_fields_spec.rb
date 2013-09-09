@@ -31,25 +31,24 @@ describe CloudModel do
   end
 
 
-  it "should be possible to refer to the hash_key field using #id, regardless of its name" do
+  it "should be possible to refer to the hash_key attribute using #id, regardless of its name" do
     i = CloudModel.new uuid: "blahonga"
     i.uuid.should == "blahonga"
     i.id.should == "blahonga"
   end
 
-  it "should be possible to set the hash_key field using #id, regardless of its name" do
+  it "should be possible to set the hash_key attribute using #id, regardless of its name" do
     i = CloudModel.new uuid: "blahonga"
     i.id.should == "blahonga"
     i.id = "snyko"
     i.uuid.should == "snyko"
   end
 
-  it "should assign an UUID to the hash_key field if nil at create" do
+  it "should assign an UUID to the hash_key attribute if nil at create" do
     i = CloudModel.new uuid: nil
     i.save.should == true
     i.uuid.should_not == nil
   end
-
 
   it "should have a class method read_capacity_units to set the table_read_capacity_units class attr" do
     CloudModel.table_read_capacity_units.should == 10
@@ -124,6 +123,30 @@ describe CloudModel do
     i.token.should == "changed"
     i.default_poison_limit.should == 10
   end
+
+
+
+  describe "ActiveModel::ForbiddenAttributesError" do
+
+    it "should be raised by assign_attributes if the passed hash responds to permitted? method and the return value of this method is false" do
+      i = CloudModel.new
+      args = {token: "changed", default_poison_limit: 10}
+      i.assign_attributes args
+      i.token.should == "changed"
+      i.default_poison_limit.should == 10
+    end
+
+    # it "blahonga" do
+    #   i = CloudModel.new
+    #   args = ActionController::Parameters.new(token: "changed", default_poison_limit: 10).
+    #     require(:token).permit(:default_poison_limit)
+    #   args.permitted?
+    #   i.assign_attributes args
+    #   i.token.should == "changed"
+    #   i.default_poison_limit.should == 10
+    # end
+  end
+
 
 
   it "should assign the fields values supplied in the call to new" do

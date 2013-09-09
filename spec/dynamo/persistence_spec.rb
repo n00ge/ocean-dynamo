@@ -53,7 +53,7 @@ describe CloudModel do
 
 
   it "serialize_attribute should barf on an unknown attribute type" do
-    expect { @i.serialize_attribute :quux, 42, {type: :falafel, default: nil} }. 
+    expect { @i.serialize_attribute :quux, 42, {type: :falafel} }. 
       to raise_error(OceanDynamo::UnsupportedType, "falafel")
   end
 

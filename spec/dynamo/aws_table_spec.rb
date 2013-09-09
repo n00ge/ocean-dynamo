@@ -159,4 +159,13 @@ describe CloudModel do
     CloudModel.delete_table.should == false
   end
 
+
+  it "should keep the connection between two instantiations" do
+    CloudModel.establish_db_connection
+    i1 = CloudModel.new
+    i1.save!
+    i2 = CloudModel.new
+    i2.save!
+  end
+
 end

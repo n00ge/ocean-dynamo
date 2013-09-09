@@ -320,6 +320,11 @@ module OceanDynamo
 
 
     def assign_attributes(values)
+      # if values.respond_to?(:permitted?)
+      #   unless values.permitted?
+      #     raise ActiveModel::ForbiddenAttributesError
+      #   end
+      # end
       values.each do |k, v|
         send("#{k}=", v)
       end
@@ -336,10 +341,8 @@ module OceanDynamo
     end
 
 
-    def serialize_attribute(attribute, value, 
-                            metadata=fields[attribute],
-                            type: metadata[:type],
-                            default: metadata[:default])
+    def serialize_attribute(attribute, value, metadata=fields[attribute],
+                            type: metadata[:type])
       return nil if value == nil
       case type
       when :string
@@ -370,9 +373,7 @@ module OceanDynamo
     end
 
 
-    def deserialize_attribute(value, metadata, 
-                              type: metadata[:type], 
-                              default: metadata[:default])
+    def deserialize_attribute(value, metadata, type: metadata[:type])
       case type
       when :string
         return "" if value == nil

@@ -40,6 +40,22 @@ describe CloudModel do
           i.last_completed_step.should == nil
           CloudModel.find(i.uuid, consistent: true).last_completed_step.should == nil
         end
+
+        it "should convert values to integers" do
+          i = CloudModel.create last_completed_step: "86400-extra"
+          i.last_completed_step.should ==  "86400-extra"
+          i.reload(consistent: true)
+          i.last_completed_step.should == 86400
+          CloudModel.find(i.uuid, consistent: true).last_completed_step.should == 86400
+        end
+
+        it "should handle durations" do
+          i = CloudModel.create last_completed_step: 1.day
+          i.last_completed_step.should ==  1.day
+          i.reload(consistent: true)
+          i.last_completed_step.should == 86400
+          CloudModel.find(i.uuid, consistent: true).last_completed_step.should == 86400
+        end
       end
     end
 
@@ -73,6 +89,14 @@ describe CloudModel do
           i.reload(consistent: true)
           i.int.should == nil
           CloudModel.find(i.uuid, consistent: true).int.should == nil
+        end
+
+        it "should convert values to integers" do
+          i = CloudModel.create int: "86400-extra"
+          i.int.should ==  "86400-extra"
+          i.reload(consistent: true)
+          i.int.should == 86400
+          CloudModel.find(i.uuid, consistent: true).int.should == 86400
         end
       end
     end

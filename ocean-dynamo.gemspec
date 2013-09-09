@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Peter Bengtson"]
   s.email       = ["peter@peterbengtson.com"]
   s.homepage    = "https://github.com/OceanDev/ocean-dynamo"
-  s.summary     = "This gem implements common Ocean behaviour for Ruby and Ruby on Rails."
+  s.summary     = "This gem implements an ActiveRecord-like DynamoDB ORM class."
   s.description = 
 "== OceanDynamo
 
