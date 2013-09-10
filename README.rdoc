@@ -32,8 +32,7 @@ Due to its similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
 Furthermore, future versions will keep track of and delete instances after tests.
 
 OceanDynamo will use secondary indices to retrieve related table items, 
-which means it will scale without limits. (NB: this is a pre-release which as yet doesn't
-implement relations, but they are underway.)
+which means it will scale without limits.
 
 
 ==== Example
@@ -64,7 +63,8 @@ The following example shows the syntax.
 
 Each attribute has a name, a type (:string, :integer, :float, :datetime, :boolean, or 
 :serialized) where :string is the default. Each attribute also optionally has a default 
-value, which can be a Proc.
+value, which can be a Proc. The hash key attribute is by default :uuid (this can of
+course be specified) and is a :string. The keys can also be explicitly declared.
 
 The :string, :integer, :float and :datetime types can also store sets of their type.
 Sets are represented as arrays and may not contain duplicates and may not be empty.
@@ -75,7 +75,17 @@ value will return the empty string, "".
 Also, dynamo_schema takes args and many options. Detailed documentation is forthcoming.
 
 At the moment, OceanDynamo is fully usable as an ActiveModel and can be used by Rails
-controllers. Relations are not yet implemented.
+controllers. Furthermore, OceanDynamo implements much of the infrastructure of ActiveRecord;
+for instance, read_attribute, write_attribute, and much of the control logic and
+parameters.
+
+Relations are not yet implemented, but are underway. Relations will use secondary
+indices, up to the DynamoDB maximum of 5 secondary keys per table. At the moment,
+only find with a single uuid is implemented. Collections can not yet be obtained.
+
+OceanDynamo is currently used in by the Ocean framework (http://wiki.oceanframework.net)
+e.g. to implement critical job queues. It will be used increasingly as features are
+added to OceanDynamo and will eventually replace all Active>Record tables.
 
 
 === Documentation
