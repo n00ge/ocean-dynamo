@@ -20,7 +20,7 @@ describe CloudModel do
   end
 
   it "should have a class method table_range_key" do
-    CloudModel.table_range_key.should == false
+    CloudModel.table_range_key.should == nil
   end
 
   it "should barf on a missing primary key at instantiation" do

@@ -1,3 +1,8 @@
+== v0.1.14
+
+* +dynamo_schema+ is now available to declare and create DynamoDB tables and attributes.
+* +create+ and +update+ now take validation options.
+
 == v0.1.13
 
 * Exception RecordInvalid shamelessly lifted from ActiveRecord.

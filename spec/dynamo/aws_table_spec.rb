@@ -136,7 +136,7 @@ describe CloudModel do
            10, 
            5, 
            hash_key: {uuid: :string}, 
-           range_key: false).
+           range_key: nil).
       and_return(t)
     Object.should_receive(:sleep).with(1).exactly(3).times
     CloudModel.establish_db_connection

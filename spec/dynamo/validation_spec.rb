@@ -2,13 +2,12 @@ require 'spec_helper'
 
 class Bang < OceanDynamo::Base
 
-  primary_key :uuid
-
-  attribute :uuid
-  attribute :v,    :float,  default: 1.0
-  attribute :must, :string, default: "mandatory"
-  attribute :soso, :string, default: "updated"
-  attribute :hate, :string, default: "exceptional"
+  dynamo_schema do
+    attribute :v,    :float,  default: 1.0
+    attribute :must, :string, default: "mandatory"
+    attribute :soso, :string, default: "updated"
+    attribute :hate, :string, default: "exceptional"
+  end
 
   validates :must, presence: true
   validates :soso, presence: { on: :update }
@@ -20,10 +19,6 @@ end
 
 
 describe Bang do
-
-  before :all do
-    Bang.establish_db_connection
-  end
 
   before :each do
     @i = Bang.new

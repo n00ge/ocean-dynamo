@@ -8,6 +8,11 @@ OceanDynamo requires Ruby 2.0 and Ruby on Rails 4.0.0 or later.
 {<img src="https://badge.fury.io/rb/ocean-dynamo.png" alt="Gem Version" />}[http://badge.fury.io/rb/ocean-dynamo]
 
 
+==== Installation
+
+ gem install ocean-dynamo
+
+
 ==== Features
 
 As one important use case for OceanDynamo is to facilitate the conversion of SQL based
@@ -29,6 +34,48 @@ Furthermore, future versions will keep track of and delete instances after tests
 OceanDynamo will use secondary indices to retrieve related table items, 
 which means it will scale without limits. (NB: this is a pre-release which as yet doesn't
 implement relations, but they are underway.)
+
+
+==== Example
+
+The following example shows the syntax. 
+
+  class AsyncJob < OceanDynamo::Base
+
+    dynamo_schema do
+      attribute :credentials,          :string
+      attribute :token
+      attribute :steps,                :serialized, default: []
+      attribute :max_seconds_in_queue, :integer,    default: 1.day
+      attribute :default_poison_limit, :integer,    default: 5
+      attribute :default_step_time,    :integer,    default: 30
+      attribute :started_at,           :datetime
+      attribute :last_completed_step,  :integer
+      attribute :finished_at,          :datetime
+      attribute :destroy_at,           :datetime
+      attribute :created_by
+      attribute :updated_by
+      attribute :succeeded,            :boolean,    default: false
+      attribute :failed,               :boolean,    default: false
+      attribute :poison,               :boolean,    default: false
+    end
+    
+  end
+
+Each attribute has a name, a type (:string, :integer, :float, :datetime, :boolean, or 
+:serialized) where :string is the default. Each attribute also optionally has a default 
+value, which can be a Proc.
+
+The :string, :integer, :float and :datetime types can also store sets of their type.
+Sets are represented as arrays and may not contain duplicates and may not be empty.
+
+All attributes except the :string type can take the value nil. Storing nil for a string
+value will return the empty string, "".
+
+Also, dynamo_schema takes args and many options. Detailed documentation is forthcoming.
+
+At the moment, OceanDynamo is fully usable as an ActiveModel and can be used by Rails
+controllers. Relations are not yet implemented.
 
 
 === Documentation
@@ -92,10 +139,6 @@ The Rails console is available from the built-in dummy application:
 
  cd spec/dummy
  rails console
-
-You may need to initialise the table connection (for each table):
-
- CloudModel.establish_db_connection
 
 This will, amongst other things, also create the CloudModel table if it doesn't already
 exist. On Amazon, this will take a little while. With +fake_dynamo+, it's practically

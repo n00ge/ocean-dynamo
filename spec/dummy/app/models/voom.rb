@@ -1,10 +1,9 @@
 class Voom < OceanDynamo::Base
 
-  primary_key :uuid, false
-
-  attribute :uuid
-  attribute :logged,     :serialized, default: []
-  attribute :no_destroy, :boolean,    default: false
+  dynamo_schema(connect: false) do
+    attribute :logged,     :serialized, default: []
+    attribute :no_destroy, :boolean,    default: false
+  end
 
 
   def log(str)

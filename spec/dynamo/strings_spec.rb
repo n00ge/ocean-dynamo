@@ -26,10 +26,10 @@ describe CloudModel do
           i = CloudModel.new(quux: 23, flouf: "nyx", blipp: nil, token: "store me")
           i.attributes.keys.should == i.fields.keys
           i.attributes.keys.should == [
+            "uuid", 
             "created_at", 
             "updated_at", 
             "lock_version", 
-            "uuid", 
             "credentials", 
             "token", 
             "steps", 
