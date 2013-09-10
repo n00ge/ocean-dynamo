@@ -75,7 +75,8 @@ module OceanDynamo
 
     def save!(options={})
       if perform_validations(options)
-        create_or_update || raise(RecordNotSaved)
+        options[:validate] = false
+        create_or_update(options) || raise(RecordNotSaved)
       else
         raise RecordInvalid.new(self)
       end
@@ -94,14 +95,14 @@ module OceanDynamo
     end
 
 
-    def create_or_update
-      result = new_record? ? create : update
+    def create_or_update(options={})
+      result = new_record? ? create(options) : update(options)
       result != false
     end
 
 
-    def create
-      return false unless valid?(:create)
+    def create(options={})
+      return false unless options[:validate] == false || valid?(:create)
       run_callbacks :commit do
         run_callbacks :save do
           run_callbacks :create do
@@ -118,8 +119,8 @@ module OceanDynamo
     end
 
 
-    def update
-      return false unless valid?(:update)
+    def update(options={})
+      return false unless options[:validate] == false || valid?(:update)
       run_callbacks :commit do
         run_callbacks :save do
           run_callbacks :update do

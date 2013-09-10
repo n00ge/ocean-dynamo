@@ -30,6 +30,26 @@ module OceanDynamo
     end
 
 
+    def [](attribute)
+      read_attribute attribute
+    end
+
+
+    def []=(attribute, value)
+      write_attribute attribute, value
+    end
+
+
+    def id
+      read_attribute(table_hash_key)
+    end
+
+
+    def id=(value)
+      write_attribute(table_hash_key, value)
+    end
+
+
     def read_attribute_for_validation(key)
       @attributes[key.to_s]
     end
@@ -51,6 +71,28 @@ module OceanDynamo
         @attributes[attr_name] = type_cast_attribute_for_write(attr_name, value)
       else
         raise ActiveModel::MissingAttributeError, "can't write unknown attribute `#{attr_name}'"
+      end
+    end
+
+
+    def to_key
+      return nil unless persisted?
+      key = respond_to?(:id) && id
+      return nil unless key
+      table_range_key ? [key, read_attribute(table_range_key)] : [key]
+    end
+
+
+    def assign_attributes(values)
+      return if values.blank?
+      values = values.stringify_keys
+      # if values.respond_to?(:permitted?)
+      #   unless values.permitted?
+      #     raise ActiveModel::ForbiddenAttributesError
+      #   end
+      # end
+      values.each do |k, v|
+        _assign_attribute(k, v)
       end
     end
 
@@ -157,49 +199,6 @@ module OceanDynamo
         JSON.parse(value)
       else
         raise UnsupportedType.new(type.to_s)
-      end
-    end
-
-
-    def [](attribute)
-      read_attribute attribute
-    end
-
-
-    def []=(attribute, value)
-      write_attribute attribute, value
-    end
-
-
-    def id
-      read_attribute(table_hash_key)
-    end
-
-
-    def id=(value)
-      write_attribute(table_hash_key, value)
-    end
-
-
-    def to_key
-      return nil unless persisted?
-      key = respond_to?(:id) && id
-      return nil unless key
-      table_range_key ? [key, read_attribute(table_range_key)] : [key]
-    end
-
-
-    def assign_attributes(values)
-      return if values.blank?
-      values = values.stringify_keys
-      # if values.respond_to?(:permitted?)
-      #   unless values.permitted?
-      #     raise ActiveModel::ForbiddenAttributesError
-      #   end
-      # end
-      values.each do |k, v|
-        #send("#{k}=", v)
-        _assign_attribute(k, v)
       end
     end
 
