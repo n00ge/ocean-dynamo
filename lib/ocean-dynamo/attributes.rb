@@ -35,13 +35,118 @@ module OceanDynamo
     end
 
 
-    def read_attribute(key)
-      @attributes[key.to_s]
+    def read_attribute(attr_name)
+      attr_name = attr_name.to_s
+      if attr_name == 'id' && fields[table_hash_key] != attr_name.to_sym
+        return read_attribute(table_hash_key)
+      end
+      @attributes[attr_name]   # Type cast!
     end
 
 
-    def write_attribute(key, value)
-      @attributes[key.to_s] = value
+    def write_attribute(attr_name, value)
+      attr_name = attr_name.to_s
+      attr_name = table_hash_key.to_s if attr_name == 'id' && fields[table_hash_key]
+      if fields.has_key?(attr_name)
+        @attributes[attr_name] = type_cast_attribute_for_write(attr_name, value)
+      else
+        raise ActiveModel::MissingAttributeError, "can't write unknown attribute `#{attr_name}'"
+      end
+    end
+
+
+    def type_cast_attribute_for_write(name, value, metadata=fields[name],
+                                      type: metadata[:type])
+      case type
+      when :string
+        value
+      when :integer
+        value
+      when :float
+        value
+      when :boolean
+        value
+      when :datetime
+        value
+      when :serialized
+        value
+      else
+        raise UnsupportedType.new(type.to_s)
+      end
+    end
+
+
+    def serialized_attributes
+      result = {}
+      fields.each do |attribute, metadata|
+        serialized = serialize_attribute(attribute, read_attribute(attribute), metadata)
+        result[attribute] = serialized unless serialized == nil
+      end
+      result
+    end
+
+
+    def serialize_attribute(attribute, value, metadata=fields[attribute],
+                            type: metadata[:type])
+      return nil if value == nil
+      case type
+      when :string
+        ["", []].include?(value) ? nil : value
+      when :integer
+        value == [] ? nil : value
+      when :float
+        value == [] ? nil : value
+      when :boolean
+        value ? "true" : "false"
+      when :datetime
+        value.to_i
+      when :serialized
+        value.to_json
+      else
+        raise UnsupportedType.new(type.to_s)
+      end
+    end
+
+
+    def deserialized_attributes(consistent_read: false, hash: nil)
+      hash ||= dynamo_item.attributes.to_hash(consistent_read: consistent_read)
+      result = {}
+      fields.each do |attribute, metadata|
+        result[attribute] = deserialize_attribute(hash[attribute], metadata)
+      end
+      result
+    end
+
+
+    def deserialize_attribute(value, metadata, type: metadata[:type])
+      case type
+      when :string
+        return "" if value == nil
+        value.is_a?(Set) ? value.to_a : value
+      when :integer
+        return nil if value == nil
+        value.is_a?(Set) || value.is_a?(Array) ? value.collect(&:to_i) : value.to_i
+      when :float
+        return nil if value == nil
+        value.is_a?(Set) || value.is_a?(Array) ? value.collect(&:to_f) : value.to_f
+      when :boolean
+        case value
+        when "true"
+          true
+        when "false"
+          false
+        else
+          nil
+        end
+      when :datetime
+        return nil if value == nil
+        Time.at(value.to_i)
+      when :serialized
+        return nil if value == nil
+        JSON.parse(value)
+      else
+        raise UnsupportedType.new(type.to_s)
+      end
     end
 
 
