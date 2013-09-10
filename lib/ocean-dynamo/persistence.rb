@@ -60,28 +60,36 @@ module OceanDynamo
     end 
 
 
-    def save
-      begin
-        create_or_update
-      rescue RecordInvalid
+    def save(options={})
+      if perform_validations(options)
+        begin
+          create_or_update
+        rescue RecordInvalid
+          false
+        end
+      else
         false
       end
     end
 
 
-    def save!(*)
-      create_or_update || raise(RecordNotSaved)
+    def save!(options={})
+      if perform_validations(options)
+        create_or_update || raise(RecordNotSaved)
+      else
+        raise RecordInvalid
+      end
     end
 
 
-    def update_attributes(attributes={})
-      assign_attributes(attributes)
+    def update_attributes(attrs={})
+      assign_attributes(attrs)
       save
     end
 
 
-    def update_attributes!(attributes={})
-      assign_attributes(attributes)
+    def update_attributes!(attrs={})
+      assign_attributes(attrs)
       save!
     end
 
