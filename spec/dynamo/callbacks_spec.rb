@@ -81,6 +81,18 @@ describe Voom do
   end
 
 
+  it "destroy! should not raise an exception for an unpersisted record" do
+    expect { @i.destroy! }.not_to raise_exception
+  end
+
+
+  it "destroy! should raise an exception if a before callback cancelled the destroy" do
+    @i.no_destroy = true
+    @i.save!
+    expect { @i.destroy! }.to raise_exception(OceanDynamo::RecordNotDestroyed)
+  end
+
+
 
 end
 

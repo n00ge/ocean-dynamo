@@ -123,12 +123,18 @@ module OceanDynamo
       end
     end
 
+
     def destroy
       run_callbacks :commit do
         run_callbacks :destroy do
           delete
         end
       end
+    end
+
+
+    def destroy!
+      destroy || raise(RecordNotDestroyed)
     end
 
 

@@ -3,7 +3,8 @@ class Voom < OceanDynamo::Base
   primary_key :uuid, false
 
   attribute :uuid
-  attribute :logged, :serialized, default: []
+  attribute :logged,     :serialized, default: []
+  attribute :no_destroy, :boolean,    default: false
 
 
   def log(str)
@@ -53,6 +54,7 @@ class Voom < OceanDynamo::Base
 
   before_destroy do
     log "before_destroy"
+    return false if no_destroy
   end
 
   after_destroy do
