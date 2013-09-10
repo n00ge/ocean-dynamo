@@ -21,6 +21,4 @@ module OceanDynamo
     [:lock_version, :integer, default: 0]
   ]
 
-
-
 end

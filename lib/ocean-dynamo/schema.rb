@@ -59,7 +59,7 @@ module OceanDynamo
 
     def self.attribute(name, type=:string, **pairs)
       attr_accessor name
-      fields[name] = {type: type, default: pairs[:default]}
+      fields[name.to_s] = {type: type, default: pairs[:default]}
     end
 
   end

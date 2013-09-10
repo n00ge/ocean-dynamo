@@ -1,5 +1,7 @@
 module OceanDynamo
   class Base
+    include ActiveModel::DeprecatedMassAssignmentSecurity
+    include ActiveModel::ForbiddenAttributesProtection
 
     attr_reader :attributes
     attr_reader :destroyed
@@ -9,13 +11,13 @@ module OceanDynamo
 
     def initialize(attrs={})
       run_callbacks :initialize do
-        @attributes = HashWithIndifferentAccess.new
+        @attributes = Hash.new
         fields.each do |name, md| 
           write_attribute(name, evaluate_default(md[:default], md[:type]))
-          self.class.class_eval "def #{name}; read_attribute('#{name}'); end"
-          self.class.class_eval "def #{name}=(value); write_attribute('#{name}', value); end"
+          self.class.class_eval "def #{name}; read_attribute('#{name.to_s}'); end"
+          self.class.class_eval "def #{name}=(value); write_attribute('#{name.to_s}', value); end"
           if fields[name][:type] == :boolean
-            self.class.class_eval "def #{name}?; read_attribute('#{name}'); end"
+            self.class.class_eval "def #{name}?; read_attribute('#{name.to_s}'); end"
           end
         end
         @dynamo_item = nil
@@ -29,17 +31,17 @@ module OceanDynamo
 
 
     def read_attribute_for_validation(key)
-      @attributes[key]
+      @attributes[key.to_s]
     end
 
 
     def read_attribute(key)
-      @attributes[key]
+      @attributes[key.to_s]
     end
 
 
     def write_attribute(key, value)
-      @attributes[key] = value
+      @attributes[key.to_s] = value
     end
 
 
@@ -72,13 +74,29 @@ module OceanDynamo
 
 
     def assign_attributes(values)
+      return if values.blank?
+      values = values.stringify_keys
       # if values.respond_to?(:permitted?)
       #   unless values.permitted?
       #     raise ActiveModel::ForbiddenAttributesError
       #   end
       # end
       values.each do |k, v|
-        send("#{k}=", v)
+        #send("#{k}=", v)
+        _assign_attribute(k, v)
+      end
+    end
+
+
+    private
+
+    def _assign_attribute(k, v)
+      public_send("#{k}=", v)
+    rescue ActiveModel::NoMethodError
+      if respond_to?("#{k}=")
+        raise
+      else
+        raise ActiveModel::UnknownAttributeError, "unknown attribute: #{k}"
       end
     end
 
