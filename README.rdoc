@@ -83,9 +83,9 @@ Relations are not yet implemented, but are underway. Relations will use secondar
 indices, up to the DynamoDB maximum of 5 secondary keys per table. At the moment,
 only find with a single uuid is implemented. Collections can not yet be obtained.
 
-OceanDynamo is currently used in by the Ocean framework (http://wiki.oceanframework.net)
+OceanDynamo is currently used in the Ocean framework (http://wiki.oceanframework.net)
 e.g. to implement critical job queues. It will be used increasingly as features are
-added to OceanDynamo and will eventually replace all Active>Record tables.
+added to OceanDynamo and will eventually replace all ActiveRecord tables.
 
 
 === Documentation
