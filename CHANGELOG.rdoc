@@ -1,3 +1,12 @@
+== v0.1.11
+
+* Type casting attribute values at assign time.
+* Added destroy!
+* First versions of read_attribute and write_attribute.
+* @attributes is now a normal hash, with string keys.
+* Base class split up into several source files.
+* Added read_attribute_for_validation. Some renames.
+
 == v0.1.10
 
 * Exception hierarchy mirroring ActiveRecord.
