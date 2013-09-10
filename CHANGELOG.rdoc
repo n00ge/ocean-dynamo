@@ -1,3 +1,7 @@
+== v0.1.13
+
+* Exception RecordInvalid shamelessly lifted from ActiveRecord.
+
 == v0.1.12
 
 * Validation for save and save! now works.
