@@ -21,10 +21,8 @@ module OceanDynamo
   class RecordNotDestroyed < DynamoError; end
 
   class StatementInvalid < DynamoError; end
-  
-  class WrappedDatabaseException < StatementInvalid; end
-    class RecordNotUnique < WrappedDatabaseException; end   
-    class InvalidForeignKey < WrappedDatabaseException; end
+    class RecordNotUnique < StatementInvalid; end   
+    class InvalidForeignKey < StatementInvalid; end
 
   class StaleObjectError < DynamoError; end
  
@@ -39,4 +37,3 @@ module OceanDynamo
   class MultiparameterAssignmentErrors < DynamoError; end
 
 end
-
