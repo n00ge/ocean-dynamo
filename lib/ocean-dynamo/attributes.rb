@@ -205,7 +205,7 @@ module OceanDynamo
 
     private
 
-    def _assign_attribute(k, v)
+    def _assign_attribute(k, v) # :nodoc:
       public_send("#{k}=", v)
     rescue ActiveModel::NoMethodError
       if respond_to?("#{k}=")
@@ -218,7 +218,7 @@ module OceanDynamo
 
     protected
 
-    def evaluate_default(default, type)
+    def evaluate_default(default, type) # :nodoc:
       return default.call if default.is_a?(Proc)
       return "" if default == nil && type == :string
       return default.clone if default.is_a?(Array) || default.is_a?(String)   # Instances need their own copies

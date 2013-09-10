@@ -102,7 +102,7 @@ module OceanDynamo
 
 
     def create(options={})
-      return false unless options[:validate] == false || valid?(:create)
+      return false if options[:validate] != false && !valid?(:create)
       run_callbacks :commit do
         run_callbacks :save do
           run_callbacks :create do
@@ -120,7 +120,7 @@ module OceanDynamo
 
 
     def update(options={})
-      return false unless options[:validate] == false || valid?(:update)
+      return false if options[:validate] != false && !valid?(:update)
       run_callbacks :commit do
         run_callbacks :save do
           run_callbacks :update do
@@ -190,13 +190,13 @@ module OceanDynamo
     end
 
 
-    def dynamo_persist
+    def dynamo_persist # :nodoc:
       @dynamo_item = dynamo_items.put(serialized_attributes)
       @new_record = false
     end
 
 
-    def post_instantiate(item, consistent)
+    def post_instantiate(item, consistent) # :nodoc:
       @dynamo_item = item
       @new_record = false
       assign_attributes(deserialized_attributes(
