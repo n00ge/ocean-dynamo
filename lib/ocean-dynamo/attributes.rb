@@ -59,16 +59,27 @@ module OceanDynamo
                                       type: metadata[:type])
       case type
       when :string
+        return nil if value == nil
+        return value.collect(&:to_s) if value.is_a?(Array)
         value
       when :integer
-        value
+        return nil if value == nil
+        return value.collect(&:to_i) if value.is_a?(Array)
+        value.to_i
       when :float
-        value
+        return nil if value == nil
+        return value.collect(&:to_f) if value.is_a?(Array)
+        value.to_f
       when :boolean
-        value
+        return nil if value == nil
+        return true if value == true
+        return true if value == "true"
+        false
       when :datetime
+        return nil if value == nil || !value.kind_of?(Time)
         value
       when :serialized
+        return nil if value == nil
         value
       else
         raise UnsupportedType.new(type.to_s)
@@ -140,7 +151,7 @@ module OceanDynamo
         end
       when :datetime
         return nil if value == nil
-        Time.at(value.to_i)
+        Time.zone.at(value.to_i)
       when :serialized
         return nil if value == nil
         JSON.parse(value)

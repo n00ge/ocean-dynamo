@@ -22,7 +22,7 @@ class CloudModel < OceanDynamo::Base
   attribute :finished_at,          :datetime
   attribute :gratuitous_float,     :float,       default: 3.141592
   attribute :zalagadoola,          :string,      default: "Menchikaboola"
-  attribute :list,                 :string,      default: [1, 2, 3]
+  attribute :list,                 :string,      default: ["1", "2", "3"]
   attribute :int,                  :integer,     default: 1066
 
 

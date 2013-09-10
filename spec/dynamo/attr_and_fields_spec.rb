@@ -223,14 +223,14 @@ describe CloudModel do
 
   it "should verify that structure isn't shared in defaults between instances" do
     i = CloudModel.new
-    i.list.should == [1, 2, 3]
-    i.list << 4
-    i.list.should == [1, 2, 3, 4]
+    i.list.should == ["1", "2", "3"]
+    i.list << "4"
+    i.list.should == ["1", "2", "3", "4"]
 
     j = CloudModel.new
-    j.list.should == [1, 2, 3]
-    j.list << 4
-    j.list.should == [1, 2, 3, 4]
+    j.list.should == ["1", "2", "3"]
+    j.list << "4"
+    j.list.should == ["1", "2", "3", "4"]
   end
 
 end

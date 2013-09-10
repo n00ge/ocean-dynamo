@@ -16,10 +16,10 @@ describe CloudModel do
           CloudModel.new.last_completed_step.should == nil
         end
 
-        it "should be able to receive any init value" do
+        it "should sanitise its init value" do
           CloudModel.new(last_completed_step: nil).last_completed_step.should == nil
-          CloudModel.new(last_completed_step: "Edwin").last_completed_step.should == "Edwin"
-          CloudModel.new(last_completed_step: 3.14).last_completed_step.should == 3.14
+          CloudModel.new(last_completed_step: "Edwin").last_completed_step.should == 0
+          CloudModel.new(last_completed_step: 3.14).last_completed_step.should == 3
         end
       end
 
@@ -43,7 +43,7 @@ describe CloudModel do
 
         it "should convert values to integers" do
           i = CloudModel.create last_completed_step: "86400-extra"
-          i.last_completed_step.should ==  "86400-extra"
+          i.last_completed_step.should ==  86400
           i.reload(consistent: true)
           i.last_completed_step.should == 86400
           CloudModel.find(i.uuid, consistent: true).last_completed_step.should == 86400
@@ -66,10 +66,10 @@ describe CloudModel do
           CloudModel.new.int.should == 1066
         end
 
-        it "should be able to receive any init value" do
+        it "should sanitise its init value" do
           CloudModel.new(int: nil).int.should == nil
-          CloudModel.new(int: "Edwin").int.should == "Edwin"
-          CloudModel.new(int: 3.14).int.should == 3.14
+          CloudModel.new(int: "Edwin").int.should == 0
+          CloudModel.new(int: 3.14).int.should == 3
         end
       end
 
@@ -93,7 +93,7 @@ describe CloudModel do
 
         it "should convert values to integers" do
           i = CloudModel.create int: "86400-extra"
-          i.int.should ==  "86400-extra"
+          i.int.should ==  86400
           i.reload(consistent: true)
           i.int.should == 86400
           CloudModel.find(i.uuid, consistent: true).int.should == 86400
@@ -110,10 +110,10 @@ describe CloudModel do
           CloudModel.new.last_completed_step.should == nil
         end
 
-        it "should be able to receive any init value" do
+        it "should sanitise its init value" do
           CloudModel.new(last_completed_step: nil).last_completed_step.should == nil
-          CloudModel.new(last_completed_step: "Edwin").last_completed_step.should == "Edwin"
-          CloudModel.new(last_completed_step: 3.14).last_completed_step.should == 3.14
+          CloudModel.new(last_completed_step: "Edwin").last_completed_step.should == 0
+          CloudModel.new(last_completed_step: 3.14).last_completed_step.should == 3
         end
       end
 
@@ -144,10 +144,10 @@ describe CloudModel do
           CloudModel.new.int.should == 1066
         end
 
-        it "should be able to receive any init value" do
+        it "should sanitise its init value" do
           CloudModel.new(int: nil).int.should == nil
-          CloudModel.new(int: "Edwin").int.should == "Edwin"
-          CloudModel.new(int: 3.14).int.should == 3.14
+          CloudModel.new(int: "Edwin").int.should == 0
+          CloudModel.new(int: 3.14).int.should == 3
         end
       end
 

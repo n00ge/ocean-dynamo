@@ -99,7 +99,7 @@ module OceanDynamo
           run_callbacks :create do
             k = read_attribute(table_hash_key)
             write_attribute(table_hash_key, SecureRandom.uuid) if k == "" || k == nil
-            t = Time.now
+            t = Time.zone.now
             self.created_at ||= t
             self.updated_at ||= t
             dynamo_persist
@@ -115,7 +115,7 @@ module OceanDynamo
       run_callbacks :commit do
         run_callbacks :save do
           run_callbacks :update do
-            self.updated_at = Time.now
+            self.updated_at = Time.zone.now
             dynamo_persist
             true
           end
@@ -160,7 +160,7 @@ module OceanDynamo
       run_callbacks :touch do
         attrs = ['updated_at']
         attrs << name if name
-        t = Time.now
+        t = Time.zone.now
         attrs.each { |k| write_attribute k, t }
         # TODO: handle lock_version
         dynamo_item.attributes.update do |u|
