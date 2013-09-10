@@ -3,7 +3,7 @@ require "aws-sdk"
 
 module OceanDynamo
 
-  DEFAULT_FIELDS = [
+  DEFAULT_ATTRIBUTES = [
     [:created_at,   :datetime], 
     [:updated_at,   :datetime],
     [:lock_version, :integer, default: 0]
@@ -46,10 +46,6 @@ module OceanDynamo
   class AttributeAssignmentError < DynamoError; end
 
   class MultiparameterAssignmentErrors < DynamoError; end
-
-
-
-
 
 
 
@@ -140,7 +136,7 @@ module OceanDynamo
       self.fields = HashWithIndifferentAccess.new
       self.table_hash_key = hash_key
       self.table_range_key = range_key
-      DEFAULT_FIELDS.each { |k, name, **pairs| attribute k, name, **pairs }
+      DEFAULT_ATTRIBUTES.each { |k, name, **pairs| attribute k, name, **pairs }
       nil
     end
 
@@ -313,13 +309,18 @@ module OceanDynamo
     end
 
 
-    def read_attribute(name)
-      @attributes[name]
+    def read_attribute_for_validation(key)
+      @attributes[key]
     end
 
 
-    def write_attribute(name, value)
-      @attributes[name] = value
+    def read_attribute(key)
+      @attributes[key]
+    end
+
+
+    def write_attribute(key, value)
+      @attributes[key] = value
     end
 
 
