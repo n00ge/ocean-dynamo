@@ -1,3 +1,7 @@
+== v0.1.12
+
+* Validation for save and save! now works.
+
 == v0.1.11
 
 * Type casting attribute values at assign time.
