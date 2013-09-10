@@ -16,7 +16,14 @@ module OceanDynamo
 
   class RecordNotSaved < DynamoError; end
 
-  class RecordInvalid < DynamoError; end     
+  class RecordInvalid < DynamoError
+    attr_reader :record # :nodoc:
+    def initialize(record) # :nodoc:
+      @record = record
+      errors = @record.errors.full_messages.join(", ")
+      super(I18n.t(:"#{@record.class.i18n_scope}.errors.messages.record_invalid", :errors => errors, :default => :"errors.messages.record_invalid"))
+    end
+  end
 
   class RecordNotDestroyed < DynamoError; end
 

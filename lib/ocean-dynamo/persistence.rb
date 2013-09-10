@@ -77,7 +77,7 @@ module OceanDynamo
       if perform_validations(options)
         create_or_update || raise(RecordNotSaved)
       else
-        raise RecordInvalid
+        raise RecordInvalid.new(self)
       end
     end
 

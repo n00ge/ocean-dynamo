@@ -76,12 +76,12 @@ describe CloudModel do
   end
 
   it "save should call create_or_update and return false if RecordInvalid is raised" do
-    @i.stub(:create_or_update).and_raise(OceanDynamo::RecordInvalid)
+    @i.stub(:create_or_update).and_raise(OceanDynamo::RecordInvalid.new(@i))
     @i.save.should == false
   end
 
   it "save should call create_or_update and return false if RecordInvalid is raised" do
-    @i.stub(:create_or_update).and_raise(OceanDynamo::RecordInvalid)
+    @i.stub(:create_or_update).and_raise(OceanDynamo::RecordInvalid.new(@i))
     @i.save.should == false
   end
 
