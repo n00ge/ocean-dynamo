@@ -12,7 +12,7 @@ dynamo_schema(create: true) do
     attribute :destroy_at,           :datetime
     attribute :started_at,           :datetime
     attribute :last_completed_step,  :integer
-    attribute :succeeded,            :boolean,     default: false
+    attribute :succeeded,            :boolean,     default: true
     attribute :failed,               :boolean,     default: false
     attribute :poison,               :boolean,     default: false
     attribute :finished_at,          :datetime

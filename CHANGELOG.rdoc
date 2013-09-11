@@ -3,6 +3,7 @@
 * Added .find_by_key which is like .find except it returns nil for nonexistent records.
 * Locking and timestamping can now be specified with dynamo_schema.
 * Freezing added. As in ActiveRecord, freeze only freezes the attribute hash.
+* Unknown parameters are now handled as in ActiveRecord.
 
 == v0.2.2
 

@@ -95,9 +95,7 @@ module OceanDynamo
       #     raise ActiveModel::ForbiddenAttributesError
       #   end
       # end
-      values.each do |k, v|
-        _assign_attribute(k, v)
-      end
+      values.each { |k, v| _assign_attribute(k, v) }
     end
 
 
@@ -201,11 +199,11 @@ module OceanDynamo
 
     def _assign_attribute(k, v) # :nodoc:
       public_send("#{k}=", v)
-    rescue ActiveModel::NoMethodError
+    rescue NoMethodError
       if respond_to?("#{k}=")
         raise
       else
-        raise ActiveModel::UnknownAttributeError, "unknown attribute: #{k}"
+        raise UnknownAttributeError, "unknown attribute: #{k}"
       end
     end
 

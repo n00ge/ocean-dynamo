@@ -35,6 +35,8 @@ describe CloudModel do
     i = CloudModel.new uuid: "blahonga"
     i.uuid.should == "blahonga"
     i.id.should == "blahonga"
+    i[:uuid].should == "blahonga"
+    i[:id].should == "blahonga"
   end
 
   it "should be possible to set the hash_key attribute using #id, regardless of its name" do
@@ -44,6 +46,12 @@ describe CloudModel do
     i.uuid.should == "snyko"
     i.uuid = "moose"
     i.id.should == "moose"
+    i[:uuid] = "elk"
+    i.uuid.should == "elk"
+    i[:id] = "badger"
+    i.id.should == "badger"
+    i.id.should == i.uuid
+    i[:id].should == i[:uuid]
   end
 
   it "should assign an UUID to the hash_key attribute if nil at create" do
@@ -228,6 +236,24 @@ describe CloudModel do
     i.freeze
     i.token.should == ""
     expect { i.token = "Hey, mister!" }.to raise_error(RuntimeError, "can't modify frozen Hash")
+  end
+
+  it "write_attribute should raise an exception if the attribute is unknown" do
+    i = CloudModel.new
+    expect { i.write_attribute :you_wish, 123 }.to raise_error(ActiveModel::MissingAttributeError, 
+                                                               "can't write unknown attribute `you_wish'")
+  end
+
+  it "_assign_attribute should call write_attribute" do
+    i = CloudModel.create!
+    i.should_receive(:_assign_attribute).with("token", "hey")
+    i.assign_attributes(token: "hey")
+  end
+
+  it "_assign_attribute should barf on unknown attributes" do
+    i = CloudModel.create!
+    expect { i.assign_attributes(outlandish: "indeed") }.to raise_error(OceanDynamo::UnknownAttributeError,
+                                                                        "unknown attribute: outlandish")
   end
 
 end

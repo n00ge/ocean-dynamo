@@ -38,7 +38,6 @@ module OceanDynamo
         else
           raise UnknownTableStatus.new("Unknown DynamoDB table status '#{dynamo_table.status}'")
         end
-        sleep 1
       end
     end
 
