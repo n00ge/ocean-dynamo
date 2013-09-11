@@ -1,6 +1,6 @@
 class CloudModel < OceanDynamo::Base
 
-dynamo_schema(connect: false) do
+dynamo_schema(create: true) do
     attribute :credentials,          :string,      default: "blah"
     attribute :token,                :string
     attribute :steps,                :serialized,  default: []
@@ -16,14 +16,12 @@ dynamo_schema(connect: false) do
     attribute :failed,               :boolean,     default: false
     attribute :poison,               :boolean,     default: false
     attribute :finished_at,          :datetime
-    attribute :gratuitous_float,     :float,       default: 3.141592
+    attribute :gratuitous_float,     :float,       default: lambda { rand }
     attribute :zalagadoola,          :string,      default: "Menchikaboola"
     attribute :list,                 :string,      default: ["1", "2", "3"]
     attribute :int,                  :integer,     default: 1066
   end
 
-  # Validations
-  #validates_presence_of :uuid
 
   validates_each :steps do |record, attr, value|
     record.errors.add(attr, 'must be an Array') unless value.is_a?(Array)

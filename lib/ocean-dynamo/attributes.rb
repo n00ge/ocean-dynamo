@@ -1,7 +1,7 @@
 module OceanDynamo
   class Base
-    include ActiveModel::DeprecatedMassAssignmentSecurity
-    include ActiveModel::ForbiddenAttributesProtection
+    #include ActiveModel::DeprecatedMassAssignmentSecurity
+    #include ActiveModel::ForbiddenAttributesProtection
 
     attr_reader :attributes
     attr_reader :destroyed
@@ -158,16 +158,6 @@ module OceanDynamo
       else
         raise UnsupportedType.new(type.to_s)
       end
-    end
-
-
-    def deserialized_attributes(consistent_read: false, hash: nil)
-      hash ||= dynamo_item.attributes.to_hash(consistent_read: consistent_read)
-      result = {}
-      fields.each do |attribute, metadata|
-        result[attribute] = deserialize_attribute(hash[attribute], metadata)
-      end
-      result
     end
 
 

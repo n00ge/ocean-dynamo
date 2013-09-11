@@ -8,12 +8,16 @@ module OceanDynamo
                            table_name_suffix: nil,
                            read_capacity_units: 10,
                            write_capacity_units: 5,
-                           connect: true,
+                           connect: :late,
+                           create: false,
                            &block)
       # Set class vars
       self.dynamo_client = nil
       self.dynamo_table = nil
       self.dynamo_items = nil
+      self.table_connected = false
+      self.table_connect_policy = connect
+      self.table_create_policy = create
       self.table_hash_key = table_hash_key
       self.table_range_key = table_range_key
       self.table_name = table_name
@@ -27,7 +31,7 @@ module OceanDynamo
       DEFAULT_ATTRIBUTES.each { |name, type, **pairs| attribute name, type, **pairs }
       block.call
       # Connect to AWS
-      establish_db_connection if connect
+      establish_db_connection if connect == true
       # Finally return the full table name
       table_full_name
     end

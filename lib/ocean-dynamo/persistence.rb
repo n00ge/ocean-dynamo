@@ -166,6 +166,7 @@ module OceanDynamo
 
     def touch(name=nil)
       raise DynamoError, "can not touch on a new record object" unless persisted?
+      _connect_late?
       run_callbacks :touch do
         attrs = ['updated_at']
         attrs << name if name
@@ -185,25 +186,48 @@ module OceanDynamo
 
     protected
 
+
+    def _connect_late?
+      return false if table_connected
+      return false unless table_connect_policy == :late
+      self.class.establish_db_connection
+      true
+    end
+
     def perform_validations(options={}) # :nodoc:
       options[:validate] == false || valid?(options[:context])
     end
 
 
     def dynamo_persist # :nodoc:
+      _connect_late?
       @dynamo_item = dynamo_items.put(serialized_attributes)
       @new_record = false
+      true
     end
 
 
-    def post_instantiate(item, consistent) # :nodoc:
+    def dynamo_unpersist(item, consistent) # :nodoc:
+      _connect_late?
       @dynamo_item = item
       @new_record = false
-      assign_attributes(deserialized_attributes(
-        hash: nil,
-        consistent_read: consistent)
-      )
+      assign_attributes(_dynamo_read_attributes(consistent_read: consistent))
       self
+    end
+
+
+    def _dynamo_read_attributes(consistent_read: false) # :nodoc:
+      hash = _dynamo_read_raw_attributes(consistent_read)
+      result = {}
+      fields.each do |attribute, metadata|
+        result[attribute] = deserialize_attribute(hash[attribute], metadata)
+      end
+      result
+    end
+
+
+    def _dynamo_read_raw_attributes(consistent) # :nodoc:
+      dynamo_item.attributes.to_hash(consistent_read: consistent)
     end
 
 

@@ -11,6 +11,7 @@ describe CloudModel do
     CloudModel.dynamo_client = nil
     CloudModel.dynamo_table = nil
     CloudModel.dynamo_items = nil
+    CloudModel.table_connected = false
     @saved_table_name = CloudModel.table_name
     @saved_prefix = CloudModel.table_name_prefix
     @saved_suffix = CloudModel.table_name_suffix
@@ -23,6 +24,7 @@ describe CloudModel do
     CloudModel.table_name = @saved_table_name
     CloudModel.table_name_prefix = @saved_prefix
     CloudModel.table_name_suffix = @saved_suffix
+    CloudModel.table_connected = false
   end
 
 
@@ -58,7 +60,7 @@ describe CloudModel do
   end
 
 
-  it "establish_connection should set dynamo_client, dynamo_table and dynamo_items" do
+  it "establish_db_connection should set dynamo_client, dynamo_table and dynamo_items" do
     AWS::DynamoDB::Table.any_instance.should_receive(:exists?).and_return(true)
     AWS::DynamoDB::Table.any_instance.should_receive(:status).and_return(:active)
     CloudModel.should_not_receive(:create_table)
@@ -71,14 +73,14 @@ describe CloudModel do
     CloudModel.dynamo_items.should be_an AWS::DynamoDB::ItemCollection
   end
 
-  it "establish_connection should return true if the table exists and is active" do
+  it "establish_db_connection should return true if the table exists and is active" do
     AWS::DynamoDB::Table.any_instance.should_receive(:exists?).and_return(true)
     AWS::DynamoDB::Table.any_instance.should_receive(:status).and_return(:active)
     CloudModel.should_not_receive(:create_table)
     CloudModel.establish_db_connection
   end
 
-  it "establish_connection should wait for the table to complete creation" do
+  it "establish_db_connection should wait for the table to complete creation" do
     AWS::DynamoDB::Table.any_instance.should_receive(:exists?).and_return(true)
     AWS::DynamoDB::Table.any_instance.should_receive(:status).
       and_return(:creating, :creating, :creating, :creating, :active)
@@ -87,7 +89,7 @@ describe CloudModel do
     CloudModel.establish_db_connection
   end
 
-  it "establish_connection should wait for the table to delete before trying to create it again" do
+  it "establish_db_connection should wait for the table to delete before trying to create it again" do
     AWS::DynamoDB::Table.any_instance.should_receive(:exists?).and_return(true)
     AWS::DynamoDB::Table.any_instance.should_receive(:status).and_return(:deleting)
     AWS::DynamoDB::Table.any_instance.should_receive(:exists?).and_return(true, true, true, false)
@@ -96,13 +98,13 @@ describe CloudModel do
     CloudModel.establish_db_connection
   end
 
-  it "establish_connection should try to create the table if it doesn't exist" do
+  it "establish_db_connection should try to create the table if it doesn't exist" do
     AWS::DynamoDB::Table.any_instance.should_receive(:exists?).and_return(false)
     CloudModel.should_receive(:create_table).and_return(true)
     CloudModel.establish_db_connection
   end
 
-  it "establish_connection should barf on an unknown table status" do
+  it "establish_db_connection should barf on an unknown table status" do
     AWS::DynamoDB::Table.any_instance.should_receive(:exists?).and_return(true)
     AWS::DynamoDB::Table.any_instance.should_receive(:status).twice.and_return(:syphilis)
     CloudModel.should_not_receive(:create_table)
@@ -163,6 +165,22 @@ describe CloudModel do
   end
   
 
+  it "should have a table_connected variable" do
+    CloudModel.table_connected.should == false
+    CloudModel.table_connected = true
+    CloudModel.table_connected.should == true
+  end
 
+  it "should have a table_connect_policy variable" do
+    CloudModel.table_connect_policy.should == :late
+    CloudModel.table_connect_policy = true
+    CloudModel.table_connect_policy.should == true
+  end
+
+  it "should have a table_create_policy variable" do
+    CloudModel.table_create_policy.should == true
+    CloudModel.table_create_policy = false
+    CloudModel.table_create_policy.should == false
+  end
 
 end

@@ -34,5 +34,14 @@ module OceanDynamo
     class_attribute :fields, instance_writer: false
     self.fields = nil
 
+    class_attribute :table_connected, instance_writer: false
+    self.table_connected = false
+
+    class_attribute :table_connect_policy, instance_writer: false
+    self.table_connect_policy = :late
+
+    class_attribute :table_create_policy, instance_writer: false
+    self.table_create_policy = false
+
   end
 end

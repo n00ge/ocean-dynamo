@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class Quux < OceanDynamo::Base
-  dynamo_schema(:index, :foo, connect: false) do
+  dynamo_schema(:index, :foo) do
     attribute :index,     :string,  default: "unlikely"
     attribute :foo,       :string
     attribute :bar,       :string,  default: "zuul"
@@ -18,7 +18,8 @@ class Blahonga < OceanDynamo::Base
                 table_name_suffix: "_post",
                 read_capacity_units: 100,
                 write_capacity_units: 50,
-                connect: false
+                connect: false,
+                create: true
                ) do
     attribute :thingy
   end
@@ -83,6 +84,22 @@ describe Blahonga do
 
   it "should respect an explicitly declared id field" do
     Quux.fields['index'].should == {"type" => :string, "default" => "unlikely"}
+  end
+
+  it "should default the table_connect_policy to :late" do
+    Quux.table_connect_policy.should == :late
+  end
+
+  it "should allow the table_connect_policy to be overridden" do
+    Blahonga.table_connect_policy.should == false
+  end
+
+  it "should default the table_create_policy to false" do
+    Quux.table_create_policy.should == false
+  end
+
+  it "should allow the table_create_policy to be overridden" do
+    Blahonga.table_create_policy.should == true
   end
 
 

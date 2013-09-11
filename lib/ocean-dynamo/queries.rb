@@ -4,7 +4,7 @@ module OceanDynamo
     def self.find(hash, range=nil, consistent: false)
       item = dynamo_items[hash, range]
       raise RecordNotFound unless item.exists?
-      new.send(:post_instantiate, item, consistent)
+      new.send(:dynamo_unpersist, item, consistent)
     end
 
 

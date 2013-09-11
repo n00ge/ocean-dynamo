@@ -5,8 +5,13 @@ module OceanDynamo
       setup_dynamo  
       if dynamo_table.exists?
         wait_until_table_is_active
+        self.table_connected = true
       else
-        create_table
+        if table_create_policy
+          create_table
+        else
+          raise "KDJSHFSHDFKHSJKDFHKSHDFKJSHKDJF"
+        end 
       end
       set_dynamo_table_keys
     end
