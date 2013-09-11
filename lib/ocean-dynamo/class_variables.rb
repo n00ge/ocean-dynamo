@@ -43,5 +43,11 @@ module OceanDynamo
     class_attribute :table_create_policy, instance_writer: false
     self.table_create_policy = false
 
+    class_attribute :lock_attribute, instance_writer: false
+    self.lock_attribute = :lock_version
+
+    class_attribute :timestamp_attributes, instance_writer: false
+    self.timestamp_attributes = [:created_at, :updated_at]
+
   end
 end

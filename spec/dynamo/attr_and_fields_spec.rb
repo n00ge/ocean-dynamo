@@ -42,6 +42,8 @@ describe CloudModel do
     i.id.should == "blahonga"
     i.id = "snyko"
     i.uuid.should == "snyko"
+    i.uuid = "moose"
+    i.id.should == "moose"
   end
 
   it "should assign an UUID to the hash_key attribute if nil at create" do
@@ -51,40 +53,44 @@ describe CloudModel do
   end
 
 
-  it "class should have an automatically supplied created_at field" do
-    CloudModel.fields.should include :created_at
-  end
-
-  it "class should have an automatically supplied updated_at field" do
-    CloudModel.fields.should include :updated_at
-  end
-
-
-  it "should have a :token field" do
-    CloudModel.fields.should include :token
-  end
-
-  it "should have :token field with a defaulted type of String" do
-    CloudModel.fields[:token][:type].should == :string
-  end
-
-  it "should have a :steps field with a type of :serialized and a :default of []" do
-    CloudModel.fields[:steps][:type].should == :serialized
-    CloudModel.fields[:steps][:default].should == []
-  end
-
-
-  it "should define accessors for all automatically defined fields" do
+  it "should define accessors for all attributes, both explicit and implicit" do
     i = CloudModel.new
-    i.should respond_to :created_at
-    i.should respond_to :created_at=
+    i.attributes.keys.should == [
+      "uuid", 
+      "created_at", 
+      "updated_at", 
+      "lock_version", 
+      "credentials", 
+      "token", 
+      "steps", 
+      "max_seconds_in_queue", 
+      "default_poison_limit", 
+      "default_step_time", 
+      "created_by", 
+      "updated_by", 
+      "destroy_at", 
+      "started_at", 
+      "last_completed_step", 
+      "succeeded", 
+      "failed", 
+      "poison", 
+      "finished_at", 
+      "gratuitous_float", 
+      "zalagadoola", 
+      "list",
+      "int"
+    ]
   end
 
-  it "should define accessors for all declared fields" do
-    i = CloudModel.new
-    i.should respond_to :uuid
-    i.should respond_to :uuid=
+  it "undeclared attributes should not be stored at all" do
+    i = CloudModel.new(quux: 23, flouf: "nyx", blipp: nil, token: "store me")
+    i.attributes.keys.should == i.fields.keys
+    i.attributes.keys.should include 'token' 
+    i.attributes.keys.should_not include 'quux' 
+    i.attributes.keys.should_not include 'flouf' 
+    i.token.should == "store me"
   end
+
 
   it "should allow fields to be read and written" do
     i = CloudModel.new
@@ -93,7 +99,9 @@ describe CloudModel do
     i.token.should == "foo"
   end
 
-  it "should have a method assign_attributes" do
+  it "should define an xxxxx? method for each attribute"
+
+  it "should implement assign_attributes" do
     i = CloudModel.new
     i.assign_attributes token: "changed", default_poison_limit: 10
     i.token.should == "changed"

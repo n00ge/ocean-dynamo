@@ -1,3 +1,7 @@
+== v0.2.3
+
+* Added .find_by_key which is like .find except it returns nil for nonexistent records.
+
 == v0.2.2
 
 * dynamo_schema now takes :connect and :create keyword args to control AWS connection and table creation.

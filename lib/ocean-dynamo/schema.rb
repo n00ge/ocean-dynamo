@@ -10,6 +10,8 @@ module OceanDynamo
                            write_capacity_units: 5,
                            connect: :late,
                            create: false,
+                           locking: :lock_version,
+                           timestamps: [:created_at, :updated_at],
                            &block)
       # Set class vars
       self.dynamo_client = nil
@@ -25,6 +27,8 @@ module OceanDynamo
       self.table_name_suffix = table_name_suffix
       self.table_read_capacity_units = read_capacity_units
       self.table_write_capacity_units = write_capacity_units
+      self.lock_attribute = locking
+      self.timestamp_attributes = timestamps
       # Init
       self.fields = HashWithIndifferentAccess.new
       attribute table_hash_key, :string, default: ''

@@ -19,7 +19,9 @@ class Blahonga < OceanDynamo::Base
                 read_capacity_units: 100,
                 write_capacity_units: 50,
                 connect: false,
-                create: true
+                create: true,
+                locking: :optimism,
+                timestamps: [:made_at, :changed_at],
                ) do
     attribute :thingy
   end
@@ -102,6 +104,22 @@ describe Blahonga do
     Blahonga.table_create_policy.should == true
   end
 
+  it "should default the locking attribute to :lock_version" do
+    Quux.lock_attribute.should == :lock_version
+  end
+
+  it "should allow locking attribute to be overridden" do
+    Blahonga.lock_attribute.should == :optimism
+  end
+
+
+  it "should default the timestamps to created_at and updated_at" do
+    Quux.timestamp_attributes.should == [:created_at, :updated_at]
+  end
+
+  it "should allow the timestamp attributes to be overridden" do
+    Blahonga.timestamp_attributes.should == [:made_at, :changed_at]
+  end
 
 end
 

@@ -21,37 +21,6 @@ describe CloudModel do
           CloudModel.new(token: "Edwin").token.should == "Edwin"
           CloudModel.new(token: 3.14).token.should == 3.14
         end
-
-        it "unknown fields should not be stored at all" do
-          i = CloudModel.new(quux: 23, flouf: "nyx", blipp: nil, token: "store me")
-          i.attributes.keys.should == i.fields.keys
-          i.attributes.keys.should == [
-            "uuid", 
-            "created_at", 
-            "updated_at", 
-            "lock_version", 
-            "credentials", 
-            "token", 
-            "steps", 
-            "max_seconds_in_queue", 
-            "default_poison_limit", 
-            "default_step_time", 
-            "created_by", 
-            "updated_by", 
-            "destroy_at", 
-            "started_at", 
-            "last_completed_step", 
-            "succeeded", 
-            "failed", 
-            "poison", 
-            "finished_at", 
-            "gratuitous_float", 
-            "zalagadoola", 
-            "list",
-            "int"
-          ]
-          i.token.should == "store me"
-        end
       end
 
       describe "after instantiation" do
