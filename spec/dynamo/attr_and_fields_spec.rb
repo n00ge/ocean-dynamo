@@ -256,6 +256,8 @@ describe CloudModel do
                                                                         "unknown attribute: outlandish")
   end
 
+  it "implement the == operator for OceanDynamo instances"
+
 end
 
 

@@ -123,7 +123,7 @@ module OceanDynamo
         run_callbacks :save do
           run_callbacks :update do
             set_timestamps
-            dynamo_persist
+            dynamo_persist(lock: lock_attribute)
             true
           end
         end
@@ -146,9 +146,8 @@ module OceanDynamo
 
 
     def delete
-      _late_connect?
       if persisted?
-        @dynamo_item.delete
+        dynamo_delete(lock: lock_attribute)
       end
       freeze
       @destroyed = true
@@ -167,11 +166,14 @@ module OceanDynamo
       raise DynamoError, "can not touch on a new record object" unless persisted?
       _late_connect?
       run_callbacks :touch do
-        # TODO: handle lock_version
-        dynamo_item.attributes.update do |u|
-          set_timestamps(name).each do |k|
-            u.set(k => serialize_attribute(k, read_attribute(k)))
+        begin
+          dynamo_item.attributes.update(_handle_locking) do |u|
+            set_timestamps(name).each do |k|
+              u.set(k => serialize_attribute(k, read_attribute(k)))
+            end
           end
+        rescue AWS::DynamoDB::Errors::ConditionalCheckFailedException
+          raise OceanDynamo::StaleObjectError
         end
         self
       end
@@ -199,11 +201,28 @@ module OceanDynamo
     end
 
 
-    def dynamo_persist # :nodoc:
+    def dynamo_persist(lock: nil) # :nodoc:
       _late_connect?
-      @dynamo_item = dynamo_items.put(serialized_attributes)
+      begin
+        options = _handle_locking(lock)
+        @dynamo_item = dynamo_items.put(serialized_attributes, options)
+      rescue AWS::DynamoDB::Errors::ConditionalCheckFailedException
+        raise OceanDynamo::StaleObjectError
+      end
+
       @new_record = false
       true
+    end
+
+
+    def dynamo_delete(lock: nil)
+      _late_connect?
+      begin
+        options = _handle_locking(lock)
+        @dynamo_item.delete(options)
+      rescue AWS::DynamoDB::Errors::ConditionalCheckFailedException
+        raise OceanDynamo::StaleObjectError
+      end
     end
 
 
@@ -246,6 +265,18 @@ module OceanDynamo
       t = Time.zone.now
       attrs.each { |a| write_attribute a, t }
       t
+    end
+
+
+    def _handle_locking(lock=lock_attribute)
+      _late_connect?
+      if lock
+        current_v = read_attribute(lock)
+        write_attribute(lock, current_v+1)  unless @attributes.frozen?
+        {if: {lock => current_v}}
+      else
+        {}
+      end
     end
 
   end

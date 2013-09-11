@@ -12,8 +12,43 @@ describe CloudModel do
   end
 
 
-  it "should use optimistic locking in update"
-  it "should use optimistic locking in destroy"
-  it "should use optimistic locking in touch"
+  it "should use optimistic locking in update" do
+    uuid = CloudModel.create.uuid
+    one = CloudModel.find uuid
+    one.lock_version.should == 0
+    two = CloudModel.find uuid
+    two.lock_version.should == 0
+    one.save!
+    two.lock_version.should == 0
+    one.lock_version.should == 1
+    expect { two.save! }.to raise_error(OceanDynamo::StaleObjectError)
+    expect { one.save! }.not_to raise_error
+  end
+
+  it "should use optimistic locking in destroy" do
+    uuid = CloudModel.create.uuid
+    one = CloudModel.find uuid
+    one.lock_version.should == 0
+    two = CloudModel.find uuid
+    two.lock_version.should == 0
+    one.save!
+    two.lock_version.should == 0
+    one.lock_version.should == 1
+    expect { two.destroy! }.to raise_error(OceanDynamo::StaleObjectError)
+    expect { one.destroy! }.not_to raise_error
+  end
+
+  it "should use optimistic locking in touch" do
+    uuid = CloudModel.create.uuid
+    one = CloudModel.find uuid
+    one.lock_version.should == 0
+    two = CloudModel.find uuid
+    two.lock_version.should == 0
+    one.save!
+    two.lock_version.should == 0
+    one.lock_version.should == 1
+    expect { two.touch }.to raise_error(OceanDynamo::StaleObjectError)
+    expect { one.touch }.not_to raise_error
+  end
 
 end
