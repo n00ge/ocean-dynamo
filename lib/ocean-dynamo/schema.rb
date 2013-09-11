@@ -2,7 +2,8 @@ module OceanDynamo
   class Base
 
 
-    def self.dynamo_schema(table_hash_key=:uuid, table_range_key=nil,
+    def self.dynamo_schema(table_hash_key=:uuid, 
+                           table_range_key=nil,
                            table_name: compute_table_name,
                            table_name_prefix: nil,
                            table_name_suffix: nil,
@@ -32,7 +33,8 @@ module OceanDynamo
       # Init
       self.fields = HashWithIndifferentAccess.new
       attribute table_hash_key, :string, default: ''
-      DEFAULT_ATTRIBUTES.each { |name, type, **pairs| attribute name, type, **pairs }
+      timestamp_attributes.each { |name| attribute name, :datetime } if timestamp_attributes
+      attribute lock_attribute, :integer, default: 0
       block.call
       # Connect to AWS
       establish_db_connection if connect == true

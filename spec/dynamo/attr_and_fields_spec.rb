@@ -99,7 +99,13 @@ describe CloudModel do
     i.token.should == "foo"
   end
 
-  it "should define an xxxxx? method for each attribute"
+  it "should define an xxxxx? method for each attribute" do
+    i = CloudModel.new
+    i.token = ""  # This is already the default, this is for clarity
+    i.token?.should == false
+    i.token = "foo"
+    i.token?.should == true
+  end
 
   it "should implement assign_attributes" do
     i = CloudModel.new

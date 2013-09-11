@@ -108,9 +108,7 @@ module OceanDynamo
           run_callbacks :create do
             k = read_attribute(table_hash_key)
             write_attribute(table_hash_key, SecureRandom.uuid) if k == "" || k == nil
-            t = Time.zone.now
-            self.created_at ||= t
-            self.updated_at ||= t
+            set_timestamps
             dynamo_persist
             true
           end
@@ -124,7 +122,7 @@ module OceanDynamo
       run_callbacks :commit do
         run_callbacks :save do
           run_callbacks :update do
-            self.updated_at = Time.zone.now
+            set_timestamps
             dynamo_persist
             true
           end
@@ -169,14 +167,13 @@ module OceanDynamo
       raise DynamoError, "can not touch on a new record object" unless persisted?
       _connect_late?
       run_callbacks :touch do
-        attrs = ['updated_at']
+        attrs = (timestamp_attributes || [])
         attrs << name if name
-        t = Time.zone.now
-        attrs.each { |k| write_attribute k, t }
+        _set_timestamp_attributes attrs
         # TODO: handle lock_version
         dynamo_item.attributes.update do |u|
           attrs.each do |k|
-            u.set(k => serialize_attribute(k, t))
+            u.set(k => serialize_attribute(k, read_attribute(k)))
           end
         end
         self
@@ -236,6 +233,22 @@ module OceanDynamo
       dynamo_item.attributes.to_hash(consistent_read: consistent)
     end
 
+
+    def set_timestamps(name=nil)
+      attrs = []
+      attrs << timestamp_attributes[0] if timestamp_attributes && new_record?
+      attrs << timestamp_attributes[1] if timestamp_attributes
+      attrs << name if name
+      _set_timestamp_attributes(attrs)
+    end
+
+
+    def _set_timestamp_attributes(attrs)
+      return if attrs.blank?
+      t = Time.zone.now
+      attrs.each { |a| write_attribute a, t }
+      nil
+    end
 
   end
 end

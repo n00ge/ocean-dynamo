@@ -16,9 +16,7 @@ module OceanDynamo
           write_attribute(name, evaluate_default(md[:default], md[:type]))
           self.class.class_eval "def #{name}; read_attribute('#{name.to_s}'); end"
           self.class.class_eval "def #{name}=(value); write_attribute('#{name.to_s}', value); end"
-          if fields[name][:type] == :boolean
-            self.class.class_eval "def #{name}?; read_attribute('#{name.to_s}'); end"
-          end
+          self.class.class_eval "def #{name}?; read_attribute('#{name.to_s}').present?; end"
         end
         @dynamo_item = nil
         @destroyed = false

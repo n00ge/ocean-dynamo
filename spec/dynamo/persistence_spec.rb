@@ -114,22 +114,22 @@ describe CloudModel do
     @i.new_record?.should == false
   end
 
-  it "save should update both created_at and updated_at for new records" do
-    @i.created_at.should == nil
-    @i.updated_at.should == nil
+  it "should set both timestamp attributes for a new record" do
+    @i.send(@i.timestamp_attributes[0]).should == nil
+    @i.send(@i.timestamp_attributes[1]).should == nil
     @i.save
-    @i.created_at.should be_a Time
-    @i.updated_at.should be_a Time
+    @i.send(@i.timestamp_attributes[0]).should be_a Time
+    @i.send(@i.timestamp_attributes[1]).should be_a Time
   end
 
-  it "save should update only updated_at for existing records" do
+  it "save should update only the second timestamp attribute for persisted records" do
     @i.save!
-    cre = @i.created_at
-    upd = @i.updated_at
+    cre = @i.send(@i.timestamp_attributes[0])
+    upd = @i.send(@i.timestamp_attributes[0])
     cre.should == upd
     @i.save!
-    @i.created_at.should == cre
-    @i.updated_at.should_not == @i.created_at
+    (@i.send(@i.timestamp_attributes[0])).to_f.should == cre.to_f
+    (@i.send(@i.timestamp_attributes[1])).should_not == @i.send(@i.timestamp_attributes[0])
   end
 
   it "should have a class method create" do
