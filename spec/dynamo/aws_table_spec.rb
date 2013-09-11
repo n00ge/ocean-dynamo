@@ -30,21 +30,6 @@ describe CloudModel do
     CloudModel.table_name.should == "cloud_models"
   end
 
-  it "should have a class set_table_name method" do
-    CloudModel.set_table_name('bibbedy_babbedy')
-    CloudModel.table_name.should == "bibbedy_babbedy"
-  end
-
-  it "should have a class set_table_name_prefix method" do
-    CloudModel.set_table_name_prefix('Prefix_')
-    CloudModel.table_name_prefix.should == "Prefix_"
-  end
-
-  it "should have a class set_table_name_suffix method" do
-    CloudModel.set_table_name_suffix('_suffiX')
-    CloudModel.table_name_suffix.should == "_suffiX"
-  end
-
   it "should have a table_name_prefix" do
     CloudModel.table_name_prefix.should == nil
     CloudModel.table_name_prefix = "foo_"
@@ -167,5 +152,17 @@ describe CloudModel do
     i2 = CloudModel.new
     i2.save!
   end
+
+
+  it "table_read_capacity_units should default to 10" do
+    CloudModel.table_read_capacity_units.should == 10
+  end
+
+  it "table_write_capacity_units should default to 5" do
+    CloudModel.table_write_capacity_units.should == 5
+  end
+  
+
+
 
 end

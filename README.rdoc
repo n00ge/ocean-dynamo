@@ -103,8 +103,8 @@ OceanDynamo is used as a central component:
 
 Contributions are welcome. Fork in the usual way. OceanDynamo is developed using
 TDD: the specs are extensive and test coverage is very near to 100 percent. Pull requests
-will not be considered unless your submission is covered by new tests, all tests pass and
-coverage is equally high or higher.
+will not be considered unless all tests pass and coverage is equally high or higher.
+All contributed code must therefore also be exhaustively tested.
 
 
 == Running the specs

@@ -33,24 +33,6 @@ module OceanDynamo
     end
 
 
-    def self.set_table_name(name)
-      self.table_name = name
-      true
-    end
-
-
-    def self.set_table_name_prefix(prefix)
-      self.table_name_prefix = prefix
-      true
-    end
-
-
-    def self.set_table_name_suffix(suffix)
-      self.table_name_suffix = suffix
-      true
-    end
-
-
     def self.compute_table_name
       name.pluralize.underscore
     end
@@ -58,16 +40,6 @@ module OceanDynamo
 
     def self.table_full_name
       "#{table_name_prefix}#{table_name}#{table_name_suffix}"
-    end
-
-
-    def self.read_capacity_units(units)
-      self.table_read_capacity_units = units
-    end
-
-
-    def self.write_capacity_units(units)
-      self.table_write_capacity_units = units
     end
 
 
