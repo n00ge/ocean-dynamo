@@ -4,7 +4,7 @@
 * Locking and timestamping can now be specified with dynamo_schema.
 * Freezing added. As in ActiveRecord, freeze only freezes the attribute hash.
 * Unknown attributes are now handled as in ActiveRecord.
-* Equality operator == (alias eql?) implemented.
+* Operators ==, eql? and <=> implemented.
 
 == v0.2.2
 

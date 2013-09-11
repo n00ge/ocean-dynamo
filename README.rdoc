@@ -72,7 +72,22 @@ Sets are represented as arrays and may not contain duplicates and may not be emp
 All attributes except the :string type can take the value nil. Storing nil for a string
 value will return the empty string, "".
 
-Also, dynamo_schema takes args and many options. Detailed documentation is forthcoming.
+Also, dynamo_schema takes args and many options. Here's the full syntax:
+
+ dynamo_schema(
+   table_hash_key = :uuid, 
+   table_range_key = nil,
+   table_name: compute_table_name,
+   table_name_prefix: nil,
+   table_name_suffix: nil,
+   read_capacity_units: 10,
+   write_capacity_units: 5,
+   connect: :late,
+   create: false,
+   locking: :lock_version,
+   timestamps: [:created_at, :updated_at],
+   &block
+ )
 
 At the moment, OceanDynamo is fully usable as an ActiveModel and can be used by Rails
 controllers. Furthermore, OceanDynamo implements much of the infrastructure of ActiveRecord;

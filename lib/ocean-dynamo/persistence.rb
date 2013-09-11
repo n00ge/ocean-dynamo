@@ -272,7 +272,7 @@ module OceanDynamo
       _late_connect?
       if lock
         current_v = read_attribute(lock)
-        write_attribute(lock, current_v+1)  unless @attributes.frozen?
+        write_attribute(lock, current_v+1) unless frozen?
         {if: {lock => current_v}}
       else
         {}

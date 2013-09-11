@@ -268,6 +268,12 @@ describe CloudModel do
     c.should_not == b
   end
 
+  it "implement the <=> to allow for sorting" do
+    a = CloudModel.create!
+    b = CloudModel.create!
+    (a <=> b).should be_an Integer
+  end
+
 end
 
 
