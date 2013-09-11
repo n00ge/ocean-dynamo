@@ -256,7 +256,17 @@ describe CloudModel do
                                                                         "unknown attribute: outlandish")
   end
 
-  it "implement the == operator for OceanDynamo instances"
+  it "implement the == operator for OceanDynamo instances" do
+    a = CloudModel.new
+    b = CloudModel.new
+    a.should_not == b
+    a.save!
+    b.save!
+    a.should_not == b
+    c = CloudModel.find(a.uuid)
+    c.should == a
+    c.should_not == b
+  end
 
 end
 

@@ -38,12 +38,6 @@ module OceanDynamo
     end
 
 
-    def freeze
-      @attributes.freeze
-      self
-    end
-
-
     def id
       read_attribute(table_hash_key)
     end
