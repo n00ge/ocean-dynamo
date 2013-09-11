@@ -1,3 +1,12 @@
+== v0.2.1
+
+* Obsolete setters removed.
+* README updates.
+
+== v0.2.0
+
+* Bumped the version number.
+
 == v0.1.14
 
 * +dynamo_schema+ is now available to declare and create DynamoDB tables and attributes.
