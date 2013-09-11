@@ -9,6 +9,13 @@ module OceanDynamo
     end
 
 
+    def self.find_by_key(*args)
+      find(*args)
+    rescue RecordNotFound
+      nil
+    end
+
+
     def self.count
       _connect_late?
       dynamo_table.item_count || -1    # The || -1 is for fake_dynamo specs.
