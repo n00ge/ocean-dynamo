@@ -88,7 +88,7 @@ e.g. to implement critical job queues. It will be used increasingly as features 
 added to OceanDynamo and will eventually replace all ActiveRecord tables.
 
 
-=== Documentation
+== Documentation
 
 * Ocean-dynamo gem on Rubygems: https://rubygems.org/gems/ocean-dynamo
 * Ocean-dynamo gem API: http://rubydoc.info/gems/ocean-dynamo/frames
@@ -99,7 +99,15 @@ OceanDynamo is used as a central component:
 * http://wiki.oceanframework.net
 
 
-=== Running the specs
+== Contributing
+
+Contributions are welcome. Fork in the usual way. OceanDynamo is developed using
+TDD: the specs are extensive and test coverage is very near to 100 percent. Pull requests
+will not be considered unless your submission is covered by new tests, all tests pass and
+coverage is equally high or higher.
+
+
+== Running the specs
 
 To run the specs for the OceanDynamo gem, you must first install the bundle. It will download
 a gem called +fake_dynamo+, which runs a local, in-memory functional clone of Amazon DynamoDB.
@@ -143,7 +151,7 @@ With +fake_dynamo+ running, you should now be able to do
 All tests should pass.
 
 
-=== Rails console
+== Rails console
 
 The Rails console is available from the built-in dummy application:
 
