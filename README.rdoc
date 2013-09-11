@@ -90,8 +90,8 @@ added to OceanDynamo and will eventually replace all ActiveRecord tables.
 
 === Documentation
 
-* Ocean-dynamo gem API: http://rdoc.info/github/OceanDev/ocean-dynamo/frames
 * Ocean-dynamo gem on Rubygems: https://rubygems.org/gems/ocean-dynamo
+* Ocean-dynamo gem API: http://rubydoc.info/gems/ocean-dynamo/0.2.0/frames
 * Ocean-dynamo source and wiki: https://github.org/OceanDev/ocean-dynamo
 
 See also Ocean, a Rails framework for creating highly scalable SOAs in the cloud, in which
