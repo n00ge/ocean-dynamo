@@ -36,6 +36,12 @@ module OceanDynamo
       timestamp_attributes.each { |name| attribute name, :datetime } if timestamp_attributes
       attribute lock_attribute, :integer, default: 0
       block.call
+      # Define attribute accessors
+      fields.each do |name, md| 
+        self.class_eval "def #{name}; read_attribute('#{name.to_s}'); end"
+        self.class_eval "def #{name}=(value); write_attribute('#{name.to_s}', value); end"
+        self.class_eval "def #{name}?; read_attribute('#{name.to_s}').present?; end"
+      end
       # Connect to AWS
       establish_db_connection if connect == true
       # Finally return the full table name
