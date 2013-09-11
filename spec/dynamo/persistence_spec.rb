@@ -182,6 +182,12 @@ describe CloudModel do
     i.started_at.to_f.should_not == ua
   end
 
+  it "touch should raise an exception if the instance is frozen" do
+    i = CloudModel.create
+    i.freeze
+    expect { i.touch }.to raise_error(RuntimeError, "can't modify frozen Hash")
+  end
+
 
   it "should have an instance method delete" do
     i = CloudModel.create!
@@ -197,6 +203,37 @@ describe CloudModel do
     CloudModel.delete(i.id).should == false
   end
 
+
+  it "delete should not raise an exception if the instance is frozen" do
+    i = CloudModel.create
+    i.freeze
+    expect { i.delete }.not_to raise_error
+  end
+
+  it "destroy should not raise an exception if the instance is frozen" do
+    i = CloudModel.create
+    i.freeze
+    expect { i.destroy }.not_to raise_error
+  end
+
+
+  it "delete should freeze the model" do
+    i = CloudModel.create
+    i.should_receive(:freeze)
+    i.delete
+  end
+
+  it "destroy should freeze the model" do
+    i = CloudModel.create
+    i.should_receive(:freeze)
+    i.destroy
+  end
+
+  it "destroy! should freeze the model" do
+    i = CloudModel.create
+    i.should_receive(:freeze)
+    i.destroy!
+  end
 
 
 end

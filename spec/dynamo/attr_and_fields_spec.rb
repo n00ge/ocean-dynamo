@@ -223,6 +223,13 @@ describe CloudModel do
     j.list.should == ["1", "2", "3", "4"]
   end
 
+  it "should implement freeze" do
+    i = CloudModel.new
+    i.freeze
+    i.token.should == ""
+    expect { i.token = "Hey, mister!" }.to raise_error(RuntimeError, "can't modify frozen Hash")
+  end
+
 end
 
 

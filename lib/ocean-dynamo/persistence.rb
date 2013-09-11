@@ -146,12 +146,12 @@ module OceanDynamo
 
 
     def delete
-      _connect_late?
+      _late_connect?
       if persisted?
         @dynamo_item.delete
       end
+      freeze
       @destroyed = true
-      #freeze
     end
 
 
@@ -165,14 +165,11 @@ module OceanDynamo
 
     def touch(name=nil)
       raise DynamoError, "can not touch on a new record object" unless persisted?
-      _connect_late?
+      _late_connect?
       run_callbacks :touch do
-        attrs = (timestamp_attributes || [])
-        attrs << name if name
-        _set_timestamp_attributes attrs
         # TODO: handle lock_version
         dynamo_item.attributes.update do |u|
-          attrs.each do |k|
+          set_timestamps(name).each do |k|
             u.set(k => serialize_attribute(k, read_attribute(k)))
           end
         end
@@ -184,7 +181,7 @@ module OceanDynamo
 
     protected
 
-    def self._connect_late?
+    def self._late_connect?
       return false if table_connected
       return false unless table_connect_policy
       establish_db_connection
@@ -192,8 +189,8 @@ module OceanDynamo
     end
 
 
-    def _connect_late?
-      self.class._connect_late?
+    def _late_connect?
+      self.class._late_connect?
     end
 
 
@@ -203,7 +200,7 @@ module OceanDynamo
 
 
     def dynamo_persist # :nodoc:
-      _connect_late?
+      _late_connect?
       @dynamo_item = dynamo_items.put(serialized_attributes)
       @new_record = false
       true
@@ -211,7 +208,7 @@ module OceanDynamo
 
 
     def dynamo_unpersist(item, consistent) # :nodoc:
-      _connect_late?
+      _late_connect?
       @dynamo_item = item
       @new_record = false
       assign_attributes(_dynamo_read_attributes(consistent_read: consistent))
@@ -240,6 +237,7 @@ module OceanDynamo
       attrs << timestamp_attributes[1] if timestamp_attributes
       attrs << name if name
       _set_timestamp_attributes(attrs)
+      attrs
     end
 
 
@@ -247,7 +245,7 @@ module OceanDynamo
       return if attrs.blank?
       t = Time.zone.now
       attrs.each { |a| write_attribute a, t }
-      nil
+      t
     end
 
   end
