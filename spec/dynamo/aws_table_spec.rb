@@ -164,15 +164,15 @@ describe CloudModel do
   
 
   it "should have a table_connected variable" do
-    CloudModel.table_connected.should == true
+    CloudModel.should respond_to :table_connected
   end
 
   it "should have a table_connect_policy variable" do
-    CloudModel.table_connect_policy.should == true
+    CloudModel.should respond_to :table_connect_policy
   end
 
   it "should have a table_create_policy variable" do
-    CloudModel.table_create_policy.should == true
+    CloudModel.should respond_to :table_create_policy
   end
 
 end

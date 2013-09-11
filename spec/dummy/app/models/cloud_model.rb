@@ -1,6 +1,6 @@
 class CloudModel < OceanDynamo::Base
 
-dynamo_schema(connect: true, create: true) do
+dynamo_schema(create: true) do
     attribute :credentials,          :string,      default: "blah"
     attribute :token,                :string
     attribute :steps,                :serialized,  default: []

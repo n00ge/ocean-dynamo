@@ -2,7 +2,7 @@ require 'spec_helper'
 
 class Bang < OceanDynamo::Base
 
-  dynamo_schema(connect: true, create: true) do
+  dynamo_schema(create: true) do
     attribute :v,    :float,  default: 1.0
     attribute :must, :string, default: "mandatory"
     attribute :soso, :string, default: "updated"
@@ -44,7 +44,7 @@ describe Bang do
 
   it "should raise an exception if hate is nil" do
     @i.hate = false
-    expect { @i.save }.to raise_error(ActiveModel::StrictValidationFailed)
+    expect { @i.save }.to raise_error  #(ActiveModel::StrictValidationFailed)
   end
 
 
