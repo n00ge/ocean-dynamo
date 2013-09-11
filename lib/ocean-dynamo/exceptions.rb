@@ -2,6 +2,8 @@ module OceanDynamo
 
   class DynamoError < StandardError; end
 
+  class TableNotFound < DynamoError; end
+
   class UnknownPrimaryKey < DynamoError; end
 
   class UnknownTableStatus < DynamoError; end

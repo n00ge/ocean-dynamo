@@ -11,7 +11,6 @@ describe CloudModel do
     CloudModel.dynamo_client = nil
     CloudModel.dynamo_table = nil
     CloudModel.dynamo_items = nil
-    CloudModel.table_connected = false
     @saved_table_name = CloudModel.table_name
     @saved_prefix = CloudModel.table_name_prefix
     @saved_suffix = CloudModel.table_name_suffix
@@ -24,7 +23,6 @@ describe CloudModel do
     CloudModel.table_name = @saved_table_name
     CloudModel.table_name_prefix = @saved_prefix
     CloudModel.table_name_suffix = @saved_suffix
-    CloudModel.table_connected = false
   end
 
 
@@ -166,21 +164,15 @@ describe CloudModel do
   
 
   it "should have a table_connected variable" do
-    CloudModel.table_connected.should == false
-    CloudModel.table_connected = true
     CloudModel.table_connected.should == true
   end
 
   it "should have a table_connect_policy variable" do
-    CloudModel.table_connect_policy.should == :late
-    CloudModel.table_connect_policy = true
     CloudModel.table_connect_policy.should == true
   end
 
   it "should have a table_create_policy variable" do
     CloudModel.table_create_policy.should == true
-    CloudModel.table_create_policy = false
-    CloudModel.table_create_policy.should == false
   end
 
 end

@@ -1,6 +1,6 @@
 class Voom < OceanDynamo::Base
 
-  dynamo_schema(create: true) do
+  dynamo_schema(connect: true, create: true) do
     attribute :logged,     :serialized, default: []
     attribute :no_destroy, :boolean,    default: false
   end

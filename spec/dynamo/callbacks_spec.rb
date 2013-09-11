@@ -2,10 +2,6 @@ require 'spec_helper'
 
 describe Voom do
 
-  before :all do
-    Voom.establish_db_connection
-  end
-
   before :each do
     @i = Voom.new
   end

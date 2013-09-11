@@ -1,3 +1,12 @@
+== v0.2.2
+
+* dynamo_schema now takes :connect and :create keyword args to control AWS connection and table creation.
+  :connect has the default value :late, which means the connection will be made as soon as queries against
+  AWS are made. If :connect has the value true, OceanDynamo will connect at class load time. If false,
+  no connection will be attempted. :create is by default false, which means that the table must already
+  exist on AWS, or an exception will be raised. If set to true, the table will be created when the
+  connection is made.
+
 == v0.2.1
 
 * Obsolete setters removed.

@@ -148,6 +148,7 @@ module OceanDynamo
 
 
     def delete
+      _connect_late?
       if persisted?
         @dynamo_item.delete
       end
@@ -186,13 +187,18 @@ module OceanDynamo
 
     protected
 
-
-    def _connect_late?
+    def self._connect_late?
       return false if table_connected
-      return false unless table_connect_policy == :late
-      self.class.establish_db_connection
+      return false unless table_connect_policy
+      establish_db_connection
       true
     end
+
+
+    def _connect_late?
+      self.class._connect_late?
+    end
+
 
     def perform_validations(options={}) # :nodoc:
       options[:validate] == false || valid?(options[:context])
