@@ -1,3 +1,7 @@
+== v0.3.0
+
+* Made ActiveModel and ActiveSupport dependencies.
+
 == v0.2.8
 
 * Turning off locking now fully complete.
