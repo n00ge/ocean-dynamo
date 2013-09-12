@@ -1,3 +1,8 @@
+== v0.2.5
+
+* DangerousAttributeError is now raised if an attribute name already exists as a method
+  in OceanDynamo.
+
 == v0.2.4
 
 * Added .find_by_key which is like .find except it returns nil for nonexistent records.

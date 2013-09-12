@@ -60,8 +60,23 @@ module OceanDynamo
 
 
     def self.attribute(name, type=:string, **pairs)
+      raise DangerousAttributeError, "#{name} is defined by OceanDynamo" if self.dangerous_attributes.include?(name.to_s)
       attr_accessor name
       fields[name.to_s] = {type: type, default: pairs[:default]}
+    end
+
+
+    protected
+
+    def self.dangerous_attributes
+      self.public_methods(false).collect do |sym|
+        str = sym.to_s
+        if str.end_with?("?", "=")
+          str[0...-1]
+        else
+          str
+        end
+      end.uniq
     end
 
   end

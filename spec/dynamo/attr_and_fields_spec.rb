@@ -274,6 +274,18 @@ describe CloudModel do
     (a <=> b).should be_an Integer
   end
 
+
+  it "should raise a DangerousAttributeError when an attribute name exists in the namespace" do
+    expect {
+      class Pericoloso < OceanDynamo::Base
+        dynamo_schema(connect: false, create: false) do
+          attribute :new
+        end
+      end
+    }.to raise_error(OceanDynamo::DangerousAttributeError,
+                     "new is defined by OceanDynamo")
+  end
+
 end
 
 
