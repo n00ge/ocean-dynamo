@@ -69,7 +69,7 @@ The +:string+, +:integer+, +:float+ and +:datetime+ types can also store sets of
 Sets are represented as arrays and may not contain duplicates and may not be empty.
 
 All attributes except the +:string+ type can take the value +nil+. Storing +nil+ for a string
-value will return the empty string, +""+.
+value will return the empty string, <tt>""</tt>.
 
 Also, dynamo_schema takes args and many options. Here's the full syntax:
 
