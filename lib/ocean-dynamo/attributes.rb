@@ -1,10 +1,14 @@
 module OceanDynamo
   class Base
 
+    #
+    # The hash of attributes and their values. Keys are strings.
+    #
     attr_reader :attributes
-    attr_reader :destroyed
-    attr_reader :new_record
-    attr_reader :dynamo_item
+
+    attr_reader :destroyed    # :nodoc:
+    attr_reader :new_record   # :nodoc:
+    attr_reader :dynamo_item  # :nodoc:
 
 
     def initialize(attrs={})
