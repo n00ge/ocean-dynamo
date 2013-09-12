@@ -183,7 +183,7 @@ module OceanDynamo
 
     protected
 
-    def self._late_connect?
+    def self._late_connect? # :nodoc:
       return false if table_connected
       return false unless table_connect_policy
       establish_db_connection
@@ -191,7 +191,7 @@ module OceanDynamo
     end
 
 
-    def _late_connect?
+    def _late_connect? # :nodoc:
       self.class._late_connect?
     end
 
@@ -215,7 +215,7 @@ module OceanDynamo
     end
 
 
-    def dynamo_delete(lock: nil)
+    def dynamo_delete(lock: nil) # :nodoc:
       _late_connect?
       begin
         options = _handle_locking(lock)
@@ -250,7 +250,7 @@ module OceanDynamo
     end
 
 
-    def set_timestamps(name=nil)
+    def set_timestamps(name=nil) # :nodoc:
       attrs = []
       attrs << timestamp_attributes[0] if timestamp_attributes && new_record?
       attrs << timestamp_attributes[1] if timestamp_attributes
@@ -260,7 +260,7 @@ module OceanDynamo
     end
 
 
-    def _set_timestamp_attributes(attrs)
+    def _set_timestamp_attributes(attrs) # :nodoc:
       return if attrs.blank?
       t = Time.zone.now
       attrs.each { |a| write_attribute a, t }
@@ -268,7 +268,7 @@ module OceanDynamo
     end
 
 
-    def _handle_locking(lock=lock_attribute)
+    def _handle_locking(lock=lock_attribute) # :nodoc:
       _late_connect?
       if lock
         current_v = read_attribute(lock)

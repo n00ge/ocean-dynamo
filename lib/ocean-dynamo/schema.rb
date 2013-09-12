@@ -68,7 +68,7 @@ module OceanDynamo
 
     protected
 
-    def self.dangerous_attributes
+    def self.dangerous_attributes # :nodoc:
       self.public_methods(false).collect do |sym|
         str = sym.to_s
         if str.end_with?("?", "=")
