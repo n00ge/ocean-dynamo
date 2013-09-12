@@ -1,3 +1,8 @@
+== v0.2.7
+
+* Locking can now be turned off by supplying nil as the lock column. v0.2.7 accidentally
+  broke this feature. It is now operational again.
+
 == v0.2.6
 
 * Locking can now be disabled. 
