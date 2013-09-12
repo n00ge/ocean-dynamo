@@ -1,3 +1,7 @@
+== v0.3.1
+
+* Loading issue fixed.
+
 == v0.3.0
 
 * Made ActiveModel and ActiveSupport dependencies.

@@ -1,6 +1,8 @@
 require "ocean-dynamo/engine"
 
 require "aws-sdk"
+require "active_record"
+require "active_support"
 
 require "ocean-dynamo/base"
 require "ocean-dynamo/exceptions"
