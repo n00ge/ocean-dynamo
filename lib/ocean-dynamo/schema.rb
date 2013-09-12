@@ -28,7 +28,7 @@ module OceanDynamo
       self.table_name_suffix = table_name_suffix
       self.table_read_capacity_units = read_capacity_units
       self.table_write_capacity_units = write_capacity_units
-      self.lock_attribute = locking
+      self.lock_attribute = locking if locking
       self.timestamp_attributes = timestamps
       # Init
       self.fields = HashWithIndifferentAccess.new
