@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ocean-dynamo (0.2.6)
+    ocean-dynamo (0.2.7)
       aws-sdk (~> 1.0)
 
 GEM
@@ -33,7 +33,7 @@ GEM
       tzinfo (~> 0.3.37)
     arel (4.0.0)
     atomic (1.1.14)
-    aws-sdk (1.17.0)
+    aws-sdk (1.18.0)
       json (~> 1.4)
       nokogiri (< 1.6.0)
       uuidtools (~> 2.1)
