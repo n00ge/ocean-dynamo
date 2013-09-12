@@ -1,3 +1,8 @@
+== v0.2.6
+
+* Locking can now be disabled. 
+* README and documentation changes.
+
 == v0.2.5
 
 * DangerousAttributeError is now raised if an attribute name already exists as a method

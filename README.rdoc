@@ -17,19 +17,18 @@ OceanDynamo requires Ruby 2.0 and Ruby on Rails 4.0.0 or later.
 
 As one important use case for OceanDynamo is to facilitate the conversion of SQL based
 ActiveRecord models to DynamoDB based models, it is important that the syntax and semantics
-of OceanDynamo's operations are as close as possible to those of ActiveRecord. This means
-that all callbacks should be available, before, around and after, and that they should be
-called in the same order as in ActiveRecord. OceanDynamo follows this pattern closely and
+of OceanDynamo's operations are as close as possible to those of ActiveRecord, including
+callbacks, exceptions and support methods. Ocean-dynamo follows this pattern closely and
 is of course based on ActiveModel.
 
 The attribute and persistence layer of OceanDynamo is modeled on that of ActiveRecord:
 there's +save+, +save!+, +create+, +update+, +update!+, +update_attribute+ and all the other
 methods you're used to. The design goal is always to implement as much as possible of the
-ActiveRecord interface, without sacrificing scalability. This makes the task of switching from
-SQL to no-SQL much easier.
+ActiveRecord interface, without sacrificing scalability. This makes the task of switching 
+from SQL to no-SQL much easier.
 
-Due to its similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
-Furthermore, future versions will keep track of and delete instances after tests.
+Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
+To facilitate testing, future versions will keep track of and delete instances after tests.
 
 OceanDynamo will use secondary indices to retrieve related table items, 
 which means it will scale without limits.
@@ -61,16 +60,16 @@ The following example shows the syntax.
     
   end
 
-Each attribute has a name, a type (:string, :integer, :float, :datetime, :boolean, or 
-:serialized) where :string is the default. Each attribute also optionally has a default 
-value, which can be a Proc. The hash key attribute is by default :uuid (this can of
-course be specified) and is a :string. The keys can also be explicitly declared.
+Each attribute has a name, a type (+:string+, +:integer+, +:float+, +:datetime+, +:boolean+, 
+or +:serialized+) where +:string+ is the default. Each attribute also optionally has a default 
+value, which can be a Proc. The hash key attribute is by default +:uuid+ (this can of
+course be specified) and is a +:string+. The keys can also be explicitly declared.
 
-The :string, :integer, :float and :datetime types can also store sets of their type.
+The +:string+, +:integer+, +:float+ and +:datetime+ types can also store sets of their type.
 Sets are represented as arrays and may not contain duplicates and may not be empty.
 
-All attributes except the :string type can take the value nil. Storing nil for a string
-value will return the empty string, "".
+All attributes except the +:string+ type can take the value +nil+. Storing +nil+ for a string
+value will return the empty string, +""+.
 
 Also, dynamo_schema takes args and many options. Here's the full syntax:
 
@@ -94,7 +93,7 @@ Also, dynamo_schema takes args and many options. Here's the full syntax:
 
 At the moment, OceanDynamo is fully usable as an ActiveModel and can be used by Rails
 controllers. Furthermore, OceanDynamo implements much of the infrastructure of ActiveRecord;
-for instance, read_attribute, write_attribute, and much of the control logic and
+for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 parameters.
 
 Relations are not yet implemented, but are underway. Relations will use secondary

@@ -1,7 +1,5 @@
 module OceanDynamo
   class Base
-    #include ActiveModel::DeprecatedMassAssignmentSecurity
-    #include ActiveModel::ForbiddenAttributesProtection
 
     attr_reader :attributes
     attr_reader :destroyed
