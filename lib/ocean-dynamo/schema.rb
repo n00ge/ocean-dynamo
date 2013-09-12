@@ -34,7 +34,7 @@ module OceanDynamo
       self.fields = HashWithIndifferentAccess.new
       attribute table_hash_key, :string, default: ''
       timestamp_attributes.each { |name| attribute name, :datetime } if timestamp_attributes
-      attribute lock_attribute, :integer, default: 0
+      attribute(lock_attribute, :integer, default: 0) if lock_attribute
       block.call
       # Define attribute accessors
       fields.each do |name, md| 

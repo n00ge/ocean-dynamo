@@ -28,6 +28,12 @@ class Blahonga < OceanDynamo::Base
 end
 
 
+class Zulu < OceanDynamo::Base
+  dynamo_schema(locking: nil, connect: false) do
+    attribute :minimal
+  end
+end
+
 
 describe Blahonga do
 
@@ -110,6 +116,10 @@ describe Blahonga do
 
   it "should allow locking attribute to be overridden" do
     Blahonga.lock_attribute.should == :optimism
+  end
+
+  it "should allow locking attribute to be set to nil" do
+    Zulu.lock_attribute.should == nil
   end
 
 
