@@ -66,7 +66,7 @@ value, which can be a Proc. The hash key attribute is by default +:uuid+ (this c
 course be specified) and is a +:string+. The keys can also be explicitly declared.
 
 The +:string+, +:integer+, +:float+ and +:datetime+ types can also store sets of their type.
-Sets are represented as arrays and may not contain duplicates and may not be empty.
+Sets are represented as arrays, may not contain duplicates and may not be empty.
 
 All attributes except the +:string+ type can take the value +nil+. Storing +nil+ for a string
 value will return the empty string, <tt>""</tt>.
