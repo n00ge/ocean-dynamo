@@ -16,22 +16,37 @@ class Slave < OceanDynamo::Base
     attribute :name
   end
 
-  #belongs_to :owner
+  belongs_to :master
 
 end
 
 
-describe "The belongs_to relation" do
-
+describe Master do
   it "Master should be saveable" do
     Master.create!
   end
+end
 
-  it "Slave should be saveable" do
+
+describe Slave do
+
+  it "should be saveable" do
     Slave.create!
   end
 
+  it "should have a :master_id attribute" do
+    Slave.fields.should include :master_id
+  end
 
+  it "should implement #master" do
+    s = Slave.new
+    s.master.should == nil
+  end
 
+  it "should implement #master_id" do
+    s = Slave.new
+    s.master_id.should == nil
+  end
 
 end
+

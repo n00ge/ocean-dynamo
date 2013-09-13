@@ -13,6 +13,7 @@ require "ocean-dynamo/callbacks"
 require "ocean-dynamo/attributes"
 require "ocean-dynamo/queries"
 require "ocean-dynamo/persistence"
+require "ocean-dynamo/associations"
 
 
 module OceanDynamo
