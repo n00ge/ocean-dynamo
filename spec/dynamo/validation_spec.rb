@@ -2,7 +2,7 @@ require 'spec_helper'
 
 class Bang < OceanDynamo::Base
 
-  dynamo_schema(create: true) do
+  dynamo_schema(:uuid, create: true) do
     attribute :v,    :float,  default: 1.0
     attribute :must, :string, default: "mandatory"
     attribute :soso, :string, default: "updated"

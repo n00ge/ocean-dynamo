@@ -6,6 +6,10 @@ describe Voom do
     @i = Voom.new
   end
 
+  it "should have :id as its key" do
+    Voom.table_hash_key.should == :id
+  end
+
 
   it "should do instantiation callbacks in the correct order" do
     @i.valid?

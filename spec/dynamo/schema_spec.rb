@@ -13,15 +13,15 @@ end
 
 
 class Blahonga < OceanDynamo::Base
-  dynamo_schema(table_name: "caramba",
-                table_name_prefix: "pre_",
-                table_name_suffix: "_post",
-                read_capacity_units: 100,
-                write_capacity_units: 50,
-                connect: false,
-                create: true,
-                locking: :optimism,
-                timestamps: [:made_at, :changed_at],
+  dynamo_schema(:uuid, table_name: "caramba",
+                       table_name_prefix: "pre_",
+                       table_name_suffix: "_post",
+                       read_capacity_units: 100,
+                       write_capacity_units: 50,
+                       connect: false,
+                       create: true,
+                       locking: :optimism,
+                       timestamps: [:made_at, :changed_at]
                ) do
     attribute :thingy
   end
@@ -36,15 +36,22 @@ end
 
 
 class Idi < OceanDynamo::Base
-  dynamo_schema(:id, create: true) do
+  dynamo_schema(create: true) do
     attribute :unused
+  end
+end
+
+
+describe Zulu do
+  it "the default key must be :id" do
+    Zulu.table_hash_key.should == :id
   end
 end
 
 
 describe Idi do
 
-  it "the :id table_hash_key must take internally" do
+  it "the default key must be :id" do
     Idi.table_hash_key.should == :id
   end
 
@@ -120,7 +127,7 @@ describe Blahonga do
     Quux.table_hash_key.should == :index
   end
 
-  it "should default the hash key to :uuid" do
+  it "should have the hash key :uuid" do
     Blahonga.table_hash_key.should == :uuid
   end
 

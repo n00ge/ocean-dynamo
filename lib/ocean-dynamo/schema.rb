@@ -2,7 +2,7 @@ module OceanDynamo
   class Base
 
 
-    def self.dynamo_schema(table_hash_key=:uuid, 
+    def self.dynamo_schema(table_hash_key=:id, 
                            table_range_key=nil,
                            table_name: compute_table_name,
                            table_name_prefix: nil,
