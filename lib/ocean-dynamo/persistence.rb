@@ -173,7 +173,7 @@ module OceanDynamo
             end
           end
         rescue AWS::DynamoDB::Errors::ConditionalCheckFailedException
-          raise OceanDynamo::StaleObjectError
+          raise OceanDynamo::StaleObjectError.new(self)
         end
         self
       end
@@ -207,7 +207,7 @@ module OceanDynamo
         options = _handle_locking(lock)
         @dynamo_item = dynamo_items.put(serialized_attributes, options)
       rescue AWS::DynamoDB::Errors::ConditionalCheckFailedException
-        raise OceanDynamo::StaleObjectError
+        raise OceanDynamo::StaleObjectError.new(self)
       end
 
       @new_record = false
@@ -221,7 +221,7 @@ module OceanDynamo
         options = _handle_locking(lock)
         @dynamo_item.delete(options)
       rescue AWS::DynamoDB::Errors::ConditionalCheckFailedException
-        raise OceanDynamo::StaleObjectError
+        raise OceanDynamo::StaleObjectError.new(self)
       end
     end
 

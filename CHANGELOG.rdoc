@@ -1,3 +1,7 @@
+== v0.3.3
+
+* The StaleObjectError exception now takes a record parameter.
+
 == v0.3.2
 
 * The hash key name now defaults to :id, for ActiveRecord and Rails controller compatibility.
