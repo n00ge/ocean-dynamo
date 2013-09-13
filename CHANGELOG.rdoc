@@ -1,3 +1,9 @@
+== v0.3.2
+
+* The hash key name now defaults to :id, for ActiveRecord and Rails controller compatibility.
+* The .id, .id= and .id? methods now work as expected.
+* assign_attributes now takes the :without_protection keyword. (No-op, compatibility only.)
+
 == v0.3.1
 
 * Loading issue fixed.

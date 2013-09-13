@@ -40,7 +40,7 @@ The following example shows the syntax.
 
   class AsyncJob < OceanDynamo::Base
 
-    dynamo_schema do
+    dynamo_schema(:uuid) do
       attribute :credentials,          :string
       attribute :token
       attribute :steps,                :serialized, default: []
@@ -62,8 +62,8 @@ The following example shows the syntax.
 
 Each attribute has a name, a type (+:string+, +:integer+, +:float+, +:datetime+, +:boolean+, 
 or +:serialized+) where +:string+ is the default. Each attribute also optionally has a default 
-value, which can be a Proc. The hash key attribute is by default +:uuid+ (this can of
-course be specified) and is a +:string+. The keys can also be explicitly declared.
+value, which can be a Proc. The hash key attribute is by default +:id+ (overridden as :uuid in
+the example above) and is a +:string+. The keys can also be explicitly declared.
 
 The +:string+, +:integer+, +:float+ and +:datetime+ types can also store sets of their type.
 Sets are represented as arrays, may not contain duplicates and may not be empty.
@@ -74,7 +74,7 @@ value will return the empty string, <tt>""</tt>.
 Also, dynamo_schema takes args and many options. Here's the full syntax:
 
  dynamo_schema(
-   table_hash_key = :uuid,                 # The name of the hash key attribute
+   table_hash_key = :id,                   # The name of the hash key attribute
    table_range_key = nil,                  # The name of the range key attribute (or nil)
    table_name: compute_table_name,         # The basename of the DynamoDB table
    table_name_prefix: nil,                 # A basename prefix string or nil
