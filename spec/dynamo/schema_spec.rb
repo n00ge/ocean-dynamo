@@ -35,29 +35,83 @@ class Zulu < OceanDynamo::Base
 end
 
 
-# class Idi < OceanDynamo::Base
-#   dynamo_schema(:id, create: true) do
-#     attribute :unused
-#   end
-# end
+class Idi < OceanDynamo::Base
+  dynamo_schema(:id, create: true) do
+    attribute :unused
+  end
+end
 
 
-# describe Idi do
-#   # it "tables must allow the index field to be named :id" do
-#   #   i = Idi.create
-#   #   i.id.should be_a String
-#   # end
+describe Idi do
 
-#   it "should have a normal field list" do
-#     Idi.fields.should == {
-#       "id"=>{"type"=>:string, "default"=>""}, 
-#       "created_at"=>{"type"=>:datetime, "default"=>nil}, 
-#       "updated_at"=>{"type"=>:datetime, "default"=>nil}, 
-#       "lock_version"=>{"type"=>:integer, "default"=>0}, 
-#       "unused"=>{"type"=>:string, "default"=>nil}
-#     }
-#   end
-# end
+  it "the :id table_hash_key must take internally" do
+    Idi.table_hash_key.should == :id
+  end
+
+  it "the attributes hash should be properly initialised" do
+    i = Idi.new
+    i.attributes.should == {"id"=>"", "created_at"=>nil, "updated_at"=>nil, "lock_version"=>0, "unused"=>""}
+    i.attributes['id'].should == ""
+  end
+
+  it "the persisted :id table_hash_key must be an UUID" do
+    i = Idi.create!
+    i.attributes['id'].should be_a String
+    i.attributes['id'].should_not == ""
+    i.attributes['id'].length.should == 36
+  end
+
+  it "should correctly evaluate the id method when new" do
+    i = Idi.new
+    i.id.should_not == nil      # BREAKS
+    i.id.should == ""
+    i.id.should be_a String
+  end
+
+  it "should correctly evaluate the id method when persisted" do
+    i = Idi.create!
+    i.id.should_not == nil      # BREAKS
+    i.id.should_not == ""
+    i.id.should be_a String
+  end
+
+  it "the uuid attribute should not be available" do
+    i = Idi.new
+    expect { i.uuid }.to raise_error(NoMethodError)
+  end
+
+  it "should correctly read the :id attribute" do
+    i = Idi.new
+    i.read_attribute(:id).should_not == nil
+    i.read_attribute(:id).should == ""
+    i.read_attribute(:id).should be_a String
+    i.save!
+    i.read_attribute(:id).should_not == nil
+    i.read_attribute(:id).should_not == ""
+    i.read_attribute(:id).should be_a String
+  end
+
+  it "should correctly read the 'id' attribute" do
+    i = Idi.new
+    i.read_attribute('id').should_not == nil
+    i.read_attribute('id').should == ""
+    i.read_attribute('id').should be_a String
+    i.save!
+    i.read_attribute('id').should_not == nil
+    i.read_attribute('id').should_not == ""
+    i.read_attribute('id').should be_a String
+  end
+
+  it "should have a normal field list" do
+    Idi.fields.should == {
+      "id"=>{"type"=>:string, "default"=>""}, 
+      "created_at"=>{"type"=>:datetime, "default"=>nil}, 
+      "updated_at"=>{"type"=>:datetime, "default"=>nil}, 
+      "lock_version"=>{"type"=>:integer, "default"=>0}, 
+      "unused"=>{"type"=>:string, "default"=>nil}
+    }
+  end
+end
 
 
 describe Blahonga do

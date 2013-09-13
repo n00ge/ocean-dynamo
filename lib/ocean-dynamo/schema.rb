@@ -32,14 +32,14 @@ module OceanDynamo
       self.timestamp_attributes = timestamps
       # Init
       self.fields = HashWithIndifferentAccess.new
-      attribute table_hash_key, :string, default: ''
+      attribute table_hash_key, :string, default: ""
       timestamp_attributes.each { |name| attribute name, :datetime } if timestamp_attributes
-      attribute(lock_attribute, :integer, default: 0) if lock_attribute
+      attribute(lock_attribute, :integer, default: 0) if locking
       block.call
       # Define attribute accessors
       fields.each do |name, md| 
         name = name.to_s
-        next if name == 'id'
+        # We define accessors even if the name is 'id' (for which we already have methods)
         self.class_eval "def #{name}; read_attribute('#{name}'); end"
         self.class_eval "def #{name}=(value); write_attribute('#{name}', value); end"
         self.class_eval "def #{name}?; read_attribute('#{name}').present?; end"

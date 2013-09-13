@@ -22,7 +22,7 @@ module OceanDynamo
         @new_record = true
         raise UnknownPrimaryKey unless table_hash_key
       end
-      attrs &&  attrs.delete_if { |k, v| !fields.has_key?(k) }
+      attrs && attrs.delete_if { |k, v| !fields.has_key?(k) }
       super(attrs)
     end
 
@@ -38,7 +38,7 @@ module OceanDynamo
 
 
     def id
-      read_attribute(table_hash_key)
+     read_attribute(table_hash_key)
     end
 
 
