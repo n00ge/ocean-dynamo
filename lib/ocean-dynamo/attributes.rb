@@ -46,6 +46,10 @@ module OceanDynamo
       write_attribute(table_hash_key, value)
     end
 
+    def id?
+      read_attribute(table_hash_key).present?
+    end
+
 
     def read_attribute_for_validation(key)
       @attributes[key.to_s]
@@ -54,16 +58,18 @@ module OceanDynamo
 
     def read_attribute(attr_name)
       attr_name = attr_name.to_s
-      if attr_name == 'id' && fields[table_hash_key] != attr_name.to_sym
-        return read_attribute(table_hash_key)
+      attr_name = table_hash_key.to_s if attr_name == 'id'
+      if fields.has_key?(attr_name)
+        @attributes[attr_name]
+      else
+        raise ActiveModel::MissingAttributeError, "can't read unknown attribute `#{attr_ name}"
       end
-      @attributes[attr_name]   # Type cast!
     end
 
 
     def write_attribute(attr_name, value)
       attr_name = attr_name.to_s
-      attr_name = table_hash_key.to_s if attr_name == 'id' && fields[table_hash_key]
+      attr_name = table_hash_key.to_s if attr_name == 'id'
       if fields.has_key?(attr_name)
         @attributes[attr_name] = type_cast_attribute_for_write(attr_name, value)
       else
@@ -80,7 +86,7 @@ module OceanDynamo
     end
 
 
-    def assign_attributes(values)
+    def assign_attributes(values, without_protection: false)
       return if values.blank?
       values = values.stringify_keys
       # if values.respond_to?(:permitted?)

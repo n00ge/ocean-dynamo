@@ -38,9 +38,11 @@ module OceanDynamo
       block.call
       # Define attribute accessors
       fields.each do |name, md| 
-        self.class_eval "def #{name}; read_attribute('#{name.to_s}'); end"
-        self.class_eval "def #{name}=(value); write_attribute('#{name.to_s}', value); end"
-        self.class_eval "def #{name}?; read_attribute('#{name.to_s}').present?; end"
+        name = name.to_s
+        next if name == 'id'
+        self.class_eval "def #{name}; read_attribute('#{name}'); end"
+        self.class_eval "def #{name}=(value); write_attribute('#{name}', value); end"
+        self.class_eval "def #{name}?; read_attribute('#{name}').present?; end"
       end
       # Connect to AWS
       establish_db_connection if connect == true

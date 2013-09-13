@@ -83,14 +83,14 @@ module OceanDynamo
     end
 
 
-    def update_attributes(attrs={})
-      assign_attributes(attrs)
+    def update_attributes(attrs={}, options={})
+      assign_attributes(attrs, options)
       save
     end
 
 
-    def update_attributes!(attrs={})
-      assign_attributes(attrs)
+    def update_attributes!(attrs={}, options={})
+      assign_attributes(attrs, options)
       save!
     end
 

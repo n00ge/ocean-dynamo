@@ -122,6 +122,21 @@ describe CloudModel do
     i.default_poison_limit.should == 10
   end
 
+  it "assign_attributes should take the :without_protection key arg" do
+    i = CloudModel.create!
+    i.assign_attributes({token: "hey"}, without_protection: true)
+  end
+
+  it "update_attributes should take the :without_protection key arg" do
+    i = CloudModel.create!
+    i.update_attributes({token: "hey"}, without_protection: true)
+  end
+
+  it "update_attributes! should take the :without_protection key arg" do
+    i = CloudModel.create!
+    i.update_attributes!({token: "hey"}, without_protection: true)
+  end
+
 
 
   describe "ActiveModel::ForbiddenAttributesError" do

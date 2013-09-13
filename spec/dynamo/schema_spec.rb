@@ -35,6 +35,31 @@ class Zulu < OceanDynamo::Base
 end
 
 
+# class Idi < OceanDynamo::Base
+#   dynamo_schema(:id, create: true) do
+#     attribute :unused
+#   end
+# end
+
+
+# describe Idi do
+#   # it "tables must allow the index field to be named :id" do
+#   #   i = Idi.create
+#   #   i.id.should be_a String
+#   # end
+
+#   it "should have a normal field list" do
+#     Idi.fields.should == {
+#       "id"=>{"type"=>:string, "default"=>""}, 
+#       "created_at"=>{"type"=>:datetime, "default"=>nil}, 
+#       "updated_at"=>{"type"=>:datetime, "default"=>nil}, 
+#       "lock_version"=>{"type"=>:integer, "default"=>0}, 
+#       "unused"=>{"type"=>:string, "default"=>nil}
+#     }
+#   end
+# end
+
+
 describe Blahonga do
 
   it "should set the hash key" do
