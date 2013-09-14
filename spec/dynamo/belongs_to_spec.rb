@@ -38,12 +38,22 @@ describe Slave do
     Slave.fields.should include :master_id
   end
 
-  it "should implement #master" do
+  it "should have a :master_id attribute with a pointer: true setting" do
+    Slave.fields[:master_id][:pointer].should == true
+    Slave.fields[:master_id].should == {"type"=>:string, "default"=>nil, "pointer"=>true}
+  end
+
+  it "should not have the pointer setting on any other attributes" do
+    Slave.fields[:name][:pointer].should == nil
+    Slave.fields[:name].should == {"type"=>:string, "default"=>nil}
+  end
+
+  it "should implement #master which should return nil for a blank id" do
     s = Slave.new
     s.master.should == nil
   end
 
-  it "should implement #master_id" do
+  it "should implement #master_id which should return nil for a blank id" do
     s = Slave.new
     s.master_id.should == nil
   end

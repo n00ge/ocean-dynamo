@@ -61,10 +61,10 @@ module OceanDynamo
     end
 
 
-    def self.attribute(name, type=:string, **pairs)
+    def self.attribute(name, type=:string, default: nil, **extra)
       raise DangerousAttributeError, "#{name} is defined by OceanDynamo" if self.dangerous_attributes.include?(name.to_s)
       attr_accessor name
-      fields[name.to_s] = {type: type, default: pairs[:default]}
+      fields[name.to_s] = {type: type, default: default}.merge(extra)
     end
 
 
