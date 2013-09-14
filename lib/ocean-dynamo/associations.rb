@@ -44,11 +44,7 @@ module OceanDynamo
     def read_pointer_id(name)  # :nodoc:
       ptr = read_attribute(name)
       return nil if ptr.blank?
-      if ptr.is_a?(String)
-        return ptr
-      else
-        return ptr.id
-      end
+      ptr.is_a?(String) ? ptr : ptr.id
     end
 
   end

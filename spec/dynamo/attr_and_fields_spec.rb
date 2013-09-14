@@ -299,6 +299,14 @@ describe CloudModel do
       end
     }.to raise_error(OceanDynamo::DangerousAttributeError,
                      "new is defined by OceanDynamo")
+    expect {
+      class Pericoloso < OceanDynamo::Base
+        dynamo_schema(connect: false, create: false) do
+          attribute :belongs_to
+        end
+      end
+    }.to raise_error(OceanDynamo::DangerousAttributeError,
+                     "belongs_to is defined by OceanDynamo")
   end
 
 end
