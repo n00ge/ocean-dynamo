@@ -1,3 +1,9 @@
+== v0.3.4
+
+* First bare-bones implementation of belongs_to. There's no corresponding has_one or has_many -
+  yet.
+* README updates.
+
 == v0.3.3
 
 * The StaleObjectError exception now takes a record parameter.

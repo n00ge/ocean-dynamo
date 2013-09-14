@@ -30,7 +30,7 @@ from SQL to no-SQL much easier.
 Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
 To facilitate testing, future versions will keep track of and delete instances after tests.
 
-OceanDynamo will use secondary indices to retrieve related table items, 
+OceanDynamo will use primary and secondary indices to retrieve related table items, 
 which means it will scale without limits.
 
 
@@ -62,7 +62,7 @@ The following example shows the syntax.
 
 Each attribute has a name, a type (+:string+, +:integer+, +:float+, +:datetime+, +:boolean+, 
 or +:serialized+) where +:string+ is the default. Each attribute also optionally has a default 
-value, which can be a Proc. The hash key attribute is by default +:id+ (overridden as :uuid in
+value, which can be a Proc. The hash key attribute is by default +:id+ (overridden as +:uuid+ in
 the example above) and is a +:string+. The keys can also be explicitly declared.
 
 The +:string+, +:integer+, +:float+ and +:datetime+ types can also store sets of their type.
@@ -96,9 +96,10 @@ controllers. Furthermore, OceanDynamo implements much of the infrastructure of A
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 parameters.
 
-Relations are not yet implemented, but are underway. Relations will use secondary
+Relations are not yet implemented, but are underway. Assocations will use secondary
 indices, up to the DynamoDB maximum of 5 secondary keys per table. At the moment,
-only find with a single uuid is implemented. Collections can not yet be obtained.
+only find with a single id is implemented. Collections can not yet be obtained.
+Work has begun on the +belongs_to+ association which requires only a primary index.
 
 OceanDynamo is currently used in the Ocean framework (http://wiki.oceanframework.net)
 e.g. to implement critical job queues. It will be used increasingly as features are
