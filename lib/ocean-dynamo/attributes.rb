@@ -61,8 +61,8 @@ module OceanDynamo
       attr_name = table_hash_key.to_s if attr_name == 'id'
       if fields.has_key?(attr_name)
         v = @attributes[attr_name]
-        if v.is_a?(Master)
-          puts '', '**********************************************'
+        klass = fields[attr_name][:pointer]
+        if klass && v.is_a?(klass)
           return v.id
         end
         v
