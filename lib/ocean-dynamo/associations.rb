@@ -1,11 +1,10 @@
 module OceanDynamo
   class Base
 
-    def self.belongs_to(target_class)
-      target_class = target_class.to_s             # "api_user" or "ApiUser"
-      target_attr = target_class.underscore        # "api_user"
-      target_attr_id = "#{target_attr}_id"         # "api_user_id"
-      target_class = target_class.camelize.constantize    # ApiUser
+    def self.belongs_to(target)                        # :api_user, "api_user", ApiUser
+      target_attr = target.to_s.underscore             # "api_user"
+      target_attr_id = "#{target_attr}_id"             # "api_user_id"
+      target_class = target_attr.camelize.constantize  # ApiUser
       attribute target_attr_id, :reference, default: nil, target_class: target_class
       attribute target_attr,    :reference, default: nil, target_class: target_class, no_save: true
 
