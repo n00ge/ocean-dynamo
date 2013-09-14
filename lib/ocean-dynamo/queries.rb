@@ -4,7 +4,7 @@ module OceanDynamo
     def self.find(hash, range=nil, consistent: false)
       _late_connect?
       item = dynamo_items[hash, range]
-      raise RecordNotFound unless item.exists?
+      raise RecordNotFound, "can't find a #{self} with primary key ['#{hash}', #{range.inspect}]" unless item.exists?
       new.send(:dynamo_unpersist, item, consistent)
     end
 

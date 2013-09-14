@@ -60,12 +60,7 @@ module OceanDynamo
       attr_name = attr_name.to_s
       attr_name = table_hash_key.to_s if attr_name == 'id'
       if fields.has_key?(attr_name)
-        v = @attributes[attr_name]
-        klass = fields[attr_name][:pointer]
-        if klass && v.is_a?(klass)
-          return v.id
-        end
-        v
+        @attributes[attr_name]
       else
         raise ActiveModel::MissingAttributeError, "can't read unknown attribute `#{attr_ name}"
       end
@@ -106,6 +101,8 @@ module OceanDynamo
     def type_cast_attribute_for_write(name, value, metadata=fields[name],
                                       type: metadata[:type])
       case type
+      when :reference
+        return value
       when :string
         return nil if value == nil
         return value.collect(&:to_s) if value.is_a?(Array)
@@ -136,7 +133,7 @@ module OceanDynamo
 
 
     def serialized_attributes
-      result = {}
+      result = Hash.new
       fields.each do |attribute, metadata|
         serialized = serialize_attribute(attribute, read_attribute(attribute), metadata)
         result[attribute] = serialized unless serialized == nil
@@ -146,12 +143,18 @@ module OceanDynamo
 
 
     def serialize_attribute(attribute, value, metadata=fields[attribute],
-                            type: metadata[:type])
+                            target_class: metadata[:target_class],
+                            type: metadata[:type]
+                            )
       return nil if value == nil
       case type
+      when :reference
+        raise DynamoError, ":reference must always have a :target_class" unless target_class
+        return value if value.is_a?(String)
+        return value.id if value.is_a?(target_class)
+        raise AssociationTypeMismatch, "can't save a #{value.class} in a #{target_class} :reference"
       when :string
         return nil if ["", []].include?(value)
-        #return value.id if value.kind_of?(Master)
         value
       when :integer
         value == [] ? nil : value
@@ -171,6 +174,8 @@ module OceanDynamo
 
     def deserialize_attribute(value, metadata, type: metadata[:type])
       case type
+      when :reference
+        return value
       when :string
         return "" if value == nil
         value.is_a?(Set) ? value.to_a : value

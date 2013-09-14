@@ -5,17 +5,50 @@ module OceanDynamo
       klass = other_class.to_s.capitalize.constantize
       other_class_attr = other_class.to_s.underscore
       name = "#{other_class_attr}_id"
-      attribute name,             :string, default: nil, pointer: klass
-      attribute other_class_attr, :string, default: nil, pointer: klass
-      self.class_eval "def #{name}; read_pointer('#{name}'); end"
-      self.class_eval "def #{other_class_attr}; read_pointer('#{name}'); end"
+      attribute name,             :reference, default: nil, target_class: klass
+      attribute other_class_attr, :reference, default: nil, target_class: klass
+
+      self.class_eval "def #{other_class_attr}
+                         read_and_maybe_load_pointer('#{name}')
+                       end"
+
+      self.class_eval "def #{name}
+                         read_pointer_id('#{name}')
+                       end"
+
+      self.class_eval "def #{other_class_attr}=(value) 
+                         write_attribute('#{name}', value) 
+                         write_attribute('#{other_class_attr}', value)
+                       end"
+
+      self.class_eval "def #{name}=(value)
+                         write_attribute('#{name}', value) 
+                         write_attribute('#{other_class_attr}', value)
+                       end"
+      # TODO: Additional "?" method for name
     end
 
 
-    def read_pointer(name)
+    protected
+
+    def read_and_maybe_load_pointer(name)  # :nodoc:
       ptr = read_attribute(name)
       return nil if ptr.blank?
-      ptr
+      if persisted? && ptr.is_a?(String)
+        fields[name][:target_class].find(ptr)
+      else
+        ptr
+      end
+    end
+
+    def read_pointer_id(name)  # :nodoc:
+      ptr = read_attribute(name)
+      return nil if ptr.blank?
+      if ptr.is_a?(String)
+        return ptr
+      else
+        return ptr.id
+      end
     end
 
   end

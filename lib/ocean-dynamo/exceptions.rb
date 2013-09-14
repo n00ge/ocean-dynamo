@@ -52,4 +52,6 @@ module OceanDynamo
 
   class MultiparameterAssignmentErrors < DynamoError; end
 
+  class AssociationTypeMismatch < DynamoError; end
+
 end
