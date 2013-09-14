@@ -48,7 +48,7 @@ describe Slave do
 
   it "should have a :master attribute with target_class: Master" do
     Slave.fields[:master][:target_class].should == Master
-    Slave.fields[:master].should == {"type"=>:reference, "default"=>nil, "target_class"=>Master}
+    Slave.fields[:master].should == {"type"=>:reference, "default"=>nil, "target_class"=>Master, "no_save"=>true}
   end
 
   it "should not have the target_class setting on any other attributes" do
@@ -199,6 +199,23 @@ describe Slave do
     s = Slave.create! master: "whatevah"
     expect { s.master }.to raise_error(OceanDynamo::RecordNotFound, 
                                        "can't find a Master with primary key ['whatevah', nil]")
+  end
+
+  it "the attr shouldn't be persisted, only the attr_id" do
+    m = Master.create!
+    s = Slave.create! master: m
+    s.serialized_attributes['master_id'].should be_a String
+    s.serialized_attributes['master'].should == nil
+  end
+
+  it "the attr, when loaded, should replace the string key with the instance" do
+    m = Master.create!
+    s = Slave.create! master: m
+    s.reload
+    Master.should_receive(:find).with(s.master_id).and_return m
+    s.master.should == m
+    s.master.should == m
+    s.master.should == m
   end
 
 

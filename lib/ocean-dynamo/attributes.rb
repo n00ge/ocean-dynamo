@@ -144,11 +144,13 @@ module OceanDynamo
 
     def serialize_attribute(attribute, value, metadata=fields[attribute],
                             target_class: metadata[:target_class],
-                            type: metadata[:type]
+                            type: metadata[:type],
+                            no_save: metadata[:no_save]
                             )
       return nil if value == nil
       case type
       when :reference
+        return nil if no_save
         raise DynamoError, ":reference must always have a :target_class" unless target_class
         return value if value.is_a?(String)
         return value.id if value.is_a?(target_class)

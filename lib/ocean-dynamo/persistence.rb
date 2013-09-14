@@ -237,8 +237,9 @@ module OceanDynamo
 
     def _dynamo_read_attributes(consistent_read: false) # :nodoc:
       hash = _dynamo_read_raw_attributes(consistent_read)
-      result = {}
+      result = Hash.new
       fields.each do |attribute, metadata|
+        next if metadata[:no_save]
         result[attribute] = deserialize_attribute(hash[attribute], metadata)
       end
       result

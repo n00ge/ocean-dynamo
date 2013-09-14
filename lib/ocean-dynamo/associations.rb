@@ -6,7 +6,7 @@ module OceanDynamo
       other_class_attr = other_class.to_s.underscore
       name = "#{other_class_attr}_id"
       attribute name,             :reference, default: nil, target_class: klass
-      attribute other_class_attr, :reference, default: nil, target_class: klass
+      attribute other_class_attr, :reference, default: nil, target_class: klass, no_save: true
 
       self.class_eval "def #{other_class_attr}
                          read_and_maybe_load_pointer('#{name}')
@@ -35,7 +35,7 @@ module OceanDynamo
       ptr = read_attribute(name)
       return nil if ptr.blank?
       if persisted? && ptr.is_a?(String)
-        fields[name][:target_class].find(ptr)
+        write_attribute(name, fields[name][:target_class].find(ptr))  # Keep the instance we've just read
       else
         ptr
       end
