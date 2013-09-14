@@ -60,7 +60,12 @@ module OceanDynamo
       attr_name = attr_name.to_s
       attr_name = table_hash_key.to_s if attr_name == 'id'
       if fields.has_key?(attr_name)
-        @attributes[attr_name]
+        v = @attributes[attr_name]
+        if v.is_a?(Master)
+          puts '', '**********************************************'
+          return v.id
+        end
+        v
       else
         raise ActiveModel::MissingAttributeError, "can't read unknown attribute `#{attr_ name}"
       end
@@ -145,7 +150,9 @@ module OceanDynamo
       return nil if value == nil
       case type
       when :string
-        ["", []].include?(value) ? nil : value
+        return nil if ["", []].include?(value)
+        #return value.id if value.kind_of?(Master)
+        value
       when :integer
         value == [] ? nil : value
       when :float

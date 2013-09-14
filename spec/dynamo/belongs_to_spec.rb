@@ -6,7 +6,6 @@ class Master < OceanDynamo::Base
   dynamo_schema(create: true) do
     attribute :name
   end
-
 end
 
 
@@ -15,9 +14,7 @@ class Slave < OceanDynamo::Base
   dynamo_schema(create: true) do
     attribute :name
   end
-
-  belongs_to :master
-
+  belongs_to :master    # AFTER the schema definition! Enforce?
 end
 
 
@@ -30,17 +27,22 @@ end
 
 describe Slave do
 
-  it "should be saveable" do
-    Slave.create!
-  end
-
   it "should have a :master_id attribute" do
     Slave.fields.should include :master_id
   end
 
-  it "should have a :master_id attribute with a pointer: true setting" do
-    Slave.fields[:master_id][:pointer].should == true
-    Slave.fields[:master_id].should == {"type"=>:string, "default"=>nil, "pointer"=>true}
+  it "should have a :master attribute" do
+    Slave.fields.should include :master
+  end
+
+  it "should have a :master_id attribute with a pointer: Master" do
+    Slave.fields[:master_id][:pointer].should == Master
+    Slave.fields[:master_id].should == {"type"=>:string, "default"=>nil, "pointer"=>Master}
+  end
+
+  it "should have a :master attribute with a pointer: Master" do
+    Slave.fields[:master][:pointer].should == Master
+    Slave.fields[:master].should == {"type"=>:string, "default"=>nil, "pointer"=>Master}
   end
 
   it "should not have the pointer setting on any other attributes" do
@@ -48,15 +50,59 @@ describe Slave do
     Slave.fields[:name].should == {"type"=>:string, "default"=>nil}
   end
 
-  it "should implement #master which should return nil for a blank id" do
-    s = Slave.new
-    s.master.should == nil
+  it "should assign an instance both attributes" do
+    i = Slave.new
+    i.attributes.should == {
+      "id"=>"", 
+      "created_at"=>nil, 
+      "updated_at"=>nil, 
+      "lock_version"=>0, 
+      "name"=>"", 
+      "master_id"=>"", 
+      "master"=>""
+    }
   end
 
-  it "should implement #master_id which should return nil for a blank id" do
-    s = Slave.new
-    s.master_id.should == nil
+
+  it "instances should be instantiatable" do
+    Slave.create!
+  end
+
+  it "instances should be reloadable" do
+    i = Slave.create!
+    i.reload
+  end
+
+  it "instances should be touchable" do
+    i = Slave.create!
+    i.touch
+  end
+
+
+  it "a new instance should have nil in the rel attr" do
+    Slave.new.master.should == nil
+  end
+
+  it "a new instance should have nil in the rel attr_id" do
+    Slave.new.master_id.should == nil
+  end
+
+
+  it "a saved instance should have nil in the rel attr" do
+    Slave.create!.master.should == nil
+  end
+
+  it "a saved instance should have nil in the rel attr_id" do
+    Slave.create!.master_id.should == nil
+  end
+
+
+  it "a reloaded instance should have nil in the rel attr" do
+    Slave.create!.reload.master.should == nil
+  end
+
+  it "a reloaded instance should have nil in the rel attr_id" do
+    Slave.create!.reload.master_id.should == nil
   end
 
 end
-
