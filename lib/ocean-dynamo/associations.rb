@@ -1,31 +1,32 @@
 module OceanDynamo
   class Base
 
-    def self.belongs_to(other_class)
-      klass = other_class.to_s.capitalize.constantize
-      other_class_attr = other_class.to_s.underscore
-      name = "#{other_class_attr}_id"
-      attribute name,             :reference, default: nil, target_class: klass
-      attribute other_class_attr, :reference, default: nil, target_class: klass, no_save: true
+    def self.belongs_to(target_class)
+      target_class = target_class.to_s             # "api_user" or "ApiUser"
+      target_attr = target_class.underscore        # "api_user"
+      target_attr_id = "#{target_attr}_id"         # "api_user_id"
+      target_class = target_class.camelize.constantize    # ApiUser
+      attribute target_attr_id, :reference, default: nil, target_class: target_class
+      attribute target_attr,    :reference, default: nil, target_class: target_class, no_save: true
 
-      self.class_eval "def #{other_class_attr}
-                         read_and_maybe_load_pointer('#{name}')
+      self.class_eval "def #{target_attr}
+                         read_and_maybe_load_pointer('#{target_attr_id}')
                        end"
 
-      self.class_eval "def #{name}
-                         read_pointer_id('#{name}')
+      self.class_eval "def #{target_attr}=(value) 
+                         write_attribute('#{target_attr_id}', value) 
+                         write_attribute('#{target_attr}', value)
                        end"
 
-      self.class_eval "def #{other_class_attr}=(value) 
-                         write_attribute('#{name}', value) 
-                         write_attribute('#{other_class_attr}', value)
+      self.class_eval "def #{target_attr_id}
+                         read_pointer_id('#{target_attr}')
                        end"
 
-      self.class_eval "def #{name}=(value)
-                         write_attribute('#{name}', value) 
-                         write_attribute('#{other_class_attr}', value)
+      self.class_eval "def #{target_attr_id}=(value)
+                         write_attribute('#{target_attr_id}', value) 
+                         write_attribute('#{target_attr}', value)
                        end"
-      # TODO: Additional "?" method for name
+      # TODO: "?" methods
     end
 
 
