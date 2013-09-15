@@ -29,10 +29,10 @@ to both the following locations in your project:
  config/aws.yml.example
  config/aws.yml
 
-Enter your AWS credentials in the ''latter'' file. Eventually, there
+Enter your AWS credentials in the latter file. Eventually, there
 will be a generator to copy these files for you, but for now you need to do it manually. 
 
-You also need ++fake_dynamo++ to run DynamoDB locally: see below for installation instructions.
+You also need +fake_dynamo+ to run DynamoDB locally: see below for installation instructions.
 
 
 ==== Features
