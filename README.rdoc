@@ -33,6 +33,7 @@ Enter your AWS credentials in the latter file. Eventually, there
 will be a generator to copy these files for you, but for now you need to do it manually. 
 
 You also need +fake_dynamo+ to run DynamoDB locally: see below for installation instructions.
+NB: You do not need an Amazon AWS account to run OceanDynamo locally.
 
 
 ==== Features
