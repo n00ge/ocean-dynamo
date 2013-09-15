@@ -5,9 +5,11 @@ module OceanDynamo
       target_attr = target.to_s.underscore             # "api_user"
       target_attr_id = "#{target_attr}_id"             # "api_user_id"
       target_class = target_attr.camelize.constantize  # ApiUser
-      attribute target_attr_id, :reference, default: nil, target_class: target_class
-      #attribute target_attr,    :reference, default: nil, target_class: target_class, no_save: true
-      attr_accessor target_attr
+
+      assert_only_one_belongs_to!
+
+      attribute target_attr_id, :reference, default: nil, target_class: target_class,
+                                association: :belongs_to
 
       self.class_eval "def #{target_attr}
                          read_and_maybe_load_pointer('#{target_attr_id}')
@@ -33,6 +35,16 @@ module OceanDynamo
 
     protected
 
+    def self.assert_only_one_belongs_to!
+      fields.each do |k, metadata|
+        if metadata["association"] == :belongs_to
+          raise OceanDynamo::AssociationMustBeUnique, 
+                "#{self} already belongs_to #{metadata["target_class"]}" 
+        end
+      end
+      false
+    end
+
     #
     # This is run by #initialize and by #assign_attributes to set the
     # association variables (@master, for instance) and its associated attribute
@@ -40,7 +52,6 @@ module OceanDynamo
     #
     def assign_associations(attrs)  # :nodoc: 
       if attrs && attrs.include?(:master)
-        #attrs = attrs.stringify_keys
         @master = attrs[:master]
         write_attribute('master_id', @master)
       end

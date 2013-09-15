@@ -54,4 +54,6 @@ module OceanDynamo
 
   class AssociationTypeMismatch < DynamoError; end
 
+  class AssociationMustBeUnique < DynamoError; end
+
 end

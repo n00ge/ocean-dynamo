@@ -16,6 +16,10 @@ class Slave < OceanDynamo::Base
 end
 
 
+class Other < OceanDynamo::Base
+end
+
+
 
 describe Master do
   it "Master should be saveable" do
@@ -45,7 +49,6 @@ describe Slave do
 
   it "should have a :master_id attribute with target_class: Master" do
     Slave.fields[:master_id][:target_class].should == Master
-    Slave.fields[:master_id].should == {"type"=>:reference, "default"=>nil, "target_class"=>Master}
   end
 
   it "should not have the target_class setting on any other attributes" do
@@ -203,6 +206,12 @@ describe Slave do
     s.master.should == m
     s.master.should == m
     s.master.should == m
+  end
+
+
+  it "must not allow more than one belongs_to association" do
+    expect { Slave.belongs_to :other }.
+      to raise_error(OceanDynamo::DynamoError, "Slave already belongs_to Master")
   end
 
 

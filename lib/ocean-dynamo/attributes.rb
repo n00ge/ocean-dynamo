@@ -89,8 +89,6 @@ module OceanDynamo
 
     def assign_attributes(values, without_protection: false)
       return if values.blank?
-
-
       values = values.stringify_keys
       assign_associations(values)
       # if values.respond_to?(:permitted?)
