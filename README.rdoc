@@ -93,8 +93,8 @@ controllers. Furthermore, OceanDynamo implements much of the infrastructure of A
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 parameters.
 
-At the moment, Model.find only takes a single id. Model.all and Model.count work as
-expected. Model.find_each and Model.find_in_batches are also available.
+At the moment, +Model.find+ only takes a single id. +Model.all+ and +Model.count+ work as
+expected. +Model.find_each+ and +Model.find_in_batches+ are also available.
 
 Work has begun on the +has_many+ / +belongs_to+ association which requires only a primary 
 index. This association is even more efficient than its ActiveRecord counterpart.
@@ -103,8 +103,9 @@ index. This association is even more efficient than its ActiveRecord counterpart
 === Future milestones
 
 After the +has_many+ / +belongs_to+ association, the +has_and_belongs_to_many+ assocation
-will be implemented. This will require secondary indices. This, and other associations will 
-use secondary indices. OceanDynamo will use association proxies to achieve the same kind of
+will be implemented. This will require secondary indices, unlike +has_many+ / +belongs_to+.
+
+OceanDynamo will use association proxies to achieve the same kind of
 interface as ActiveRecord, e.g.: <code>blog_entry.comments.build(body: "Cool!").save!</code>
 
 
@@ -115,7 +116,7 @@ e.g. to implement critical job queues. It will be used increasingly as features 
 added to OceanDynamo and will eventually replace all ActiveRecord tables in Ocean.
 
 
-==== Installation
+== Installation
 
  gem install ocean-dynamo
 
