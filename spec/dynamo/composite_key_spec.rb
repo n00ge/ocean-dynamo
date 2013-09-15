@@ -11,6 +11,10 @@ end
 
 describe VaVaVoom do
 
+  before :each do
+    VaVaVoom.all.each { |vvv| vvv.delete }
+  end
+
   it "should set the keys correctly" do
     VaVaVoom.table_hash_key.should == :hash
     VaVaVoom.table_range_key.should == :range

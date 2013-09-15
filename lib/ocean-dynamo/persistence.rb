@@ -180,6 +180,43 @@ module OceanDynamo
     end
 
 
+    #
+    # Sets the dynamo_item and deserialises and assigns all its defined 
+    # attributes. Skips undeclared attributes. 
+    #
+    # The arg may be either an Item or an ItemData. If Item, a request will be
+    # made for the attributes from DynamoDB. If ItemData, no DB access will
+    # be made and the existing data will be used.
+    #
+    # The :consistent keyword may only be used when the arg is an Item.
+    #
+    def _setup_from_dynamo(arg, consistent: false)
+      case arg
+      when AWS::DynamoDB::Item
+        item = arg
+        item_data = nil
+      when AWS::DynamoDB::ItemData
+        item = arg.item
+        item_data = arg
+        raise ArgumentError, ":consistent may not be specified when passing an ItemData" if consistent
+      else
+        raise ArgumentError, "arg must be an AWS::DynamoDB::Item or an AWS::DynamoDB::ItemData"
+      end
+      
+      @dynamo_item = item
+
+      if !item_data
+        raw_attrs = item.attributes.to_hash(consistent_read: consistent)
+      else
+        raw_attrs = item_data.attributes
+      end
+
+      dynamo_deserialize_attributes(raw_attrs)
+      @new_record = false
+      self
+    end
+
+
 
     protected
 
@@ -196,11 +233,6 @@ module OceanDynamo
     end
 
 
-    def perform_validations(options={}) # :nodoc:
-      options[:validate] == false || valid?(options[:context])
-    end
-
-
     def dynamo_persist(lock: nil) # :nodoc:
       _late_connect?
       begin
@@ -209,7 +241,6 @@ module OceanDynamo
       rescue AWS::DynamoDB::Errors::ConditionalCheckFailedException
         raise OceanDynamo::StaleObjectError.new(self)
       end
-
       @new_record = false
       true
     end
@@ -226,28 +257,94 @@ module OceanDynamo
     end
 
 
-    def dynamo_unpersist(item, consistent) # :nodoc:
-      _late_connect?
-      @dynamo_item = item
-      @new_record = false
-      assign_attributes(_dynamo_read_attributes(consistent_read: consistent))
-      self
-    end
-
-
-    def _dynamo_read_attributes(consistent_read: false) # :nodoc:
-      hash = _dynamo_read_raw_attributes(consistent_read)
+    def serialized_attributes
       result = Hash.new
       fields.each do |attribute, metadata|
-        next if metadata[:no_save]
-        result[attribute] = deserialize_attribute(hash[attribute], metadata)
+        serialized = serialize_attribute(attribute, read_attribute(attribute), metadata)
+        result[attribute] = serialized unless serialized == nil
       end
       result
     end
 
 
-    def _dynamo_read_raw_attributes(consistent) # :nodoc:
-      dynamo_item.attributes.to_hash(consistent_read: consistent)
+    def dynamo_deserialize_attributes(hash) # :nodoc:
+      result = Hash.new
+      fields.each do |attribute, metadata|
+        next if metadata[:no_save]
+        result[attribute] = deserialize_attribute(hash[attribute], metadata)
+      end
+      assign_attributes(result)
+    end
+
+
+    def serialize_attribute(attribute, value, metadata=fields[attribute],
+                            target_class: metadata[:target_class],
+                            type: metadata[:type],
+                            no_save: metadata[:no_save]
+                            )
+      return nil if value == nil
+      case type
+      when :reference
+        return nil if no_save
+        raise DynamoError, ":reference must always have a :target_class" unless target_class
+        return value if value.is_a?(String)
+        return value.id if value.is_a?(target_class)
+        raise AssociationTypeMismatch, "can't save a #{value.class} in a #{target_class} :reference"
+      when :string
+        return nil if ["", []].include?(value)
+        value
+      when :integer
+        value == [] ? nil : value
+      when :float
+        value == [] ? nil : value
+      when :boolean
+        value ? "true" : "false"
+      when :datetime
+        value.to_i
+      when :serialized
+        value.to_json
+      else
+        raise UnsupportedType.new(type.to_s)
+      end
+    end
+
+
+    def deserialize_attribute(value, metadata, type: metadata[:type])
+      case type
+      when :reference
+        return value
+      when :string
+        return "" if value == nil
+        value.is_a?(Set) ? value.to_a : value
+      when :integer
+        return nil if value == nil
+        value.is_a?(Set) || value.is_a?(Array) ? value.collect(&:to_i) : value.to_i
+      when :float
+        return nil if value == nil
+        value.is_a?(Set) || value.is_a?(Array) ? value.collect(&:to_f) : value.to_f
+      when :boolean
+        case value
+        when "true"
+          true
+        when "false"
+          false
+        else
+          nil
+        end
+      when :datetime
+        return nil if value == nil
+        Time.zone.at(value.to_i)
+      when :serialized
+        return nil if value == nil
+        JSON.parse(value)
+      else
+        raise UnsupportedType.new(type.to_s)
+      end
+    end
+
+
+    def perform_validations(options={}) # :nodoc:
+      options[:validate] == false || valid?(options[:context])
     end
 
 

@@ -66,4 +66,21 @@ describe CloudModel do
     CloudModel.count.should be_an Integer
   end
 
+
+  describe "all" do
+
+    it "should return an array" do
+      CloudModel.all.should be_an Array
+    end
+
+    it "should return an array of model instances" do
+      CloudModel.all.first.should be_a CloudModel
+    end
+
+    it "should return as many instances as there are records in the table" do
+      CloudModel.all.length.should == CloudModel.count
+    end
+
+  end
+
 end

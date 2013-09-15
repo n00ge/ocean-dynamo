@@ -204,8 +204,8 @@ describe Slave do
   it "the attr shouldn't be persisted, only the attr_id" do
     m = Master.create!
     s = Slave.create! master: m
-    s.serialized_attributes['master_id'].should be_a String
-    s.serialized_attributes['master'].should == nil
+    s.send(:serialized_attributes)['master_id'].should be_a String
+    s.send(:serialized_attributes)['master'].should == nil
   end
 
   it "the attr, when loaded, should replace the string key with the instance" do

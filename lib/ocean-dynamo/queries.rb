@@ -5,7 +5,7 @@ module OceanDynamo
       _late_connect?
       item = dynamo_items[hash, range]
       raise RecordNotFound, "can't find a #{self} with primary key ['#{hash}', #{range.inspect}]" unless item.exists?
-      new.send(:dynamo_unpersist, item, consistent)
+      new._setup_from_dynamo(item, consistent: consistent)
     end
 
 
@@ -22,11 +22,24 @@ module OceanDynamo
 
 
     #
-    # Does a scan of all items in the table and returns the count.
+    # The number of records in the table.
     #
-    def self.count
+    def self.count(**options)
       _late_connect?
-      dynamo_items.count
+      dynamo_items.count(options)
+    end
+
+
+    #
+    # Returns all records in the table.
+    #
+    def self.all(**options)
+      _late_connect?
+      result = []
+      dynamo_items.select(options) do |item_data| 
+        result << new._setup_from_dynamo(item_data)
+      end
+      result
     end
 
   end

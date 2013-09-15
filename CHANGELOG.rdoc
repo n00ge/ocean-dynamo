@@ -1,3 +1,8 @@
+== v0.3.9
+
+* Model.all added. As the name suggests, it returns all items in the table.
+* Model.count changed to use a table scan.
+
 == v0.3.6, v0.3.7, v0.3.8
 
 * README and gemspec updates.

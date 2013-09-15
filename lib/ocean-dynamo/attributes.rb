@@ -6,9 +6,9 @@ module OceanDynamo
     #
     attr_reader :attributes
 
-    attr_reader :destroyed    # :nodoc:
-    attr_reader :new_record   # :nodoc:
-    attr_reader :dynamo_item  # :nodoc:
+    attr_reader :destroyed      # :nodoc:
+    attr_reader :new_record     # :nodoc:
+    attr_reader :dynamo_item    # :nodoc:
 
 
     def initialize(attrs={})
@@ -126,82 +126,6 @@ module OceanDynamo
       when :serialized
         return nil if value == nil
         value
-      else
-        raise UnsupportedType.new(type.to_s)
-      end
-    end
-
-
-    def serialized_attributes
-      result = Hash.new
-      fields.each do |attribute, metadata|
-        serialized = serialize_attribute(attribute, read_attribute(attribute), metadata)
-        result[attribute] = serialized unless serialized == nil
-      end
-      result
-    end
-
-
-    def serialize_attribute(attribute, value, metadata=fields[attribute],
-                            target_class: metadata[:target_class],
-                            type: metadata[:type],
-                            no_save: metadata[:no_save]
-                            )
-      return nil if value == nil
-      case type
-      when :reference
-        return nil if no_save
-        raise DynamoError, ":reference must always have a :target_class" unless target_class
-        return value if value.is_a?(String)
-        return value.id if value.is_a?(target_class)
-        raise AssociationTypeMismatch, "can't save a #{value.class} in a #{target_class} :reference"
-      when :string
-        return nil if ["", []].include?(value)
-        value
-      when :integer
-        value == [] ? nil : value
-      when :float
-        value == [] ? nil : value
-      when :boolean
-        value ? "true" : "false"
-      when :datetime
-        value.to_i
-      when :serialized
-        value.to_json
-      else
-        raise UnsupportedType.new(type.to_s)
-      end
-    end
-
-
-    def deserialize_attribute(value, metadata, type: metadata[:type])
-      case type
-      when :reference
-        return value
-      when :string
-        return "" if value == nil
-        value.is_a?(Set) ? value.to_a : value
-      when :integer
-        return nil if value == nil
-        value.is_a?(Set) || value.is_a?(Array) ? value.collect(&:to_i) : value.to_i
-      when :float
-        return nil if value == nil
-        value.is_a?(Set) || value.is_a?(Array) ? value.collect(&:to_f) : value.to_f
-      when :boolean
-        case value
-        when "true"
-          true
-        when "false"
-          false
-        else
-          nil
-        end
-      when :datetime
-        return nil if value == nil
-        Time.zone.at(value.to_i)
-      when :serialized
-        return nil if value == nil
-        JSON.parse(value)
       else
         raise UnsupportedType.new(type.to_s)
       end

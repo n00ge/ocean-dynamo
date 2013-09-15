@@ -52,12 +52,6 @@ describe CloudModel do
   end
 
 
-  it "serialize_attribute should barf on an unknown attribute type" do
-    expect { @i.serialize_attribute :quux, 42, {type: :falafel, target_class: Object, no_save: false} }. 
-      to raise_error(OceanDynamo::UnsupportedType, "falafel")
-  end
-
-
   it "create_or_update should call create if the record is new" do
     CloudModel.any_instance.should_receive(:new_record?).and_return(true)
     @i.should_receive(:create)
