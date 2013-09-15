@@ -25,16 +25,16 @@ callbacks, exceptions and support methods. Ocean-dynamo follows this pattern clo
 is of course based on ActiveModel.
 
 The attribute and persistence layer of OceanDynamo is modeled on that of ActiveRecord:
-there's +save+, +save!+, +create+, +update+, +update!+, +update_attributes+ and all the other
-methods you're used to. The design goal is always to implement as much as possible of the
-ActiveRecord interface, without sacrificing scalability. This makes the task of switching from
-SQL to no-SQL much easier.
-
-OceanDynamo will use secondary indices to retrieve related table items, 
-which means OceanDynamo tables will scale without limits.
+there's +save+, +save!+, +create+, +update+, +update!+, +update_attributes+, +find_each+,
+and all the other methods you're used to. The design goal is always to implement as much 
+as possible of the ActiveRecord interface, without sacrificing scalability. This makes the 
+task of switching from SQL to no-SQL much easier.
 
 Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
 To facilitate testing, future versions will keep track of and delete instances after tests.
+
+OceanDynamo uses primary and secondary indices to retrieve related table items, 
+which means it will scale without limits.
 
 See also Ocean, a Rails framework for creating highly scalable SOAs in the cloud, in which
 ocean-dynamo is used as a central component: http://wiki.oceanframework.net"

@@ -5,6 +5,8 @@ describe CloudModel do
 
   before :all do
     CloudModel.establish_db_connection
+    CloudModel.delete_all
+    3.times { CloudModel.create! }
   end
 
   before :each do
@@ -81,6 +83,41 @@ describe CloudModel do
       CloudModel.all.length.should == CloudModel.count
     end
 
+  end
+
+
+  describe "find_each" do
+
+    before :all do
+      CloudModel.delete_all
+      24.times { CloudModel.create! }
+    end
+
+
+    it "should take a block" do
+      CloudModel.find_each { |item| }
+    end
+
+    it "should yield to the block as many times as there are items in the table" do
+      c = CloudModel.count
+      i = 0
+      CloudModel.find_each { |item| i += 1 }
+      i.should == c
+    end
+
+    it "should take the :limit keyword" do
+      c = CloudModel.count
+      i = 0
+      CloudModel.find_each(limit: 5) { |item| i += 1 }
+      i.should == 5
+    end
+
+    it "should take the :batch_size keyword and still process all items" do
+      c = CloudModel.count
+      i = 0
+      CloudModel.find_each(batch_size: 5) { |item| i += 1 }
+      i.should == c
+    end
   end
 
 end

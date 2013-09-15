@@ -32,6 +32,22 @@ module OceanDynamo
     end
 
 
+    def self.delete_all
+      dynamo_items.each() do |item|
+        item.delete
+      end
+      nil
+    end
+
+
+    def self.destroy_all
+      dynamo_items.select() do |item_data|
+        new._setup_from_dynamo(item_data).destroy
+      end
+      nil
+    end
+
+
     # ---------------------------------------------------------
     #
     #  Instance variables and methods

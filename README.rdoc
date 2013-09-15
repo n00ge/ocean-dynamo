@@ -8,34 +8,6 @@ OceanDynamo requires Ruby 2.0 and Ruby on Rails 4.0.0 or later.
 {<img src="https://badge.fury.io/rb/ocean-dynamo.png" alt="Gem Version" />}[http://badge.fury.io/rb/ocean-dynamo]
 
 
-==== Installation
-
- gem install ocean-dynamo
-
-Then, locate the gem's directory and copy 
-
- spec/dummy/config/initializers/aws.rb
-
-to your project's
-
- config/initializers/aws.rb
-
-Also copy 
-
- spec/dummy/config/aws.yml.example
-
-to both the following locations in your project:
-
- config/aws.yml.example
- config/aws.yml
-
-Enter your AWS credentials in the latter file. Eventually, there
-will be a generator to copy these files for you, but for now you need to do it manually. 
-
-You also need +fake_dynamo+ to run DynamoDB locally: see below for installation instructions.
-NB: You do not need an Amazon AWS account to run OceanDynamo locally.
-
-
 ==== Features
 
 As one important use case for OceanDynamo is to facilitate the conversion of SQL based
@@ -45,17 +17,16 @@ callbacks, exceptions and support methods. Ocean-dynamo follows this pattern clo
 is of course based on ActiveModel.
 
 The attribute and persistence layer of OceanDynamo is modeled on that of ActiveRecord:
-there's +save+, +save!+, +create+, +update+, +update!+, +update_attributes+ and all the other
-methods you're used to. The design goal is always to implement as much as possible of the
-ActiveRecord interface, without sacrificing scalability. This makes the task of switching 
-from SQL to no-SQL much easier.
+there's +save+, +save!+, +create+, +update+, +update!+, +update_attributes+, +find_each+,
+and all the other methods you're used to. The design goal is always to implement as much 
+as possible of the ActiveRecord interface, without sacrificing scalability. This makes the 
+task of switching from SQL to no-SQL much easier.
 
 Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
 To facilitate testing, future versions will keep track of and delete instances after tests.
 
-OceanDynamo will use primary and secondary indices to retrieve related table items, 
+OceanDynamo uses primary and secondary indices to retrieve related table items, 
 which means it will scale without limits.
-
 
 ==== Example
 
@@ -115,22 +86,61 @@ Also, dynamo_schema takes args and many options. Here's the full syntax:
  end
 
 
-== Current State
+=== Current State
 
 At the moment, OceanDynamo is fully usable as an ActiveModel and can be used by Rails
 controllers. Furthermore, OceanDynamo implements much of the infrastructure of ActiveRecord;
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 parameters.
 
-Relations are underway. Assocations will use secondary
-indices, up to the DynamoDB maximum of 5 secondary keys per table. At the moment,
-only find with a single id is implemented. Collections can not yet be obtained.
-Work has begun on the +has_many+ / +belongs_to+ association which requires only a primary index.
-After that, the +has_and_belongs_to_many+ association will be added.
+At the moment, Model.find only takes a single id. Model.all and Model.count work as
+expected. Model.find_each and Model.find_in_batches are also available.
+
+Work has begun on the +has_many+ / +belongs_to+ association which requires only a primary 
+index. This association is even more efficient than its ActiveRecord counterpart.
+
+
+=== Future milestones
+
+After the +has_many+ / +belongs_to+ association, the +has_and_belongs_to_many+ assocation
+will be implemented. This will require secondary indices. This, and other associations will 
+use secondary indices. OceanDynamo will use association proxies to achieve the same kind of
+interface as ActiveRecord, e.g.: <code>blog_entry.comments.build(body: "Cool!").save!</code>
+
+
+=== Current use
 
 OceanDynamo is currently used in the Ocean framework (http://wiki.oceanframework.net)
 e.g. to implement critical job queues. It will be used increasingly as features are
-added to OceanDynamo and will eventually replace all ActiveRecord tables.
+added to OceanDynamo and will eventually replace all ActiveRecord tables in Ocean.
+
+
+==== Installation
+
+ gem install ocean-dynamo
+
+Then, locate the gem's directory and copy 
+
+ spec/dummy/config/initializers/aws.rb
+
+to your project's
+
+ config/initializers/aws.rb
+
+Also copy 
+
+ spec/dummy/config/aws.yml.example
+
+to both the following locations in your project:
+
+ config/aws.yml.example
+ config/aws.yml
+
+Enter your AWS credentials in the latter file. Eventually, there
+will be a generator to copy these files for you, but for now you need to do it manually. 
+
+You also need +fake_dynamo+ to run DynamoDB locally: see below for installation instructions.
+NB: You do not need an Amazon AWS account to run OceanDynamo locally.
 
 
 == Documentation

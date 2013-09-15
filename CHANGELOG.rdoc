@@ -1,3 +1,10 @@
+== v0.3.10
+
+* Model.find_each implemented.
+* Model.delete_all implemented.
+* Model.destroy_all implemented.
+* README updated.
+
 == v0.3.9
 
 * Model.all added. As the name suggests, it returns all items in the table.

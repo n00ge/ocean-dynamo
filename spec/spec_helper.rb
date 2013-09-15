@@ -7,9 +7,7 @@ end
 ENV["RAILS_ENV"] = "test"
 
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
-#require "rails/test_help"
 require 'rspec/rails'
-#require 'rspec/autorun'
 require 'factory_girl_rails'
 
 Rails.backtrace_cleaner.remove_silencers!
@@ -31,6 +29,7 @@ RSpec.configure do |config|
   # Make "FactoryGirl" superfluous
   config.include FactoryGirl::Syntax::Methods
 
-  # To clear the fake_dynamo DB before each run, uncomment the following line:
-  # config.before(:suite) { system "curl -X DELETE http://localhost:4567" }
+  # To clear the fake_dynamo DB before and/or after each run, uncomment the following:
+  config.before(:suite) { system "curl -X DELETE http://localhost:4567" }
+  # config.after(:suite)  { system "curl -X DELETE http://localhost:4567" }
 end

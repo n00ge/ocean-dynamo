@@ -230,4 +230,49 @@ describe CloudModel do
   end
 
 
+  describe "delete_all" do
+
+    before :each do
+      CloudModel.establish_db_connection
+      CloudModel.all.each(&:delete)
+    end
+
+
+    it "should implement delete_all" do
+      CloudModel.delete_all
+    end
+  
+    it "should remove all items" do
+      CloudModel.create!
+      CloudModel.create!
+      CloudModel.create!
+      CloudModel.count.should == 3
+      CloudModel.delete_all      
+      CloudModel.count.should == 0
+    end
+  end
+
+
+  describe "destroy_all" do
+
+    before :each do
+      CloudModel.establish_db_connection
+      CloudModel.delete_all
+    end
+
+
+    it "should implement destroy_all" do
+      CloudModel.destroy_all
+    end
+
+    it "should remove all items" do
+      CloudModel.create!
+      CloudModel.create!
+      CloudModel.create!
+      CloudModel.count.should == 3
+      CloudModel.destroy_all      
+      CloudModel.count.should == 0
+    end
+  end
+
 end
