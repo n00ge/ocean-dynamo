@@ -39,8 +39,8 @@ describe Slave do
     Slave.fields.should include :master_id
   end
 
-  it "should have a :master attribute" do
-    Slave.fields.should include :master
+  it "should not have a :master attribute" do
+    Slave.fields.should_not include :master
   end
 
   it "should have a :master_id attribute with target_class: Master" do
@@ -48,17 +48,12 @@ describe Slave do
     Slave.fields[:master_id].should == {"type"=>:reference, "default"=>nil, "target_class"=>Master}
   end
 
-  it "should have a :master attribute with target_class: Master" do
-    Slave.fields[:master][:target_class].should == Master
-    Slave.fields[:master].should == {"type"=>:reference, "default"=>nil, "target_class"=>Master, "no_save"=>true}
-  end
-
   it "should not have the target_class setting on any other attributes" do
     Slave.fields[:name][:target_class].should == nil
     Slave.fields[:name].should == {"type"=>:string, "default"=>nil}
   end
 
-  it "should assign an instance both attributes" do
+  it "should assign an instance only the _id attribute" do
     i = Slave.new
     i.attributes.should == {
       "id"=>"", 
@@ -66,8 +61,7 @@ describe Slave do
       "updated_at"=>nil, 
       "lock_version"=>0, 
       "name"=>"", 
-      "master_id"=>nil, 
-      "master"=>nil
+      "master_id"=>nil
     }
   end
 
@@ -87,29 +81,29 @@ describe Slave do
   end
 
 
-  it "a new instance should have nil in the rel attr" do
+  it "a new instance should have nil in the assocation attr" do
     Slave.new.master.should == nil
   end
 
-  it "a new instance should have nil in the rel attr_id" do
+  it "a new instance should have nil in attr_id" do
     Slave.new.master_id.should == nil
   end
 
 
-  it "a saved instance should have nil in the rel attr" do
+  it "a saved instance should have nil in the assocation attr" do
     Slave.create!.master.should == nil
   end
 
-  it "a saved instance should have nil in the rel attr_id" do
+  it "a saved instance should have nil in attr_id" do
     Slave.create!.master_id.should == nil
   end
 
 
-  it "a reloaded instance should have nil in the rel attr" do
+  it "a reloaded instance should have nil in the assocation attr" do
     Slave.create!.reload.master.should == nil
   end
 
-  it "a reloaded instance should have nil in the rel attr_id" do
+  it "a reloaded instance should have nil in attr_id" do
     Slave.create!.reload.master_id.should == nil
   end
 
@@ -131,7 +125,7 @@ describe Slave do
     s.master.should == "some-uurl"
   end
 
-  it "attr should be mass-assignable" do
+  it "attr should be mass-assignable" do     # crucial!
     s = Slave.new master: "any-uuid"
     s.master.should == "any-uuid"
   end
@@ -148,15 +142,6 @@ describe Slave do
     s = Slave.new
     s.master = m
     s.master.should == m
-  end
-
-  it "an instance in attr should be saved as its UUID" do
-    m = Master.create!
-    s = Slave.create master: m
-    s.master.should == m
-    s.reload
-    s.attributes['master'].should be_a String
-    s.attributes['master'].should_not == ""
   end
 
   it "an instance in attr_id should be saved as its UUID" do

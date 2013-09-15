@@ -22,6 +22,7 @@ module OceanDynamo
         @new_record = true
         raise UnknownPrimaryKey unless table_hash_key
       end
+      assign_associations(attrs)
       attrs && attrs.delete_if { |k, v| !fields.has_key?(k) }
       super(attrs)
     end
@@ -88,7 +89,10 @@ module OceanDynamo
 
     def assign_attributes(values, without_protection: false)
       return if values.blank?
+
+
       values = values.stringify_keys
+      assign_associations(values)
       # if values.respond_to?(:permitted?)
       #   unless values.permitted?
       #     raise ActiveModel::ForbiddenAttributesError
