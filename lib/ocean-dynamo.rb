@@ -9,11 +9,12 @@ require "ocean-dynamo/exceptions"
 require "ocean-dynamo/class_variables"
 require "ocean-dynamo/tables"
 require "ocean-dynamo/schema"
-require "ocean-dynamo/callbacks"
 require "ocean-dynamo/attributes"
-require "ocean-dynamo/queries"
+require "ocean-dynamo/callbacks"
 require "ocean-dynamo/persistence"
-require "ocean-dynamo/associations"
+require "ocean-dynamo/queries"
+
+require "ocean-dynamo/associations/belongs_to"
 
 
 module OceanDynamo
