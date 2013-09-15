@@ -12,19 +12,19 @@ OceanDynamo requires Ruby 2.0 and Ruby on Rails 4.0.0 or later.
 
  gem install ocean-dynamo
 
-Then, copy 
+Then, locate the gem's directory and copy 
 
  spec/dummy/config/initializers/aws.rb
 
-to
+to your project's
 
  config/initializers/aws.rb
 
-and 
+Also copy 
 
  spec/dummy/config/aws.yml.example
 
-to both the following locations:
+to both the following locations in your project:
 
  config/aws.yml.example
  config/aws.yml
@@ -32,7 +32,7 @@ to both the following locations:
 Enter your AWS credentials in the ''latter'' file. Eventually, there
 will be a generator to copy these files for you, but for now you need to do it manually. 
 
-You also need fake_dynamo to run DynamoDB locally: see below for installation instructions.
+You also need ++fake_dynamo++ to run DynamoDB locally: see below for installation instructions.
 
 
 ==== Features
