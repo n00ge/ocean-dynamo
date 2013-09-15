@@ -1,7 +1,7 @@
 == ocean-dynamo
 
-This is the OceanDynamo ruby gem, implementing a highly scalable Amazon DynamoDB 
-near drop-in replacement for ActiveRecord.
+OceanDynamo is a massively scalable Amazon DynamoDB near drop-in replacement for 
+ActiveRecord.
 
 OceanDynamo requires Ruby 2.0 and Ruby on Rails 4.0.0 or later.
 
