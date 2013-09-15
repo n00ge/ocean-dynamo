@@ -91,15 +91,19 @@ Also, dynamo_schema takes args and many options. Here's the full syntax:
    ...
  end
 
+
+== Current State
+
 At the moment, OceanDynamo is fully usable as an ActiveModel and can be used by Rails
 controllers. Furthermore, OceanDynamo implements much of the infrastructure of ActiveRecord;
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 parameters.
 
-Relations are not yet implemented, but are underway. Assocations will use secondary
+Relations are underway. Assocations will use secondary
 indices, up to the DynamoDB maximum of 5 secondary keys per table. At the moment,
 only find with a single id is implemented. Collections can not yet be obtained.
-Work has begun on the +belongs_to+ association which requires only a primary index.
+Work has begun on the +has_many+ / +belongs_to+ association which requires only a primary index.
+After that, the +has_and_belongs_to_many+ association will be added.
 
 OceanDynamo is currently used in the Ocean framework (http://wiki.oceanframework.net)
 e.g. to implement critical job queues. It will be used increasingly as features are
