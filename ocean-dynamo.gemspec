@@ -10,12 +10,13 @@ Gem::Specification.new do |s|
   s.authors     = ["Peter Bengtson"]
   s.email       = ["peter@peterbengtson.com"]
   s.homepage    = "https://github.com/OceanDev/ocean-dynamo"
-  s.summary     = "This gem implements an ActiveRecord-like DynamoDB ORM class."
+  s.summary     = "OceanDynamo is a massively scalable Amazon DynamoDB near drop-in replacement for 
+ActiveRecord."
   s.description = 
 "== OceanDynamo
 
-This is the OceanDynamo ruby gem, implementing a highly scalable Amazon DynamoDB near drop-in 
-replacement for ActiveRecord.
+OceanDynamo is a massively scalable Amazon DynamoDB near drop-in replacement for 
+ActiveRecord.
 
 As one important use case for OceanDynamo is to facilitate the conversion of SQL based
 ActiveRecord models to DynamoDB based models, it is important that the syntax and semantics
