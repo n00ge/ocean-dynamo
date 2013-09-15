@@ -27,7 +27,7 @@ and
 to both the following locations:
 
  config/aws.yml.example
- config/aws.ym
+ config/aws.yml
 
 Enter your AWS credentials in the ''latter'' file. Eventually, there
 will be a generator to copy these files for you, but for now you need to do it manually. 
