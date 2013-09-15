@@ -1,3 +1,7 @@
+== v0.3.11
+
+* .find can now take an array arg.
+
 == v0.3.10
 
 * Model.find_each implemented.

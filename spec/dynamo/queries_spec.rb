@@ -36,6 +36,13 @@ describe CloudModel do
       found = CloudModel.find(@i.uuid, consistent: true)
       found.started_at.should_not == nil
     end
+
+    it "find should be able to take an array arg" do
+      foo = CloudModel.create uuid: "foo"
+      bar = CloudModel.create uuid: "bar"
+      baz = CloudModel.create uuid: "baz"
+      CloudModel.find(["foo", "bar"], consistent: true).should == [foo, bar]
+    end
   end
 
 

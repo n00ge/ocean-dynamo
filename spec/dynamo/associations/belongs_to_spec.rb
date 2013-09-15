@@ -12,8 +12,9 @@ class Slave < OceanDynamo::Base
   dynamo_schema(create: true) do
     attribute :name
   end
-  belongs_to :master    # AFTER the schema definition! Enforce?
+  belongs_to :master
 end
+
 
 
 describe Master do
@@ -29,6 +30,7 @@ describe Master do
     Master.fields.should_not include :slave
   end
 end
+
 
 
 describe Slave do

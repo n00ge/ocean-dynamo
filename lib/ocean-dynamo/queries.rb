@@ -2,6 +2,7 @@ module OceanDynamo
   class Base
 
     def self.find(hash, range=nil, consistent: false)
+      return hash.collect {|elem| find elem, range, consistent: consistent } if hash.is_a?(Array)
       _late_connect?
       item = dynamo_items[hash, range]
       raise RecordNotFound, "can't find a #{self} with primary key ['#{hash}', #{range.inspect}]" unless item.exists?
