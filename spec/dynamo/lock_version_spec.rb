@@ -3,6 +3,11 @@ require 'spec_helper'
 
 describe CloudModel do
 
+  before :all do
+    CloudModel.establish_db_connection
+  end
+
+
   it "should have an automatically supplied lock_version field" do
     CloudModel.fields.should include :lock_version
   end

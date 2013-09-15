@@ -21,6 +21,9 @@ module OceanDynamo
     end
 
 
+    #
+    # Does a scan of all items in the table and returns the count.
+    #
     def self.count
       _late_connect?
       dynamo_items.count
