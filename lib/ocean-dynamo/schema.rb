@@ -32,7 +32,11 @@ module OceanDynamo
       self.timestamp_attributes = timestamps
       # Init
       self.fields = HashWithIndifferentAccess.new
-      attribute table_hash_key, :string, default: ""
+      attribute(table_hash_key, :string, default: "")
+      if table_range_key
+        attribute(table_range_key, :string, default: "")
+        self.validates(table_range_key, presence: true)
+      end
       timestamp_attributes.each { |name| attribute name, :datetime } if timestamp_attributes
       attribute(lock_attribute, :integer, default: 0) if locking
       block.call

@@ -23,7 +23,7 @@ module OceanDynamo
 
     def self.count
       _late_connect?
-      dynamo_table.item_count || -1    # The || -1 is for fake_dynamo specs.
+      dynamo_items.count
     end
 
   end
