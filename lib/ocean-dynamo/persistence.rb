@@ -124,7 +124,6 @@ module OceanDynamo
           run_callbacks :create do
             # Default the correct hash key to a UUID
             if self.class.has_belongs_to?
-              raise "HELL" if table_range_key.to_s =~ /_id/
               write_attribute(table_range_key, SecureRandom.uuid) if range_key.blank?
             else
               write_attribute(table_hash_key, SecureRandom.uuid) if hash_key.blank?
@@ -257,7 +256,7 @@ module OceanDynamo
 
     def dynamo_persist(lock: nil) # :nodoc:
       raise "HELL" if table_hash_key == table_range_key
-      if self.class.has_belongs_to?
+      if false # self.class.has_belongs_to?
             puts 
             puts "PERSISTING with key [#{table_hash_key}, #{table_range_key}]:"
             puts "  ['#{@attributes[table_hash_key.to_s]}', '#{@attributes[table_range_key.to_s]}']"
@@ -308,16 +307,15 @@ module OceanDynamo
 
     def serialize_attribute(attribute, value, metadata=fields[attribute],
                             target_class: metadata[:target_class],
-                            type: metadata[:type],
-                            no_save: metadata[:no_save]
+                            type: metadata[:type]
                             )
       return nil if value == nil
+      #value = value.id if value.kind_of?(target_class)
       case type
       when :reference
-        return nil if no_save
         raise DynamoError, ":reference must always have a :target_class" unless target_class
         return value if value.is_a?(String)
-        return value.id if value.is_a?(target_class)
+        return value.id if value.kind_of?(target_class)
         raise AssociationTypeMismatch, "can't save a #{value.class} in a #{target_class} :reference"
       when :string
         return nil if ["", []].include?(value)

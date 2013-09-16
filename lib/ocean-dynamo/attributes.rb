@@ -11,11 +11,18 @@ module OceanDynamo
     attr_reader :dynamo_item    # :nodoc:
 
 
+    #
+    # Returns the value of the hash key attribute
+    #
     def hash_key
       read_attribute(table_hash_key)
     end
 
 
+    #
+    # Returns the value of the range key attribute or false if the
+    # table doesn't have a range_key.
+    #
     def range_key
       table_range_key && read_attribute(table_range_key)
     end

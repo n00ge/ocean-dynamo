@@ -1,25 +1,26 @@
 module OceanDynamo
   class Base
 
-    def self.belongs_to(target)                        # :api_user, "api_user", ApiUser, Master
-      target_attr = target.to_s.underscore             # "api_user", "master"
-      target_attr_id = "#{target_attr}_id"             # "api_user_id", "master_id"
-      target_class = target_attr.camelize.constantize  # ApiUser, Master
+    def self.belongs_to(target)                        # :master, "master", Master
+      target_attr = target.to_s.underscore             # "master"
+      target_attr_id = "#{target_attr}_id"             # "master_id"
+      target_class = target_attr.camelize.constantize  # Master
 
       assert_only_one_belongs_to!
 
-      self.table_range_key = table_hash_key            # The RANGE KEY is variable  (:id)
-      self.table_hash_key = target_attr_id.to_sym      # The HASH KEY is the parent UUID  (:master_id)
+      self.table_range_key = table_hash_key            # The RANGE KEY is variable
+      self.table_hash_key = target_attr_id.to_sym      # The HASH KEY is the parent UUID
 
       attribute table_hash_key, :string                # Define :master_id
       define_attribute_accessors(table_hash_key)       # Define master_id, master_id=, master_id?
 
-      # Define the range attribute
-      attribute(table_range_key, :string, default: "") # Define :id
-      define_attribute_accessors(table_range_key)      # define id, id=, id?
-
       # Make sure there always is a parent
-      validates(table_hash_key, presence: true)        # Can't save without a parent UUID
+      validates(table_hash_key, presence: true)        # Can't save without a parent_id
+
+      # Define the range attribute (our unique UUID)
+      attribute(table_range_key, :string, default: "") # Define :uuid
+      define_attribute_accessors(table_range_key)      # define uuid, uuid=, uuid?
+
 
 
       # Define the parent id attribute 
@@ -48,7 +49,7 @@ module OceanDynamo
 
 
     #
-    # Returns true if the table has a :belongs_to relation.
+    # Returns true if the class has a belongs_to association.
     #
     def self.has_belongs_to?
       fields[table_hash_key]['association'] == :belongs_to
@@ -57,7 +58,7 @@ module OceanDynamo
 
 
     #
-    # If the table has a :belongs_to relation, returns the target's class
+    # Returns the class of the belongs_to association, or false if none.
     #
     def self.belongs_to_class
       has_belongs_to? && fields[table_hash_key]['target_class']

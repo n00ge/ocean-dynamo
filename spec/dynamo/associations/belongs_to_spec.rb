@@ -49,7 +49,13 @@ describe Slave do
     Slave.table_hash_key.to_s.should == Slave.dynamo_table.hash_key.name
   end
 
-  it "should match the DynamoDB range_key"
+  it "should match the DynamoDB range_key" do
+    Slave.establish_db_connection
+    Slave.table_range_key.to_s.should == Slave.dynamo_table.range_key.name
+  end
+
+
+  it "should barf on an excplicitly specified range key"
 
 
   it "should have a range key named :uuid" do
@@ -65,8 +71,8 @@ describe Slave do
     Slave.fields.should include :uuid
     i = Slave.new
     i.uuid.should == ""            # String because it's an empty UUID
-    i.uuid = 2345
-    i[:uuid].should == 2345
+    i.uuid = "2345"
+    i[:uuid].should == "2345"
   end
 
   it "should not have a :master attribute" do
@@ -242,9 +248,7 @@ describe Slave do
   it "the attr, if it contains an instance, should load and return that instance when accessed after a save" do
     s = Slave.create! master: @m
     s.master.should == @m
-    s.master = nil
     s.reload
-    Master.should_receive(:find).with(s.master_id).and_return @m
     s.master.should == @m
   end
 
