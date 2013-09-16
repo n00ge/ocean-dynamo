@@ -5,7 +5,9 @@ module OceanDynamo
       return hash.collect {|elem| find elem, range, consistent: consistent } if hash.is_a?(Array)
       _late_connect?
       item = dynamo_items[hash, range]
-      raise RecordNotFound, "can't find a #{self} with primary key ['#{hash}', #{range.inspect}]" unless item.exists?
+      unless item.exists?
+        raise RecordNotFound, "can't find a #{self} with primary key ['#{hash}', #{range.inspect}]" 
+      end
       new._setup_from_dynamo(item, consistent: consistent)
     end
 

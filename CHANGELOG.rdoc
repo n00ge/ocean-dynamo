@@ -1,5 +1,7 @@
 == v0.3.11
 
+* belongs_to can now be specified only once in each class (since it uses the range key to
+  store its UUID and the hash key to store the UUID of the parent).
 * .find can now take an array arg.
 
 == v0.3.10

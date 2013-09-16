@@ -268,7 +268,7 @@ describe CloudModel do
   it "_assign_attribute should barf on unknown attributes" do
     i = CloudModel.create!
     expect { i.assign_attributes(outlandish: "indeed") }.to raise_error(OceanDynamo::UnknownAttributeError,
-                                                                        "unknown attribute: outlandish")
+                                                                        "unknown attribute: `outlandish'")
   end
 
   it "implement the == operator for OceanDynamo instances" do

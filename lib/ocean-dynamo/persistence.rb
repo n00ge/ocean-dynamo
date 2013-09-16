@@ -122,8 +122,14 @@ module OceanDynamo
       run_callbacks :commit do
         run_callbacks :save do
           run_callbacks :create do
-            k = read_attribute(table_hash_key)
-            write_attribute(table_hash_key, SecureRandom.uuid) if k == "" || k == nil
+            # Default the correct hash key to a UUID
+            if self.class.has_belongs_to?
+              raise "HELL" if table_range_key.to_s =~ /_id/
+              write_attribute(table_range_key, SecureRandom.uuid) if range_key.blank?
+            else
+              write_attribute(table_hash_key, SecureRandom.uuid) if hash_key.blank?
+            end
+
             set_timestamps
             dynamo_persist
             true
@@ -171,8 +177,8 @@ module OceanDynamo
 
 
     def reload(**keywords)
-      range_key = table_range_key && attributes[table_range_key]
-      new_instance = self.class.find(id, range_key, **keywords)
+      raise "HELLISHNESS" if id == range_key
+      new_instance = self.class.find(hash_key, range_key, **keywords)
       assign_attributes(new_instance.attributes)
       self
     end
@@ -250,6 +256,13 @@ module OceanDynamo
 
 
     def dynamo_persist(lock: nil) # :nodoc:
+      raise "HELL" if table_hash_key == table_range_key
+      if self.class.has_belongs_to?
+            puts 
+            puts "PERSISTING with key [#{table_hash_key}, #{table_range_key}]:"
+            puts "  ['#{@attributes[table_hash_key.to_s]}', '#{@attributes[table_range_key.to_s]}']"
+            puts
+      end
       _late_connect?
       begin
         options = _handle_locking(lock)

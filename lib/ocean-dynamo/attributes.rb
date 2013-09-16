@@ -11,6 +11,16 @@ module OceanDynamo
     attr_reader :dynamo_item    # :nodoc:
 
 
+    def hash_key
+      read_attribute(table_hash_key)
+    end
+
+
+    def range_key
+      table_range_key && read_attribute(table_range_key)
+    end
+
+
     def initialize(attrs={})
       run_callbacks :initialize do
         @attributes = Hash.new
@@ -142,7 +152,7 @@ module OceanDynamo
       if respond_to?("#{k}=")
         raise
       else
-        raise UnknownAttributeError, "unknown attribute: #{k}"
+        raise UnknownAttributeError, "unknown attribute: `#{k}'"
       end
     end
 

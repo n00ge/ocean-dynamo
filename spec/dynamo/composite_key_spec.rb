@@ -57,4 +57,9 @@ describe VaVaVoom do
     found.should == orig
   end
 
+  it "instances should be reloadable" do
+    i = VaVaVoom.create! hash: "quux", range: "zuul"
+    i.reload
+  end
+
 end

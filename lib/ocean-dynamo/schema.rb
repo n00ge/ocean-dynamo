@@ -41,17 +41,19 @@ module OceanDynamo
       attribute(lock_attribute, :integer, default: 0) if locking
       block.call
       # Define attribute accessors
-      fields.each do |name, md| 
-        name = name.to_s
-        # We define accessors even if the name is 'id' (for which we already have methods)
-        self.class_eval "def #{name}; read_attribute('#{name}'); end"
-        self.class_eval "def #{name}=(value); write_attribute('#{name}', value); end"
-        self.class_eval "def #{name}?; read_attribute('#{name}').present?; end"
-      end
+      fields.each { |name, md| define_attribute_accessors(name) }
       # Connect to AWS
       establish_db_connection if connect == true
       # Finally return the full table name
       table_full_name
+    end
+
+
+    def self.define_attribute_accessors(name)
+      name = name.to_s
+      self.class_eval "def #{name}; read_attribute('#{name}'); end"
+      self.class_eval "def #{name}=(value); write_attribute('#{name}', value); end"
+      self.class_eval "def #{name}?; read_attribute('#{name}').present?; end"
     end
 
 

@@ -43,19 +43,30 @@ module OceanDynamo
 
 
     def self.set_dynamo_table_keys
-      dynamo_table.hash_key = [table_hash_key, fields[table_hash_key][:type]]
+      hash_key_type = fields[table_hash_key][:type]
+      hash_key_type = :string if hash_key_type == :reference
+      dynamo_table.hash_key = [table_hash_key, hash_key_type]
+
       if table_range_key
-        dynamo_table.range_key = [table_range_key, fields[table_range_key][:type]]
+        range_key_type = fields[table_range_key][:type]
+        #range_key_type = :string if range_key_type == :reference
+        dynamo_table.range_key = [table_range_key, range_key_type]
       end
     end
 
 
     def self.create_table
+      hash_key_type = fields[table_hash_key][:type]
+      hash_key_type = :string if hash_key_type == :reference
+
+      range_key_type = table_range_key && fields[table_range_key][:type]
+      #range_key_type = :string if range_key_type == :reference
+
       self.dynamo_table = dynamo_client.tables.create(table_full_name, 
         table_read_capacity_units, table_write_capacity_units,
-        hash_key: { table_hash_key => fields[table_hash_key][:type]},
-        range_key: table_range_key && { table_range_key => fields[table_range_key][:type]}
-        )
+        hash_key: { table_hash_key => hash_key_type},
+        range_key: table_range_key && { table_range_key => range_key_type }
+      )
       sleep 1 until dynamo_table.status == :active
       setup_dynamo
       true

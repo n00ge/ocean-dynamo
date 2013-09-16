@@ -9,7 +9,7 @@ end
 
 
 class Slave < OceanDynamo::Base
-  dynamo_schema(create: true) do
+  dynamo_schema(:uuid, create: true) do
     attribute :name
   end
   belongs_to :master
@@ -39,13 +39,48 @@ end
 
 describe Slave do
 
-  it "should have a :master_id attribute" do
-    Slave.fields.should include :master_id
+  before :each do
+    @m = Master.create!
+  end
+
+
+  it "should match the DynamoDB hash_key" do
+    Slave.establish_db_connection
+    Slave.table_hash_key.to_s.should == Slave.dynamo_table.hash_key.name
+  end
+
+  it "should match the DynamoDB range_key"
+
+
+  it "should have a range key named :uuid" do
+    Slave.table_range_key.should == :uuid
+  end
+
+  it "should have a hash key named :master_id" do
+    Slave.table_hash_key.should == :master_id
+  end
+
+
+  it "should have an :uuid attribute" do
+    Slave.fields.should include :uuid
+    i = Slave.new
+    i.uuid.should == ""            # String because it's an empty UUID
+    i.uuid = 2345
+    i[:uuid].should == 2345
   end
 
   it "should not have a :master attribute" do
     Slave.fields.should_not include :master
   end
+
+  it "should have a :master_id attribute" do
+    Slave.fields.should include :master_id
+    i = Slave.new
+    i.master_id.should == nil      # nil because it's an empty reference
+    i.master_id = "the-master-id"
+    i[:master_id].should == "the-master-id"
+  end
+
 
   it "should have a :master_id attribute with target_class: Master" do
     Slave.fields[:master_id][:target_class].should == Master
@@ -53,33 +88,66 @@ describe Slave do
 
   it "should not have the target_class setting on any other attributes" do
     Slave.fields[:name][:target_class].should == nil
-    Slave.fields[:name].should == {"type"=>:string, "default"=>nil}
   end
 
-  it "should assign an instance only the _id attribute" do
+
+  it "the :id reader should read the :master_id attribute" do
     i = Slave.new
+    i.master_id = "hash key"
     i.attributes.should == {
-      "id"=>"", 
+      "uuid"=>"", 
       "created_at"=>nil, 
       "updated_at"=>nil, 
       "lock_version"=>0, 
       "name"=>"", 
-      "master_id"=>nil
+      "master_id"=>"hash key"
+    }
+    i[:master_id].should == "hash key"
+    i.id.should == "hash key"
+    i[:id].should == "hash key"
+  end
+
+  it "the :id writer should set the :master_id attribute" do
+    i = Slave.new
+    i.id = "I'm the ID now"
+    i.attributes.should == {
+      "uuid"=>"", 
+      "created_at"=>nil, 
+      "updated_at"=>nil, 
+      "lock_version"=>0, 
+      "name"=>"", 
+      "master_id"=>"I'm the ID now"
     }
   end
 
+  it "the :master_id reader should read the :master_id attribute" do
+    i = Slave.new
+    i.master_id = "range key"
+    i.attributes.should == {
+      "uuid"=>"", 
+      "created_at"=>nil, 
+      "updated_at"=>nil, 
+      "lock_version"=>0, 
+      "name"=>"", 
+      "master_id"=>"range key"
+    }
+    i.master_id.should == "range key"
+    i[:master_id].should == "range key"
+  end
+
+
 
   it "instances should be instantiatable" do
-    Slave.create!
+    Slave.create! master: @m
   end
 
   it "instances should be reloadable" do
-    s = Slave.create!
+    s = Slave.create! master: @m
     s.reload
   end
 
   it "instances should be touchable" do
-    s = Slave.create!
+    s = Slave.create! master: @m
     s.touch
   end
 
@@ -93,21 +161,21 @@ describe Slave do
   end
 
 
-  it "a saved instance should have nil in the assocation attr" do
-    Slave.create!.master.should == nil
+  it "a saved instance should not have nil in the assocation attr" do
+    Slave.create!(master:@m).master.should_not == nil
   end
 
-  it "a saved instance should have nil in attr_id" do
-    Slave.create!.master_id.should == nil
+  it "a saved instance should not have nil in attr_id" do
+    Slave.create!(master: @m).master_id.should_not == nil
   end
 
 
-  it "a reloaded instance should have nil in the assocation attr" do
-    Slave.create!.reload.master.should == nil
+  it "a reloaded instance should not have nil in the assocation attr" do
+    Slave.create!(master: @m).reload.master.should_not == nil
   end
 
-  it "a reloaded instance should have nil in attr_id" do
-    Slave.create!.reload.master_id.should == nil
+  it "a reloaded instance should not have nil in attr_id" do
+    Slave.create!(master: @m).reload.master_id.should_not == nil
   end
 
 
@@ -135,54 +203,49 @@ describe Slave do
 
 
   it "attr should be able to be mass-assigned an instance of the associated type" do
-    m = Master.create!
-    s = Slave.new master: m
-    s.master.should == m
+    s = Slave.new master: @m
+    s.master.should == @m
   end
 
   it "attr should be able to be directly assigned an instance of the associated type" do
-    m = Master.create!
     s = Slave.new
-    s.master = m
-    s.master.should == m
+    s.master = @m
+    s.master.should == @m
   end
 
   it "an instance in attr_id should be saved as its UUID" do
-    m = Master.create!
-    s = Slave.create master: m
-    s.master_id.should == m.id
+    s = Slave.create master: @m, id: "this-is-the-id", gniff: 2222
+    s.master_id.should == @m.id
     s.reload
     s.attributes['master_id'].should be_a String
     s.attributes['master_id'].should_not == ""
-    s.master_id.should == m.id
+    s.master_id.should == @m.id
   end
 
   it "an instance in attr must be of the correct target class" do
-    wrong = Slave.create!
+    wrong = Slave.create!(master: @m)
     expect { Slave.create master: wrong }.
       to raise_error(OceanDynamo::AssociationTypeMismatch, "can't save a Slave in a Master :reference")
   end
 
   it "an instance in attr_id must be of the correct target class" do
-    wrong = Slave.create!
+    wrong = Slave.create!(master_id: @m.id)
     expect { Slave.create master_id: wrong }.
       to raise_error(OceanDynamo::AssociationTypeMismatch, "can't save a Slave in a Master :reference")
   end
 
   it "the attr_id, if it contains an instance, should return the id of that instance" do
-    m = Master.create!
-    s = Slave.new master_id: m
-    s.master_id.should == m.id
+    s = Slave.new master_id: @m
+    s.master_id.should == @m.id
   end
 
   it "the attr, if it contains an instance, should load and return that instance when accessed after a save" do
-    m = Master.create!
-    s = Slave.create! master: m
-    s.master.should == m
+    s = Slave.create! master: @m
+    s.master.should == @m
     s.master = nil
     s.reload
-    Master.should_receive(:find).with(s.master_id).and_return m
-    s.master.should == m
+    Master.should_receive(:find).with(s.master_id).and_return @m
+    s.master.should == @m
   end
 
   it "attr load should barf on an unknown key" do
@@ -192,26 +255,25 @@ describe Slave do
   end
 
   it "the attr shouldn't be persisted, only the attr_id" do
-    m = Master.create!
-    s = Slave.create! master: m
+    s = Slave.create! master: @m
     s.send(:serialized_attributes)['master_id'].should be_a String
     s.send(:serialized_attributes)['master'].should == nil
   end
 
   it "the attr, when loaded, should replace the string key with the instance" do
-    m = Master.create!
-    s = Slave.create! master: m
+    s = Slave.create! master: @m
     s.reload
-    Master.should_receive(:find).with(s.master_id).and_return m
-    s.master.should == m
-    s.master.should == m
-    s.master.should == m
+    Master.should_receive(:find).with(s.master_id).and_return @m
+    s.master.should == @m
+    s.master.should == @m
+    s.master.should == @m
   end
 
 
-  it "must not allow more than one belongs_to association" do
+  it "must not allow more than one belongs_to association per model" do
     expect { Slave.belongs_to :other }.
-      to raise_error(OceanDynamo::DynamoError, "Slave already belongs_to Master")
+      to raise_error(OceanDynamo::AssociationMustBeUnique, 
+                     "Slave already belongs_to Master")
   end
 
 
