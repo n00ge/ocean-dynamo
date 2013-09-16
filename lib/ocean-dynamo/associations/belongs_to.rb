@@ -107,7 +107,8 @@ module OceanDynamo
       ptr = read_attribute(name)
       return nil if ptr.blank?
       if persisted? && ptr.is_a?(String)
-        write_attribute(name, fields[name][:target_class].find(ptr))  # Keep the instance we've just read
+        parent = fields[name][:target_class].find(ptr, consistent: true)  # TODO: true?
+        write_attribute(name, parent)  # Keep the instance we've just read
       else
         ptr
       end

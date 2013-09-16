@@ -1,7 +1,16 @@
 == v0.3.11
 
-* belongs_to can now be specified only once in each class (since it claims the range key to
-  store its UUID and the hash key to store the UUID of the parent).
+* belongs_to operational. The other side, has_many, is much simpler and should follow
+  very soon. Probably today. Restrictions for belongs_to tables: 
+* * The hash key must be specified and must not be :id. 
+* * The range key may not be specified at all.
+* * belongs_to can be specified only once in each class.
+  This is due to belongs_to claiming the range key for its internal use, to
+  store its UUID. The hash key is used to store the UUID of the parent. This
+  allows us to use only the primary index for all references between parent and
+  its child objects, in both directions. It's our goal to use a similar technique
+  to implement has_and_belongs_to_many associations, which means that secondary
+  indices won't be necessary for the vast majority of OceanDynamo databases.
 * .has_belongs_to? returns true if the class has a belongs_to association.
 * .belongs_to_class returns the class of the belongs_to association, or false if none.
 * .find can now take an array arg.

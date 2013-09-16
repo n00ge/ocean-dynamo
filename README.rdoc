@@ -8,7 +8,7 @@ OceanDynamo requires Ruby 2.0 and Ruby on Rails 4.0.0 or later.
 {<img src="https://badge.fury.io/rb/ocean-dynamo.png" alt="Gem Version" />}[http://badge.fury.io/rb/ocean-dynamo]
 
 
-==== Features
+=== Features
 
 As one important use case for OceanDynamo is to facilitate the conversion of SQL based
 ActiveRecord models to DynamoDB based models, it is important that the syntax and semantics
@@ -19,7 +19,7 @@ is of course based on ActiveModel.
 The attribute and persistence layer of OceanDynamo is modeled on that of ActiveRecord:
 there's +save+, +save!+, +create+, +update+, +update!+, +update_attributes+, +find_each+,
 and all the other methods you're used to. The design goal is always to implement as much 
-as possible of the ActiveRecord interface, without sacrificing scalability. This makes the 
+of the ActiveRecord interface as possible, without compromising scalability. This makes the 
 task of switching from SQL to no-SQL much easier.
 
 Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
@@ -28,7 +28,7 @@ To facilitate testing, future versions will keep track of and delete instances a
 OceanDynamo uses primary and secondary indices to retrieve related table items, 
 which means it will scale without limits.
 
-==== Example
+=== Example
 
 The following example shows the syntax. 
 
@@ -93,11 +93,46 @@ controllers. Furthermore, OceanDynamo implements much of the infrastructure of A
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 parameters.
 
-At the moment, +Model.find+ only takes a single id. +Model.all+ and +Model.count+ work as
-expected. +Model.find_each+ and +Model.find_in_batches+ are also available.
++Model.all+ and +.count+ work as expected. +Model.find_each+ is also available.
 
-Work has begun on the +has_many+ / +belongs_to+ association which requires only a primary 
-index. This association is even more efficient than its ActiveRecord counterpart.
++belongs_to+ is now operational. The other side, +has_many+, is much simpler and should 
+follow very soon (probably today). 
+
+Restrictions for +belongs_to+ tables: 
+* * The hash key must be specified and must not be +:id+. 
+* * The range key must not be specified at all.
+* * belongs_to can be specified only once in each class.
+
+These restrictions allow OceanDynamo to implement the +has_many+ / +belongs_to+ 
+relation in a very efficient and massively scalable way. 
+
++belongs_to+ claims the range key and uses it to store its own UUID, which normally
+would be stored in the hash key attribute. Instead, the hash key attribute holds the
+UUID of the parent. We have thus reversed the roles of these two fields. As a result, 
+all children have their parent UUID as their hash key, and their own UUID in their 
+range key.
+
+This type of association is even more efficient than its ActiveRecord counterpart as
+it uses only the primary index of the child model for finds and scans in both directions
+of the +has_many+ / +belongs_to+ association.
+
+Furthermore, since DynamoDB has powerful primary index searches involving substrings
+and matching, the fact that the range key is a string can be used to implement
+wildcard matching of additional attributes. This gives, amongst other things, the 
+equivalent of an SQL GROUP BY request, again without requiring any secondary indices.
+
+It's our goal to use a similar technique to implement has_and_belongs_to_many relations, 
+which means that secondary indices won't be necessary for the vast majority of 
+OceanDynamo use cases. This ultimately means reduced operational costs, as well as
+reduced complexity.
+
++.has_belongs_to?+ returns true if the class has a belongs_to association.
+
++.belongs_to_class returns the class of the belongs_to association, or false if none.
+
++.find+ can now take an array arg.
+
++#hash_key+ and +#range_key+ readers added.
 
 
 === Future milestones

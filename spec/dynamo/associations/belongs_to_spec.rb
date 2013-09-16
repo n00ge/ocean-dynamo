@@ -268,7 +268,7 @@ describe Slave do
   it "the attr, when loaded, should replace the string key with the instance" do
     s = Slave.create! master: @m
     s.reload
-    Master.should_receive(:find).with(s.master_id).and_return @m
+    Master.should_receive(:find).and_return @m
     s.master.should == @m
     s.master.should == @m
     s.master.should == @m
