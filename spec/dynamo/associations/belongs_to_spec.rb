@@ -55,7 +55,8 @@ describe Slave do
   end
 
 
-  it "should barf on an excplicitly specified range key"
+  it "should barf on an explicitly specified range key"
+  it "should barf on an explicitly specified hash key of :id"
 
 
   it "should have a range key named :uuid" do

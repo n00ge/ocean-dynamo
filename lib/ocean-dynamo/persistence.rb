@@ -255,13 +255,6 @@ module OceanDynamo
 
 
     def dynamo_persist(lock: nil) # :nodoc:
-      raise "HELL" if table_hash_key == table_range_key
-      if false # self.class.has_belongs_to?
-            puts 
-            puts "PERSISTING with key [#{table_hash_key}, #{table_range_key}]:"
-            puts "  ['#{@attributes[table_hash_key.to_s]}', '#{@attributes[table_range_key.to_s]}']"
-            puts
-      end
       _late_connect?
       begin
         options = _handle_locking(lock)

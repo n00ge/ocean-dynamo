@@ -54,6 +54,10 @@ module OceanDynamo
 
   class AssociationTypeMismatch < DynamoError; end
 
-  class AssociationMustBeUnique < DynamoError; end
+
+  class BelongsToError < DynamoError; end
+    class AssociationMustBeUnique < BelongsToError; end
+    class RangeKeyMustNotBeSpecified < BelongsToError; end
+    class HashKeyMayNotBeNamedId < BelongsToError; end
 
 end

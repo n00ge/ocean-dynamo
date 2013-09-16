@@ -4,7 +4,7 @@ module OceanDynamo
     def self.find(hash, range=nil, consistent: false)
       return hash.collect {|elem| find elem, range, consistent: consistent } if hash.is_a?(Array)
       _late_connect?
-      hash = hash.id if hash.kind_of?(Base)
+      hash = hash.id if hash.kind_of?(Base)    # TODO: We have (innocuous) leakage, fix!
       item = dynamo_items[hash, range]
       unless item.exists?
         raise RecordNotFound, "can't find a #{self} with primary key ['#{hash}', #{range.inspect}]" 
