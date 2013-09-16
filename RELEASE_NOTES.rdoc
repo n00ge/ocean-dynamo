@@ -1,3 +1,7 @@
+== v0.3.12
+
+* Documentation updates.
+
 == v0.3.11
 
 * belongs_to operational. The other side, has_many, is much simpler and should follow
