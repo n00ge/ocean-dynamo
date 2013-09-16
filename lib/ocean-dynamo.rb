@@ -35,7 +35,7 @@ module OceanDynamo
 
     include Basal
 
-    extend Tables
+    include Tables
     extend Schema
 
     include Attributes
@@ -46,6 +46,12 @@ module OceanDynamo
     include BelongsTo
     include HasMany
 
+
+    def initialize(attrs={})
+      run_callbacks :initialize do
+        super
+      end
+    end
 
   end
 end

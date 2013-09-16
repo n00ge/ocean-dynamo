@@ -70,6 +70,18 @@ module OceanDynamo
     #
     # ---------------------------------------------------------
 
+    def initialize(attrs={})
+      @destroyed = false
+      @new_record = true
+      super
+    end
+
+
+    def dynamo_schema(*)
+      super
+    end
+
+
     def destroyed?
       @destroyed
     end

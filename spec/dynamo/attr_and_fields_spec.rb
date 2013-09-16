@@ -256,7 +256,7 @@ describe CloudModel do
   it "write_attribute should raise an exception if the attribute is unknown" do
     i = CloudModel.new
     expect { i.write_attribute :you_wish, 123 }.to raise_error(ActiveModel::MissingAttributeError, 
-                                                               "can't write unknown attribute `you_wish'")
+                                                               "can't write unknown attribute 'you_wish'")
   end
 
   it "_assign_attribute should call write_attribute" do
@@ -268,7 +268,7 @@ describe CloudModel do
   it "_assign_attribute should barf on unknown attributes" do
     i = CloudModel.create!
     expect { i.assign_attributes(outlandish: "indeed") }.to raise_error(OceanDynamo::UnknownAttributeError,
-                                                                        "unknown attribute: `outlandish'")
+                                                                        "unknown attribute: 'outlandish'")
   end
 
   it "implement the == operator for OceanDynamo instances" do

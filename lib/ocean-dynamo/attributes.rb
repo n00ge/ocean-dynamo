@@ -13,6 +13,31 @@ module OceanDynamo
     # ---------------------------------------------------------
 
     module ClassMethods
+
+      def dynamo_schema(table_hash_key=:id, 
+                        table_range_key=nil,
+                        locking: :lock_version,
+                        timestamps: [:created_at, :updated_at],
+                        **keywords,
+                        &block)
+        self.lock_attribute = locking
+        self.timestamp_attributes = timestamps
+        # Init
+        self.fields = HashWithIndifferentAccess.new
+        attribute(table_hash_key, :string, default: "")
+        if table_range_key
+          attribute(table_range_key, :string, default: "")
+          self.validates(table_range_key, presence: true)
+        end
+        timestamp_attributes.each { |name| attribute name, :datetime } if timestamp_attributes
+        attribute(lock_attribute, :integer, default: 0) if locking
+        block.call
+        # Define attribute accessors
+        fields.each { |name, md| define_attribute_accessors(name) }
+        # Return table name
+        super
+      end
+
     end
 
 
@@ -32,6 +57,19 @@ module OceanDynamo
     attr_reader :dynamo_item    # :nodoc:
 
 
+    def initialize(attrs={})
+      @attributes = Hash.new
+      fields.each do |name, md| 
+        write_attribute(name, evaluate_default(md[:default], md[:type]))
+      end
+      raise UnknownPrimaryKey unless table_hash_key
+      set_belongs_to_association(attrs)
+      # Barf on unknown attributes here?
+      attrs && attrs.delete_if { |k, v| !fields.has_key?(k) }
+      super(attrs)
+    end
+
+
     #
     # Returns the value of the hash key attribute
     #
@@ -49,23 +87,6 @@ module OceanDynamo
     end
 
 
-    def initialize(attrs={})
-      run_callbacks :initialize do
-        @attributes = Hash.new
-        fields.each do |name, md| 
-          write_attribute(name, evaluate_default(md[:default], md[:type]))
-        end
-        @dynamo_item = nil
-        @destroyed = false
-        @new_record = true
-        raise UnknownPrimaryKey unless table_hash_key
-      end
-      assign_associations(attrs)
-      attrs && attrs.delete_if { |k, v| !fields.has_key?(k) }
-      super(attrs)
-    end
-
-
     def [](attribute)
       read_attribute attribute
     end
@@ -77,7 +98,7 @@ module OceanDynamo
 
 
     def id
-     read_attribute(table_hash_key)
+      hash_key
     end
 
 
@@ -85,8 +106,9 @@ module OceanDynamo
       write_attribute(table_hash_key, value)
     end
 
+
     def id?
-      read_attribute(table_hash_key).present?
+      hash_key.present?
     end
 
 
@@ -101,7 +123,7 @@ module OceanDynamo
       if fields.has_key?(attr_name)
         @attributes[attr_name]
       else
-        raise ActiveModel::MissingAttributeError, "can't read unknown attribute `#{attr_ name}"
+        raise ActiveModel::MissingAttributeError, "can't read unknown attribute '#{attr_ name}"
       end
     end
 
@@ -112,7 +134,7 @@ module OceanDynamo
       if fields.has_key?(attr_name)
         @attributes[attr_name] = type_cast_attribute_for_write(attr_name, value)
       else
-        raise ActiveModel::MissingAttributeError, "can't write unknown attribute `#{attr_name}'"
+        raise ActiveModel::MissingAttributeError, "can't write unknown attribute '#{attr_name}'"
       end
     end
 
@@ -121,14 +143,14 @@ module OceanDynamo
       return nil unless persisted?
       key = respond_to?(:id) && id
       return nil unless key
-      table_range_key ? [key, read_attribute(table_range_key)] : [key]
+      table_range_key ? [key, range_key] : [key]
     end
 
 
     def assign_attributes(values, without_protection: false)
       return if values.blank?
       values = values.stringify_keys
-      assign_associations(values)
+      set_belongs_to_association(values)
       # if values.respond_to?(:permitted?)
       #   unless values.permitted?
       #     raise ActiveModel::ForbiddenAttributesError
@@ -180,7 +202,7 @@ module OceanDynamo
       if respond_to?("#{k}=")
         raise
       else
-        raise UnknownAttributeError, "unknown attribute: `#{k}'"
+        raise UnknownAttributeError, "unknown attribute: '#{k}'"
       end
     end
 

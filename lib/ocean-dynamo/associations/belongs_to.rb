@@ -116,6 +116,11 @@ module OceanDynamo
     #
     # ---------------------------------------------------------
 
+    def initialize(attrs={})
+      super
+    end
+
+
     protected
 
     #
@@ -124,7 +129,7 @@ module OceanDynamo
     # (such as master_id) to the value given. This is a hack, do away with
     # the double storage when association proxies are introduced.
     #
-    def assign_associations(attrs)  # :nodoc:
+    def set_belongs_to_association(attrs)  # :nodoc:
       parent_class = self.class.belongs_to_class
       return unless parent_class
       parent_class = parent_class.to_s.underscore.to_sym

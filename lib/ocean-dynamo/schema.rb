@@ -7,48 +7,8 @@ module OceanDynamo
     #
     # ---------------------------------------------------------
 
-    def dynamo_schema(table_hash_key=:id, 
-                      table_range_key=nil,
-                      table_name: compute_table_name,
-                      table_name_prefix: nil,
-                      table_name_suffix: nil,
-                      read_capacity_units: 10,
-                      write_capacity_units: 5,
-                      connect: :late,
-                      create: false,
-                      locking: :lock_version,
-                      timestamps: [:created_at, :updated_at],
-                      &block)
-      # Set class vars
-      self.dynamo_client = nil
-      self.dynamo_table = nil
-      self.dynamo_items = nil
-      self.table_connected = false
-      self.table_connect_policy = connect
-      self.table_create_policy = create
-      self.table_hash_key = table_hash_key
-      self.table_range_key = table_range_key
-      self.table_name = table_name
-      self.table_name_prefix = table_name_prefix
-      self.table_name_suffix = table_name_suffix
-      self.table_read_capacity_units = read_capacity_units
-      self.table_write_capacity_units = write_capacity_units
-      self.lock_attribute = locking
-      self.timestamp_attributes = timestamps
-      # Init
-      self.fields = HashWithIndifferentAccess.new
-      attribute(table_hash_key, :string, default: "")
-      if table_range_key
-        attribute(table_range_key, :string, default: "")
-        self.validates(table_range_key, presence: true)
-      end
-      timestamp_attributes.each { |name| attribute name, :datetime } if timestamp_attributes
-      attribute(lock_attribute, :integer, default: 0) if locking
-      block.call
-      # Define attribute accessors
-      fields.each { |name, md| define_attribute_accessors(name) }
-      # Connect to AWS
-      establish_db_connection if connect == true
+    def dynamo_schema(*)
+      super
       # Finally return the full table name
       table_full_name
     end
