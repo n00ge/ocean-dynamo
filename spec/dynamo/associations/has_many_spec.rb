@@ -18,6 +18,7 @@ end
 # The Child class
 class Child < OceanDynamo::Base
   dynamo_schema(:uuid, create: true) do
+    attribute :name
   end
   belongs_to :parent
 end
@@ -26,6 +27,7 @@ end
 # Another child class, Pet
 class Pet < OceanDynamo::Base
   dynamo_schema(:uuid, create: true) do
+    attribute :name
   end
   belongs_to :parent
 end
@@ -36,6 +38,13 @@ class SpaceCadet < OceanDynamo::Base; end;
 
 
 describe Parent do
+
+  before :all do
+    Parent.establish_db_connection
+    Child.establish_db_connection
+    Pet.establish_db_connection
+  end
+
 
   it "should be saveable" do
     Parent.create!
@@ -70,7 +79,7 @@ describe Parent do
 
   it "child class Child should have one extra attribute" do
     Child.new.attributes.should == {
-      "uuid"=>"", "parent_id"=>nil,
+      "uuid"=>"", "parent_id"=>nil, "name"=>"",
       "created_at"=>nil, "updated_at"=>nil, "lock_version"=>0 
     }
   end
@@ -90,7 +99,57 @@ describe Parent do
 
     it "should return an array for a persisted Parent" do
       p = Parent.create!
-      p.children.should == []
+      children = p.children
+      children.should be_an Array
+    end
+
+    it "should be instantiatable as instances" do
+      Child.create!(parent_id: Parent.create!)
+    end
+
+    it "should store and return an array for a persisted Parent" do
+      p = Parent.create!
+      c1 = Child.create! parent_id: p.id
+      c2 = Child.create! parent_id: p.id
+      c3 = Child.create! parent_id: p.id
+      children = p.children
+      children.should include c1
+      children.should include c2
+      children.should include c3
+    end
+
+  end
+
+
+  describe "#pets" do
+
+    it "should return nil for an unpersisted Parent" do
+      p = Parent.new
+      p.pets.should == nil
+    end
+
+    it "should return an array of Pets for a persisted Parent" do
+      p = Parent.create!
+      Pet.create! parent_id: p.id
+      pets = p.pets
+      pets.should be_an Array
+      pets.should_not == []
+      pets.first.should be_a Pet
+    end
+
+    it "should be instantiatable as instances" do
+      Pet.create!(parent_id: Parent.create!)
+    end
+
+    it "should return an array for a persisted Parent" do
+      p = Parent.create!
+      c1 = Pet.create! parent_id: p.id  # We build these by hand until
+      c2 = Pet.create! parent_id: p.id  # the association proxies are
+      c3 = Pet.create! parent_id: p.id  # in place
+      pets = p.pets                     # Cache them locally for faster tests
+      pets.should include c1
+      pets.should include c2
+      pets.should include c3
     end
 
   end

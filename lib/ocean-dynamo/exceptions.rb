@@ -23,7 +23,7 @@ module OceanDynamo
     def initialize(record) # :nodoc:
       @record = record
       errors = @record.errors.full_messages.join(", ")
-      super(:"#{@record.class}.errors.messages.record_invalid")
+      super(@record.errors.messages)
     end
   end
 
@@ -38,7 +38,7 @@ module OceanDynamo
     def initialize(record) # :nodoc:
       @record = record
       errors = @record.errors.full_messages.join(", ")
-      super(:"#{@record.class}.errors.messages.record_invalid")
+      super(@record.errors.messages)
     end
   end
  

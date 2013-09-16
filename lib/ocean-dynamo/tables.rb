@@ -49,7 +49,6 @@ module OceanDynamo
 
       if table_range_key
         range_key_type = fields[table_range_key][:type]
-        #range_key_type = :string if range_key_type == :reference
         dynamo_table.range_key = [table_range_key, range_key_type]
       end
     end
@@ -60,7 +59,6 @@ module OceanDynamo
       hash_key_type = :string if hash_key_type == :reference
 
       range_key_type = table_range_key && fields[table_range_key][:type]
-      #range_key_type = :string if range_key_type == :reference
 
       self.dynamo_table = dynamo_client.tables.create(table_full_name, 
         table_read_capacity_units, table_write_capacity_units,
