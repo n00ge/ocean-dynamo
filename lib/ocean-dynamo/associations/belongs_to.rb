@@ -26,7 +26,10 @@ module OceanDynamo
       # Define the parent id attribute 
       attribute target_attr_id, :reference, default: nil, target_class: target_class,
                                 association: :belongs_to
+      self.relations[target_class] = :belongs_to
 
+
+      # Define accessors for instances
       self.class_eval "def #{target_attr}
                          read_and_maybe_load_pointer('#{target_attr_id}')
                        end"

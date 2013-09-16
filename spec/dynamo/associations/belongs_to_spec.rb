@@ -21,22 +21,6 @@ end
 
 
 
-describe Master do
-  it "Master should be saveable" do
-    Master.create!
-  end
-
-  it "Master should not have a slave_id field" do
-    Master.fields.should_not include :slave_id
-  end
-
-  it "Master should not have a slave field" do
-    Master.fields.should_not include :slave
-  end
-end
-
-
-
 describe Slave do
 
   before :each do

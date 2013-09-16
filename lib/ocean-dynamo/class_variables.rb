@@ -49,5 +49,8 @@ module OceanDynamo
     class_attribute :timestamp_attributes, instance_writer: false
     self.timestamp_attributes = [:created_at, :updated_at]
 
+    class_attribute :relations, instance_writer: false
+    self.relations = nil
+
   end
 end

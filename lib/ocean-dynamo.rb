@@ -15,6 +15,7 @@ require "ocean-dynamo/persistence"
 require "ocean-dynamo/queries"
 
 require "ocean-dynamo/associations/belongs_to"
+require "ocean-dynamo/associations/has_many"
 
 
 module OceanDynamo

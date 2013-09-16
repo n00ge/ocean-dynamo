@@ -9,8 +9,9 @@ spec/dummy/.sass-cache
 # Ignore coverage artefacts
 /coverage
 
-# Ignore Tork config
+# Ignore Tork
 /.tork
+*.rb.log
 
 # Ignore yml config files in dummy app
 spec/dummy/config/config.yml
