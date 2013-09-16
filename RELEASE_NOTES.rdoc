@@ -1,3 +1,8 @@
+== v0.3.14
+
+* OceanDynamo::Table replaces OceanDynamo::Base. 
+* Modular structure introduced.
+
 == v0.3.13
 
 * Documentation updates.
