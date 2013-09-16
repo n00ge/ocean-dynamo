@@ -88,6 +88,20 @@ describe Parent do
   end
 
 
+  it "should be reachable from all its children" do
+    p = Parent.create!
+    c1 = Child.create! parent_id: p.id
+    c2 = Child.create! parent_id: p.id
+    c3 = Child.create! parent_id: p.id
+    c1.reload
+    c1.parent.should == p
+    c2.reload
+    c2.parent.should == p
+    c3.reload
+    c3.parent.should == p
+  end
+
+
   describe "#children" do
 
     it "should return nil for an unpersisted Parent" do
@@ -191,7 +205,12 @@ describe Parent do
 
         it "should store nil" do
           expect { @homer.pets = nil }.not_to raise_error
+          expect { @homer.pets = false }.not_to raise_error
+          expect { @homer.pets = "" }.not_to raise_error
+          expect { @homer.pets = " " }.not_to raise_error
         end
+
+        it "should persist the written data"
 
       end
 
