@@ -26,9 +26,9 @@ is of course based on ActiveModel.
 
 The attribute and persistence layer of OceanDynamo is modeled on that of ActiveRecord:
 there's +save+, +save!+, +create+, +update+, +update!+, +update_attributes+, +find_each+,
-and all the other methods you're used to. The design goal is always to implement as much 
-as possible of the ActiveRecord interface, without sacrificing scalability. This makes the 
-task of switching from SQL to no-SQL much easier.
++destroy_all+, +delete_all+ and all the other methods you're used to. The design goal 
+is always to implement as much of the ActiveRecord interface as possible, without 
+compromising scalability. This makes the task of switching from SQL to no-SQL much easier.
 
 Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
 To facilitate testing, future versions will keep track of and delete instances after tests.
