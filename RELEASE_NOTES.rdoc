@@ -1,3 +1,7 @@
+== v0.3.13
+
+* Documentation updates.
+
 == v0.3.12
 
 * Documentation updates.
