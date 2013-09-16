@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 # This is temporary
-class Parent < OceanDynamo::Base; end
-class Child < OceanDynamo::Base; end
-class Pet < OceanDynamo::Base; end
+class Parent < OceanDynamo::Table; end
+class Child < OceanDynamo::Table; end
+class Pet < OceanDynamo::Table; end
 
 
 # The parent class
-class Parent < OceanDynamo::Base
+class Parent < OceanDynamo::Table
   dynamo_schema(create: true) do
   end
   has_many :children
@@ -16,7 +16,7 @@ end
 
 
 # The Child class
-class Child < OceanDynamo::Base
+class Child < OceanDynamo::Table
   dynamo_schema(:uuid, create: true) do
   end
   belongs_to :parent
@@ -24,14 +24,14 @@ end
 
 
 # Another child class, Pet
-class Pet < OceanDynamo::Base
+class Pet < OceanDynamo::Table
   dynamo_schema(:uuid, create: true) do
   end
   belongs_to :parent
 end
 
 
-class SpaceCadet < OceanDynamo::Base; end;
+class SpaceCadet < OceanDynamo::Table; end;
 
 
 
@@ -185,7 +185,6 @@ describe Parent do
 
         @lois = Parent.create!
           @brian = Pet.create! parent_id: @lois
-
       end
 
 
@@ -210,7 +209,11 @@ describe Parent do
           expect { @homer.pets = " " }.not_to raise_error
         end
 
-        it "should persist the written data"
+        it "should persist the written data" do
+          @peter.children = []
+          @peter.reload
+          @peter.children.length.should == 0
+        end
 
       end
 

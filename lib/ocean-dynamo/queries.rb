@@ -1,10 +1,10 @@
 module OceanDynamo
-  class Base
+  module Queries
 
-    def self.find(hash, range=nil, consistent: false)
+    def find(hash, range=nil, consistent: false)
       return hash.collect {|elem| find elem, range, consistent: consistent } if hash.is_a?(Array)
       _late_connect?
-      hash = hash.id if hash.kind_of?(Base)    # TODO: We have (innocuous) leakage, fix!
+      hash = hash.id if hash.kind_of?(Table)    # TODO: We have (innocuous) leakage, fix!
       item = dynamo_items[hash, range]
       unless item.exists?
         raise RecordNotFound, "can't find a #{self} with primary key ['#{hash}', #{range.inspect}]" 
@@ -13,14 +13,14 @@ module OceanDynamo
     end
 
 
-    def self.find_by_key(*args)
+    def find_by_key(*args)
       find(*args)
     rescue RecordNotFound
       nil
     end
 
 
-    def self.find_by_id(*args)
+    def find_by_id(*args)
       find_by_key(*args)
     end
 
@@ -28,7 +28,7 @@ module OceanDynamo
     #
     # The number of records in the table.
     #
-    def self.count(**options)
+    def count(**options)
       _late_connect?
       dynamo_items.count(options)
     end
@@ -37,7 +37,7 @@ module OceanDynamo
     #
     # Returns all records in the table.
     #
-    def self.all(**options)
+    def all(**options)
       _late_connect?
       result = []
       dynamo_items.select(options) do |item_data| 
@@ -54,7 +54,7 @@ module OceanDynamo
     # In that case, batch processing methods allow you to work with the records in batches, 
     # thereby greatly reducing memory consumption.
     #
-    def self.find_each(limit: nil, batch_size: 1000)
+    def find_each(limit: nil, batch_size: 1000)
       dynamo_items.select(limit: limit, batch_size: 1000) do |item_data|
         yield new._setup_from_dynamo(item_data)
       end
@@ -71,7 +71,7 @@ module OceanDynamo
     # #
     # # It’s not possible to set the order.
     # #
-    # def self.find_in_batches(start: nil, batch_size: 1000)
+    # def find_in_batches(start: nil, batch_size: 1000)
     #   []
     # end
   end

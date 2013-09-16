@@ -15,7 +15,7 @@ module OceanDynamo
     #
     # For example, given
     #
-    #   class Blog < OceanDynamo::Base
+    #   class Blog < OceanDynamo::Table
     #     has_many :posts
     #   end
     #
@@ -66,7 +66,7 @@ module OceanDynamo
       #
       # *First:* Specify a subset of fields to be selected from the result set.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -121,10 +121,10 @@ module OceanDynamo
       end
 
       # Finds an object in the collection responding to the +id+. Uses the same
-      # rules as <tt>OceanDynamo::Base.find</tt>. Returns <tt>OceanDynamo::RecordNotFound</tt>
+      # rules as <tt>OceanDynamo::Table.find</tt>. Returns <tt>OceanDynamo::RecordNotFound</tt>
       # error if the object can not be found.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -154,7 +154,7 @@ module OceanDynamo
       # If the collection is empty, the first form returns +nil+, and the second
       # form returns an empty array.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -184,7 +184,7 @@ module OceanDynamo
       # If the collection is empty, the first form returns +nil+, and the second
       # form returns an empty array.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -215,7 +215,7 @@ module OceanDynamo
       # You can pass an array of attributes hashes, this will return an array
       # with the new objects.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -243,7 +243,7 @@ module OceanDynamo
       # attributes, linked to this object and that has already been saved (if it
       # passes the validations).
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -271,7 +271,7 @@ module OceanDynamo
 
       # Like +create+, except that if the record is invalid, raises an exception.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -290,7 +290,7 @@ module OceanDynamo
       # inserts each record, +push+ and +concat+ behave identically. Returns +self+
       # so method calls may be chained.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     pets :has_many
       #   end
       #
@@ -316,7 +316,7 @@ module OceanDynamo
       # Replaces this collection with +other_array+. This will perform a diff
       # and delete/add only records that have changed.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -348,7 +348,7 @@ module OceanDynamo
       # sets the foreign keys to <tt>NULL</tt>. For, +has_many+ <tt>:through</tt>,
       # the default strategy is +delete_all+.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets # dependent: :nullify option by default
       #   end
       #
@@ -381,7 +381,7 @@ module OceanDynamo
       # are removed by calling their +destroy+ method. See +destroy+ for more
       # information.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets, dependent: :destroy
       #   end
       #
@@ -406,7 +406,7 @@ module OceanDynamo
       # If it is set to <tt>:delete_all</tt>, all the objects are deleted
       # *without* calling their +destroy+ method.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets, dependent: :delete_all
       #   end
       #
@@ -435,7 +435,7 @@ module OceanDynamo
       # This will _always_ remove the records ignoring the +:dependent+
       # option.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -467,7 +467,7 @@ module OceanDynamo
       # keys to <tt>NULL</tt>. For, +has_many+ <tt>:through</tt>, the default
       # strategy is +delete_all+.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets # dependent: :nullify option by default
       #   end
       #
@@ -495,7 +495,7 @@ module OceanDynamo
       # If it is set to <tt>:destroy</tt> all the +records+ are removed by calling
       # their +destroy+ method. See +destroy+ for more information.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets, dependent: :destroy
       #   end
       #
@@ -523,7 +523,7 @@ module OceanDynamo
       # If it is set to <tt>:delete_all</tt>, all the +records+ are deleted
       # *without* calling their +destroy+ method.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets, dependent: :delete_all
       #   end
       #
@@ -551,7 +551,7 @@ module OceanDynamo
       # You can pass +Fixnum+ or +String+ values, it finds the records
       # responding to the +id+ and executes delete on them.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -579,7 +579,7 @@ module OceanDynamo
       # This method will _always_ remove record from the database ignoring
       # the +:dependent+ option. Returns an array with the removed records.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -649,7 +649,7 @@ module OceanDynamo
 
       # Specifies whether the records should be unique or not.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -668,7 +668,7 @@ module OceanDynamo
 
       # Count all records using SQL.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -690,7 +690,7 @@ module OceanDynamo
       # equivalent. If not and you are going to need the records anyway
       # +length+ will take one less query. Otherwise +size+ is more efficient.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -716,7 +716,7 @@ module OceanDynamo
       # equivalent. If not and you are going to need the records anyway this
       # method will take one less query. Otherwise +size+ is more efficient.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -742,7 +742,7 @@ module OceanDynamo
       # not already been loaded and you are going to fetch the records anyway it
       # is better to check <tt>collection.length.zero?</tt>.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -759,7 +759,7 @@ module OceanDynamo
 
       # Returns +true+ if the collection is not empty.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -793,7 +793,7 @@ module OceanDynamo
       # Returns true if the collection has more than one record.
       # Equivalent to <tt>collection.size > 1</tt>.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -830,7 +830,7 @@ module OceanDynamo
 
       # Returns +true+ if the given object is present in the collection.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -869,7 +869,7 @@ module OceanDynamo
       # to the corresponding element in the other array, otherwise returns
       # +false+.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -895,7 +895,7 @@ module OceanDynamo
       # Returns a new array of objects from the collection. If the collection
       # hasn't been loaded, it fetches the records from the database.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -934,7 +934,7 @@ module OceanDynamo
       # to the association's primary key. Returns +self+, so several appends may be
       # chained together.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #
@@ -971,7 +971,7 @@ module OceanDynamo
       # Reloads the collection from the database. Returns +self+.
       # Equivalent to <tt>collection(true)</tt>.
       #
-      #   class Person < OceanDynamo::Base
+      #   class Person < OceanDynamo::Table
       #     has_many :pets
       #   end
       #

@@ -4,20 +4,48 @@ require "aws-sdk"
 require "active_model"
 require "active_support"
 
-require "ocean-dynamo/base"
+require "ocean-dynamo/basal"
 require "ocean-dynamo/exceptions"
 require "ocean-dynamo/class_variables"
 require "ocean-dynamo/tables"
 require "ocean-dynamo/schema"
 require "ocean-dynamo/attributes"
-require "ocean-dynamo/callbacks"
 require "ocean-dynamo/persistence"
 require "ocean-dynamo/queries"
 
+require "ocean-dynamo/associations/associations"
 require "ocean-dynamo/associations/belongs_to"
 require "ocean-dynamo/associations/has_many"
 
 
 module OceanDynamo
+  class Table
 
+    include ActiveModel::Model
+
+    include Basal
+    include Attributes
+
+    extend Tables         # Extend since everything is class methods
+    extend Schema         # Same thing
+
+    include Persistence
+    extend Queries
+
+    include Associations
+    include BelongsTo
+    include HasMany
+
+
+    include ActiveModel::Validations::Callbacks
+
+    define_model_callbacks :initialize, only: :after
+    define_model_callbacks :save
+    define_model_callbacks :create
+    define_model_callbacks :update
+    define_model_callbacks :destroy
+    define_model_callbacks :commit, only: :after
+    define_model_callbacks :touch
+
+  end
 end

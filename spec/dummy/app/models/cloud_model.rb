@@ -1,4 +1,4 @@
-class CloudModel < OceanDynamo::Base
+class CloudModel < OceanDynamo::Table
 
 dynamo_schema(:uuid, create: true) do
     attribute :credentials,          :string,      default: "blah"

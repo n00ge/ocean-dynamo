@@ -1,5 +1,13 @@
 module OceanDynamo
-  class Base
+  module Attributes
+
+    def self.included(base)
+      base.extend(ClassMethods)
+    end
+  
+
+    module ClassMethods
+    end
 
     #
     # The hash of attributes and their values. Keys are strings.

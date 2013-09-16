@@ -1,5 +1,10 @@
 module OceanDynamo
-  class Base
+  module Persistence
+
+    def self.included(base)
+      base.extend(ClassMethods)
+    end
+  
 
     # ---------------------------------------------------------
     #
@@ -7,44 +12,55 @@ module OceanDynamo
     #
     # ---------------------------------------------------------
 
+    module ClassMethods
 
-    def self.create(attributes = nil, &block)
-      object = new(attributes)
-      yield(object) if block_given?
-      object.save
-      object
-    end
-
-
-    def self.create!(attributes = nil, &block)
-      object = new(attributes)
-      yield(object) if block_given?
-      object.save!
-      object
-    end
+      def create(attributes = nil, &block)
+        object = new(attributes)
+        yield(object) if block_given?
+        object.save
+        object
+      end
 
 
-    def self.delete(hash, range=nil)
-      item = dynamo_items[hash, range]
-      return false unless item.exists?
-      item.delete
-      true
-    end
+      def create!(attributes = nil, &block)
+        object = new(attributes)
+        yield(object) if block_given?
+        object.save!
+        object
+      end
 
 
-    def self.delete_all
-      dynamo_items.each() do |item|
+      def delete(hash, range=nil)
+        item = dynamo_items[hash, range]
+        return false unless item.exists?
         item.delete
+        true
       end
-      nil
-    end
 
 
-    def self.destroy_all
-      dynamo_items.select() do |item_data|
-        new._setup_from_dynamo(item_data).destroy
+      def delete_all
+        dynamo_items.each() do |item|
+          item.delete
+        end
+        nil
       end
-      nil
+
+
+      def destroy_all
+        dynamo_items.select() do |item_data|
+          new._setup_from_dynamo(item_data).destroy
+        end
+        nil
+      end
+
+
+      def _late_connect? # :nodoc:
+        return false if table_connected
+        return false unless table_connect_policy
+        establish_db_connection
+        true
+      end
+
     end
 
 
@@ -240,14 +256,6 @@ module OceanDynamo
 
 
     protected
-
-    def self._late_connect? # :nodoc:
-      return false if table_connected
-      return false unless table_connect_policy
-      establish_db_connection
-      true
-    end
-
 
     def _late_connect? # :nodoc:
       self.class._late_connect?

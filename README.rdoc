@@ -34,7 +34,7 @@ which means it will scale without limits.
 
 The following example shows the basic syntax for declaring a DynamoDB-based schema. 
 
-  class AsyncJob < OceanDynamo::Base
+  class AsyncJob < OceanDynamo::Table
 
     dynamo_schema(:uuid) do
       attribute :credentials,          :string
@@ -97,7 +97,7 @@ value will return the empty string, <tt>""</tt>.
 
 The following example shows how to set up a +belongs_to+ relation:
 
- class Parent < OceanDynamo::Base
+ class Parent < OceanDynamo::Table
    dynamo_schema do
      attribute :this
      attribute :that
@@ -107,7 +107,7 @@ The following example shows how to set up a +belongs_to+ relation:
  end
 
 
- class Child < OceanDynamo::Base
+ class Child < OceanDynamo::Table
    dynamo_schema(:uuid) do
      attribute :foo
      attribute :bar

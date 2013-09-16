@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-class VaVaVoom < OceanDynamo::Base
+class VaVaVoom < OceanDynamo::Table
 
   dynamo_schema(:hash, :range, create: true) do
     attribute :contents

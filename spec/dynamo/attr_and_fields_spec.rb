@@ -292,7 +292,7 @@ describe CloudModel do
 
   it "should raise a DangerousAttributeError when an attribute name exists in the namespace" do
     expect {
-      class Pericoloso < OceanDynamo::Base
+      class Pericoloso < OceanDynamo::Table
         dynamo_schema(connect: false, create: false) do
           attribute :new
         end
@@ -300,7 +300,7 @@ describe CloudModel do
     }.to raise_error(OceanDynamo::DangerousAttributeError,
                      "new is defined by OceanDynamo")
     expect {
-      class Pericoloso < OceanDynamo::Base
+      class Pericoloso < OceanDynamo::Table
         dynamo_schema(connect: false, create: false) do
           attribute :belongs_to
         end

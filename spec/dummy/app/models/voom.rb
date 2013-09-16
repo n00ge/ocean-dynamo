@@ -1,4 +1,4 @@
-class Voom < OceanDynamo::Base
+class Voom < OceanDynamo::Table
 
   dynamo_schema(create: true,
                 timestamps: [:made_at, :changed_at]) do

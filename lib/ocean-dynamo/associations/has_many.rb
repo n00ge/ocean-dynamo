@@ -1,22 +1,38 @@
 module OceanDynamo
-  class Base
+  module HasMany
 
-    def self.has_many(children)                                    # :children
-      children_attr = children.to_s.underscore                     # "children"
-      child_class = children_attr.singularize.camelize.constantize # Child
-      self.relations[child_class] = :has_many
-      # Define accessors for instances
-      self.class_eval "def #{children_attr}; read_children(#{child_class}); end"
-      self.class_eval "def #{children_attr}=(value); write_children(#{child_class}, value); end"
-      # TODO: "?" method
+    def self.included(base)
+      base.extend(ClassMethods)
+    end
+  
+    module ClassMethods
+
+      #
+      #
+      #
+      def has_many(children)                                         # :children
+        children_attr = children.to_s.underscore                     # "children"
+        child_class = children_attr.singularize.camelize.constantize # Child
+        self.relations[child_class] = :has_many
+        # Define accessors for instances
+        self.class_eval "def #{children_attr}; read_children(#{child_class}); end"
+        self.class_eval "def #{children_attr}=(value); write_children(#{child_class}, value); end"
+        # TODO: "?" method
+      end
+
+      #
+      #
+      #
+      def relates_to(klass)
+        relations[klass]
+      end
     end
 
 
-    def self.relates_to(klass)
-      relations[klass]
-    end
 
-
+    #
+    #
+    #
     def read_children(child_class)
       if new_record? 
         nil
@@ -31,11 +47,15 @@ module OceanDynamo
       end
     end
 
-
+    #
+    #
+    #
     def write_children(child_class, value)
       return nil if value.blank?
       raise AssociationTypeMismatch, "not an array or nil" if !value.is_a?(Array)
       raise AssociationTypeMismatch, "an array element is not a #{child_class}" unless value.all? { |m| m.is_a?(child_class) }
+      # We now know that value is an array containing only members of the child_class
+      value.each(&:save!)
       value
     end
 

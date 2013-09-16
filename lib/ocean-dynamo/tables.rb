@@ -1,7 +1,13 @@
 module OceanDynamo
-  class Base
+  module Tables
 
-    def self.establish_db_connection
+    # ---------------------------------------------------------
+    #
+    #  Class methods
+    #
+    # ---------------------------------------------------------
+
+    def establish_db_connection
       setup_dynamo  
       if dynamo_table.exists?
         wait_until_table_is_active
@@ -14,7 +20,7 @@ module OceanDynamo
     end
 
 
-    def self.setup_dynamo
+    def setup_dynamo
       #self.dynamo_client = AWS::DynamoDB::Client.new(:api_version => '2012-08-10') 
       self.dynamo_client ||= AWS::DynamoDB.new
       self.dynamo_table = dynamo_client.tables[table_full_name]
@@ -22,7 +28,7 @@ module OceanDynamo
     end
 
 
-    def self.wait_until_table_is_active
+    def wait_until_table_is_active
       loop do
         case dynamo_table.status
         when :active
@@ -42,7 +48,7 @@ module OceanDynamo
     end
 
 
-    def self.set_dynamo_table_keys
+    def set_dynamo_table_keys
       hash_key_type = fields[table_hash_key][:type]
       hash_key_type = :string if hash_key_type == :reference
       dynamo_table.hash_key = [table_hash_key, hash_key_type]
@@ -54,7 +60,7 @@ module OceanDynamo
     end
 
 
-    def self.create_table
+    def create_table
       hash_key_type = fields[table_hash_key][:type]
       hash_key_type = :string if hash_key_type == :reference
 
@@ -71,7 +77,7 @@ module OceanDynamo
     end
 
 
-    def self.delete_table
+    def delete_table
       return false unless dynamo_table.exists? && dynamo_table.status == :active
       dynamo_table.delete
       true

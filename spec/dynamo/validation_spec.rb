@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-class Bang < OceanDynamo::Base
+class Bang < OceanDynamo::Table
 
   dynamo_schema(:uuid, create: true) do
     attribute :v,    :float,  default: 1.0

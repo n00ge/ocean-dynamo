@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 
-class Master < OceanDynamo::Base
+class Master < OceanDynamo::Table
   dynamo_schema(create: true) do
     attribute :name
   end
 end
 
 
-class Slave < OceanDynamo::Base
+class Slave < OceanDynamo::Table
   dynamo_schema(:uuid, create: true) do
     attribute :name
   end
@@ -16,7 +16,7 @@ class Slave < OceanDynamo::Base
 end
 
 
-class Other < OceanDynamo::Base
+class Other < OceanDynamo::Table
 end
 
 

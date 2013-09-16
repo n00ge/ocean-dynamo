@@ -1,19 +1,24 @@
 module OceanDynamo
-  class Base
+  module Schema
 
+    # ---------------------------------------------------------
+    #
+    #  Class methods
+    #
+    # ---------------------------------------------------------
 
-    def self.dynamo_schema(table_hash_key=:id, 
-                           table_range_key=nil,
-                           table_name: compute_table_name,
-                           table_name_prefix: nil,
-                           table_name_suffix: nil,
-                           read_capacity_units: 10,
-                           write_capacity_units: 5,
-                           connect: :late,
-                           create: false,
-                           locking: :lock_version,
-                           timestamps: [:created_at, :updated_at],
-                           &block)
+    def dynamo_schema(table_hash_key=:id, 
+                      table_range_key=nil,
+                      table_name: compute_table_name,
+                      table_name_prefix: nil,
+                      table_name_suffix: nil,
+                      read_capacity_units: 10,
+                      write_capacity_units: 5,
+                      connect: :late,
+                      create: false,
+                      locking: :lock_version,
+                      timestamps: [:created_at, :updated_at],
+                      &block)
       # Set class vars
       self.dynamo_client = nil
       self.dynamo_table = nil
@@ -50,7 +55,7 @@ module OceanDynamo
     end
 
 
-    def self.define_attribute_accessors(name)
+    def define_attribute_accessors(name)
       name = name.to_s
       self.class_eval "def #{name}; read_attribute('#{name}'); end"
       self.class_eval "def #{name}=(value); write_attribute('#{name}', value); end"
@@ -58,17 +63,17 @@ module OceanDynamo
     end
 
 
-    def self.compute_table_name
+    def compute_table_name
       name.pluralize.underscore
     end
 
 
-    def self.table_full_name
+    def table_full_name
       "#{table_name_prefix}#{table_name}#{table_name_suffix}"
     end
 
 
-    def self.attribute(name, type=:string, default: nil, **extra)
+    def attribute(name, type=:string, default: nil, **extra)
       raise DangerousAttributeError, "#{name} is defined by OceanDynamo" if self.dangerous_attributes.include?(name.to_s)
       attr_accessor name
       fields[name.to_s] = {type: type, default: default}.merge(extra)
@@ -77,7 +82,7 @@ module OceanDynamo
 
     protected
 
-    def self.dangerous_attributes # :nodoc:
+    def dangerous_attributes # :nodoc:
       self.public_methods(false).collect do |sym|
         str = sym.to_s
         if str.end_with?("?", "=")

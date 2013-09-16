@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-class Quux < OceanDynamo::Base
+class Quux < OceanDynamo::Table
   dynamo_schema(:index, :foo) do
     attribute :index,     :string,  default: "unlikely"
     attribute :foo,       :string
@@ -12,7 +12,7 @@ class Quux < OceanDynamo::Base
 end
 
 
-class Blahonga < OceanDynamo::Base
+class Blahonga < OceanDynamo::Table
   dynamo_schema(:uuid, table_name: "caramba",
                        table_name_prefix: "pre_",
                        table_name_suffix: "_post",
@@ -28,14 +28,14 @@ class Blahonga < OceanDynamo::Base
 end
 
 
-class Zulu < OceanDynamo::Base
+class Zulu < OceanDynamo::Table
   dynamo_schema(locking: nil, connect: false) do
     attribute :minimal
   end
 end
 
 
-class Idi < OceanDynamo::Base
+class Idi < OceanDynamo::Table
   dynamo_schema(create: true) do
     attribute :unused
   end

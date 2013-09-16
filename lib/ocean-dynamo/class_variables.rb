@@ -1,5 +1,5 @@
 module OceanDynamo
-  class Base
+  class Table
 
     class_attribute :dynamo_client, instance_writer: false
     self.dynamo_client = nil
