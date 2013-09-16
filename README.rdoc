@@ -152,24 +152,13 @@ reduced complexity.
 
 === Current State
 
-At the moment, OceanDynamo is fully usable as an ActiveModel and can be used by Rails
-controllers. Furthermore, OceanDynamo implements much of the infrastructure of ActiveRecord;
+OceanDynamo is fully usable as an ActiveModel and can be used by Rails
+controllers. OceanDynamo implements much of the infrastructure of ActiveRecord;
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 parameters.
 
-+Model.all+ and +.count+ work as expected. +Model.find_each+ is also available.
-
 +belongs_to+ is now operational. The other side, +has_many+, is much simpler and should 
 follow very soon (probably today). 
-
-+.has_belongs_to?+ returns true if the class has a belongs_to association.
-
-+.belongs_to_class+ returns the class of the belongs_to association, or false if none.
-
-+.find+ can now take an array arg.
-
-+#hash_key+ and +#range_key+ readers added.
-
 
 === Future milestones
 
