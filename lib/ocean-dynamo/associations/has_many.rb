@@ -7,7 +7,7 @@ module OceanDynamo
       self.relations[child_class] = :has_many
       # Define accessors for instances
       self.class_eval "def #{children_attr}; read_children(#{child_class}); end"
-      self.class_eval "def #{children_attr}=(value); write_children('#{children_attr}', value); end"
+      self.class_eval "def #{children_attr}=(value); write_children(#{child_class}, value); end"
       # TODO: "?" method
     end
 
@@ -32,8 +32,11 @@ module OceanDynamo
     end
 
 
-    def write_children(children_attr, children_value)
-      children_value
+    def write_children(child_class, value)
+      return nil if value.blank?
+      raise AssociationTypeMismatch, "not an array or nil" if !value.is_a?(Array)
+      raise AssociationTypeMismatch, "an array element is not a #{child_class}" unless value.all? { |m| m.is_a?(child_class) }
+      value
     end
 
   end

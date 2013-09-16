@@ -60,4 +60,7 @@ module OceanDynamo
     class RangeKeyMustNotBeSpecified < BelongsToError; end
     class HashKeyMayNotBeNamedId < BelongsToError; end
 
+  class HasManyError < DynamoError; end
+  
+
 end

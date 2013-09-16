@@ -18,7 +18,6 @@ end
 # The Child class
 class Child < OceanDynamo::Base
   dynamo_schema(:uuid, create: true) do
-    attribute :name
   end
   belongs_to :parent
 end
@@ -27,7 +26,6 @@ end
 # Another child class, Pet
 class Pet < OceanDynamo::Base
   dynamo_schema(:uuid, create: true) do
-    attribute :name
   end
   belongs_to :parent
 end
@@ -79,7 +77,7 @@ describe Parent do
 
   it "child class Child should have one extra attribute" do
     Child.new.attributes.should == {
-      "uuid"=>"", "parent_id"=>nil, "name"=>"",
+      "uuid"=>"", "parent_id"=>nil,
       "created_at"=>nil, "updated_at"=>nil, "lock_version"=>0 
     }
   end
@@ -117,7 +115,6 @@ describe Parent do
       children.should include c2
       children.should include c3
     end
-
   end
 
 
@@ -151,6 +148,91 @@ describe Parent do
       pets.should include c2
       pets.should include c3
     end
+  end
+
+
+  describe "associations:" do
+
+      before :each do
+        Parent.delete_all
+        Child.delete_all
+        Pet.delete_all
+        @homer = Parent.create!
+          @bart = Child.create parent_id: @homer.id
+          @lisa = Child.create parent_id: @homer.id
+          @maggie = Child.create parent_id: @homer.id
+
+        @marge = Parent.create!
+
+        @peter = Parent.create!
+          @meg = Child.create! parent_id: @peter.id
+          @chris = Child.create! parent_id: @peter.id
+          @stewie = Child.create parent_id: @peter.id
+
+        @lois = Parent.create!
+          @brian = Pet.create! parent_id: @lois
+
+      end
+
+
+      describe "writing: " do
+
+        it "should not store arrays containing objects of incompatible type" do
+          expect { @homer.pets = [@maggie] }.
+            to raise_error(OceanDynamo::AssociationTypeMismatch, "an array element is not a Pet")
+        end
+
+        it "should not store non-arrays" do
+          expect { @homer.pets = @maggie }.
+            to raise_error(OceanDynamo::AssociationTypeMismatch, "not an array or nil")
+          expect { @homer.pets = "lalala" }.
+            to raise_error(OceanDynamo::AssociationTypeMismatch, "not an array or nil")
+        end
+
+        it "should store nil" do
+          expect { @homer.pets = nil }.not_to raise_error
+        end
+
+      end
+
+
+      describe "reading:" do
+
+        it "Homer should have three children" do
+          @homer.children.length.should == 3
+        end
+
+        it "Homer should have no pets" do
+          @homer.pets.length.should == 0
+        end
+
+
+        it "Marge should have no children" do
+          @marge.children.length.should == 0
+        end
+
+        it "Marge should have no pets" do
+          @marge.pets.length.should == 0
+        end
+
+
+        it "Peter should have three children" do
+          @peter.children.length.should == 3
+        end
+
+        it "Peter should have no pets" do
+          @peter.pets.length.should == 0
+        end
+
+
+        it "Lois should have no children" do
+          @lois.children.length.should == 0
+        end
+
+        it "Lois should have one pet" do
+          @lois.pets.length.should == 1
+        end
+      end
 
   end
 
