@@ -106,25 +106,12 @@ The following example shows how to set up a belongs_to relation:
    belongs_to :parent
  end
 
-The +belongs_to+ declaration must follow after the +dynamo_schema+ attribute block.
-
-
-=== Current State
-
-At the moment, OceanDynamo is fully usable as an ActiveModel and can be used by Rails
-controllers. Furthermore, OceanDynamo implements much of the infrastructure of ActiveRecord;
-for instance, +read_attribute+, +write_attribute+, and much of the control logic and
-parameters.
-
-+Model.all+ and +.count+ work as expected. +Model.find_each+ is also available.
-
-+belongs_to+ is now operational. The other side, +has_many+, is much simpler and should 
-follow very soon (probably today). 
 
 Restrictions for +belongs_to+ tables: 
 * The hash key must be specified and must not be +:id+. 
 * The range key must not be specified at all.
 * +belongs_to+ can be specified only once in each class.
+* +belongs_to+ must be placed after the +dynamo_schema+ attribute block.
 
 These restrictions allow OceanDynamo to implement the +has_many+ / +belongs_to+ 
 relation in a very efficient and massively scalable way. 
@@ -149,9 +136,22 @@ which means that secondary indices won't be necessary for the vast majority of
 OceanDynamo use cases. This ultimately means reduced operational costs, as well as
 reduced complexity.
 
+
+=== Current State
+
+At the moment, OceanDynamo is fully usable as an ActiveModel and can be used by Rails
+controllers. Furthermore, OceanDynamo implements much of the infrastructure of ActiveRecord;
+for instance, +read_attribute+, +write_attribute+, and much of the control logic and
+parameters.
+
++Model.all+ and +.count+ work as expected. +Model.find_each+ is also available.
+
++belongs_to+ is now operational. The other side, +has_many+, is much simpler and should 
+follow very soon (probably today). 
+
 +.has_belongs_to?+ returns true if the class has a belongs_to association.
 
-+.belongs_to_class returns the class of the belongs_to association, or false if none.
++.belongs_to_class+ returns the class of the belongs_to association, or false if none.
 
 +.find+ can now take an array arg.
 
@@ -160,13 +160,13 @@ reduced complexity.
 
 === Future milestones
 
-After the +has_many+ / +belongs_to+ association, the +has_and_belongs_to_many+ assocation
-will be implemented. 
+* After the +has_many+ / +belongs_to+ association, the +has_and_belongs_to_many+ assocation
+  will be implemented. 
 
-A generator to install the <tt>config/aws.yml</tt> file.
+* A generator to install the <tt>config/aws.yml</tt> file.
 
-OceanDynamo will use association proxies to achieve the same kind of
-interface as ActiveRecord, e.g.: <code>blog_entry.comments.build(body: "Cool!").save!</code>
+* OceanDynamo will use association proxies to achieve the same kind of
+  interface as ActiveRecord, e.g.: <code>blog_entry.comments.build(body: "Cool!").save!</code>
 
 
 === Current use
