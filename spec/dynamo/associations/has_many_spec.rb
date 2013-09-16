@@ -90,9 +90,9 @@ describe Parent do
 
   it "should be reachable from all its children" do
     p = Parent.create!
-    c1 = Child.create! parent_id: p.id
-    c2 = Child.create! parent_id: p.id
-    c3 = Child.create! parent_id: p.id
+    c1 = Child.create! parent: p
+    c2 = Child.create! parent: p
+    c3 = Child.create! parent: p
     c1.reload
     c1.parent.should == p
     c2.reload
@@ -116,7 +116,7 @@ describe Parent do
     end
 
     it "should be instantiatable as instances" do
-      Child.create!(parent_id: Parent.create!)
+      Child.create!(parent: Parent.create!)
     end
 
     it "should store and return an array for a persisted Parent" do
@@ -141,7 +141,7 @@ describe Parent do
 
     it "should return an array of Pets for a persisted Parent" do
       p = Parent.create!
-      Pet.create! parent_id: p.id
+      Pet.create! parent: p
       pets = p.pets
       pets.should be_an Array
       pets.should_not == []
@@ -172,7 +172,7 @@ describe Parent do
         Child.delete_all
         Pet.delete_all
         @homer = Parent.create!
-          @bart = Child.create parent_id: @homer.id
+          @bart = Child.create parent: @homer
           @lisa = Child.create parent_id: @homer.id
           @maggie = Child.create parent_id: @homer.id
 
@@ -180,8 +180,8 @@ describe Parent do
 
         @peter = Parent.create!
           @meg = Child.create! parent_id: @peter.id
-          @chris = Child.create! parent_id: @peter.id
-          @stewie = Child.create parent_id: @peter.id
+          @chris = Child.create! parent: @peter
+          @stewie = Child.create parent: @peter
 
         @lois = Parent.create!
           @brian = Pet.create! parent_id: @lois

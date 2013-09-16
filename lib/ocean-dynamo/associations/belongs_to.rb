@@ -121,12 +121,16 @@ module OceanDynamo
     #
     # This is run by #initialize and by #assign_attributes to set the
     # association variables (@master, for instance) and its associated attribute
-    # (such as master_id) to the value given.
+    # (such as master_id) to the value given. This is a hack, do away with
+    # the double storage when association proxies are introduced.
     #
-    def assign_associations(attrs)  # :nodoc: 
-      if attrs && attrs.include?(:master)
-        @master = attrs[:master]
-        write_attribute('master_id', @master)
+    def assign_associations(attrs)  # :nodoc:
+      parent_class = self.class.belongs_to_class
+      return unless parent_class
+      parent_class = parent_class.to_s.underscore.to_sym
+      if attrs && attrs.include?(parent_class)
+        instance_variable_set("@#{parent_class}", attrs[parent_class])
+        write_attribute("#{parent_class}_id", attrs[parent_class])
       end
     end
 
