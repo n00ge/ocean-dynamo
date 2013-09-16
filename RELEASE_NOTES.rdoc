@@ -6,8 +6,10 @@
 
 * belongs_to operational. The other side, has_many, is much simpler and should follow
   very soon. Probably today.
-* .find_each added.
-* .delete_all and .destroy_all added.
+* .all implemented.
+* .find_each implemented.
+* .delete_all implemented.
+* .destroy_all added.
 * .has_belongs_to? returns true if the class has a belongs_to association.
 * .belongs_to_class returns the class of the belongs_to association, or false if none.
 * .find can now take an array arg.
