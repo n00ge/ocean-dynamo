@@ -25,7 +25,7 @@ task of switching from SQL to no-SQL much easier.
 Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
 To facilitate testing, future versions will keep track of and delete instances after tests.
 
-OceanDynamo uses primary and secondary indices to retrieve related table items, 
+OceanDynamo uses primary indices to retrieve related table items, 
 which means it will scale without limits.
 
 === Example
@@ -85,6 +85,29 @@ Also, dynamo_schema takes args and many options. Here's the full syntax:
    ...
  end
 
+The following example shows how to set up a belongs_to relation:
+
+ class Parent < OceanDynamo::Base
+   dynamo_schema do
+     attribute :this
+     attribute :that
+     attribute :the_other
+   end
+   #has_many :children       -- coming soon
+ end
+
+
+ class Child < OceanDynamo::Base
+   dynamo_schema(:uuid) do
+     attribute :foo
+     attribute :bar
+     attribute :baz
+   end
+   belongs_to :parent
+ end
+
+The +belongs_to+ declaration must follow after the +dynamo_schema+ attribute block.
+
 
 === Current State
 
@@ -99,9 +122,9 @@ parameters.
 follow very soon (probably today). 
 
 Restrictions for +belongs_to+ tables: 
-* * The hash key must be specified and must not be +:id+. 
-* * The range key must not be specified at all.
-* * belongs_to can be specified only once in each class.
+* The hash key must be specified and must not be +:id+. 
+* The range key must not be specified at all.
+* +belongs_to+ can be specified only once in each class.
 
 These restrictions allow OceanDynamo to implement the +has_many+ / +belongs_to+ 
 relation in a very efficient and massively scalable way. 
@@ -138,7 +161,9 @@ reduced complexity.
 === Future milestones
 
 After the +has_many+ / +belongs_to+ association, the +has_and_belongs_to_many+ assocation
-will be implemented. This will require secondary indices, unlike +has_many+ / +belongs_to+.
+will be implemented. 
+
+A generator to install the <tt>config/aws.yml</tt> file.
 
 OceanDynamo will use association proxies to achieve the same kind of
 interface as ActiveRecord, e.g.: <code>blog_entry.comments.build(body: "Cool!").save!</code>
