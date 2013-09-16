@@ -6,8 +6,14 @@ module OceanDynamo
     end
   
 
-    module ClassMethods
+    # ---------------------------------------------------------
+    #
+    #  Class methods
+    #
+    # ---------------------------------------------------------
 
+    module ClassMethods
+      
       #
       # 
       #
@@ -36,7 +42,7 @@ module OceanDynamo
         # Define the parent id attribute 
         attribute target_attr_id, :reference, default: nil, target_class: target_class,
                                   association: :belongs_to
-        self.relations[target_class] = :belongs_to
+        register_relation(target_class, :belongs_to)
 
 
         # Define accessors for instances
@@ -103,6 +109,12 @@ module OceanDynamo
       end
     end
 
+
+    # ---------------------------------------------------------
+    #
+    #  Instance variables and methods
+    #
+    # ---------------------------------------------------------
 
     protected
 

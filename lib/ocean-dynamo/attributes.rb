@@ -6,8 +6,21 @@ module OceanDynamo
     end
   
 
+    # ---------------------------------------------------------
+    #
+    #  Class methods
+    #
+    # ---------------------------------------------------------
+
     module ClassMethods
     end
+
+
+    # ---------------------------------------------------------
+    #
+    #  Instance variables and methods
+    #
+    # ---------------------------------------------------------
 
     #
     # The hash of attributes and their values. Keys are strings.

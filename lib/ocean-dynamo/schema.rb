@@ -35,7 +35,6 @@ module OceanDynamo
       self.table_write_capacity_units = write_capacity_units
       self.lock_attribute = locking
       self.timestamp_attributes = timestamps
-      self.relations = Hash.new
       # Init
       self.fields = HashWithIndifferentAccess.new
       attribute(table_hash_key, :string, default: "")

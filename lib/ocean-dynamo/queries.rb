@@ -1,6 +1,12 @@
 module OceanDynamo
   module Queries
 
+    # ---------------------------------------------------------
+    #
+    #  Class methods
+    #
+    # ---------------------------------------------------------
+
     def find(hash, range=nil, consistent: false)
       return hash.collect {|elem| find elem, range, consistent: consistent } if hash.is_a?(Array)
       _late_connect?

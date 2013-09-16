@@ -5,6 +5,13 @@ module OceanDynamo
       base.extend(ClassMethods)
     end
   
+
+    # ---------------------------------------------------------
+    #
+    #  Class methods
+    #
+    # ---------------------------------------------------------
+
     module ClassMethods
 
       #
@@ -13,22 +20,21 @@ module OceanDynamo
       def has_many(children)                                         # :children
         children_attr = children.to_s.underscore                     # "children"
         child_class = children_attr.singularize.camelize.constantize # Child
-        self.relations[child_class] = :has_many
+        register_relation(child_class, :has_many)
         # Define accessors for instances
         self.class_eval "def #{children_attr}; read_children(#{child_class}); end"
         self.class_eval "def #{children_attr}=(value); write_children(#{child_class}, value); end"
         # TODO: "?" method
       end
 
-      #
-      #
-      #
-      def relates_to(klass)
-        relations[klass]
-      end
     end
 
 
+    # ---------------------------------------------------------
+    #
+    #  Instance variables and methods
+    #
+    # ---------------------------------------------------------
 
     #
     #

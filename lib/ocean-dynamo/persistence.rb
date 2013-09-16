@@ -192,7 +192,6 @@ module OceanDynamo
 
 
     def reload(**keywords)
-      raise "HELLISHNESS" if id == range_key
       new_instance = self.class.find(hash_key, range_key, **keywords)
       assign_attributes(new_instance.attributes)
       self
