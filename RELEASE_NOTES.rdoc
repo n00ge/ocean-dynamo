@@ -5,7 +5,7 @@
 == v0.3.11
 
 * belongs_to operational. The other side, has_many, is much simpler and should follow
-  very soon. Probably today.st majority of OceanDynamo databases.
+  very soon. Probably today.
 * .delete_all and .destroy_all added.
 * .has_belongs_to? returns true if the class has a belongs_to association.
 * .belongs_to_class returns the class of the belongs_to association, or false if none.
