@@ -24,9 +24,7 @@ module OceanDynamo
         result = Array.new
         _late_connect?
         child_items = child_class.dynamo_items
-        child_items.query(hash_value: id, 
-                          range_greater_than: "0"
-                         ) do |item_data|
+        child_items.query(hash_value: id, range_gte: "0") do |item_data|
           result << child_class.new._setup_from_dynamo(item_data)
         end
         result
