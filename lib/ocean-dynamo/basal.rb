@@ -7,8 +7,9 @@ module OceanDynamo
     def ==(comparison_object)
       super ||
         comparison_object.instance_of?(self.class) &&
-        id.present? &&
-        comparison_object.id == id
+        hash_key.present? &&
+        comparison_object.hash_key == hash_key &&
+        (range_key == comparison_object.range_key)
     end
     alias :eql? :==
 

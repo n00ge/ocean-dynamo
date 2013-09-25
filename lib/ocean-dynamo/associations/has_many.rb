@@ -23,10 +23,16 @@ module OceanDynamo
         child_class = children_attr.singularize.camelize.constantize # Child
         register_relation(child_class, :has_many)
         # Define accessors for instances
-        self.class_eval "def #{children_attr}; @#{children_attr} ||= read_children(#{child_class}); end"
-        self.class_eval "def #{children_attr}=(value); @#{children_attr} = value; end"
-        self.class_eval "def #{children_attr}?; @#{children_attr} ||= read_children(#{child_class}); @#{children_attr}.present?; end"
-       # TODO: "?" method
+        self.class_eval "def #{children_attr} 
+                           @#{children_attr} ||= read_children(#{child_class})
+                         end"
+        self.class_eval "def #{children_attr}=(value)
+                           @#{children_attr} = value
+                         end"
+        self.class_eval "def #{children_attr}? 
+                           @#{children_attr} ||= read_children(#{child_class})
+                           @#{children_attr}.present?
+                         end"
       end
 
     end
@@ -97,7 +103,14 @@ module OceanDynamo
 
       self.class.relations_of_type(:has_many).each do |klass|
         attr_name = klass.to_s.pluralize.underscore
-        write_children klass, instance_variable_get("@#{attr_name}")
+        # First create or update the children in the new set
+        new_children = instance_variable_get("@#{attr_name}") || []
+        write_children klass, new_children
+        # Destroy all children not in the new set (this is not yet scalable)
+        read_children(klass).each do |c|
+          next if new_children.include?(c)
+          c.delete
+        end
       end
 
       result

@@ -208,6 +208,12 @@ describe Parent do
       end
 
 
+      it "should have findable children" do
+        @lisa.parent_id.should == @homer.id
+        Child.find(@homer.id, @lisa.uuid).should == @lisa
+      end
+
+
       describe "reading:" do
 
         it "Homer should have three children" do
@@ -273,9 +279,9 @@ describe Parent do
           @peter.save!
           @peter.reload
           @peter.children.length.should == 1
-          Child.find_by_key(@peter.id, @meg.id).should == nil
-          Child.find_by_key(@peter.id, @chris.id).should == @chris
-          Child.find_by_key(@peter.id, @stewie.id).should == nil
+          Child.find_by_key(@peter.id, @meg.uuid, consistent: true).should == nil
+          Child.find_by_key(@peter.id, @chris.uuid, consistent: true).should == @chris
+          Child.find_by_key(@peter.id, @stewie.uuid, consistent: true).should == nil
         end
       end
 
