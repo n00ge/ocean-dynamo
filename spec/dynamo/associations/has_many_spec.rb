@@ -102,6 +102,26 @@ describe Parent do
   end
 
 
+  describe "#children?" do
+
+    it "should return false for an unpersisted parent" do
+      p = Parent.new
+      p.children?.should == false
+    end
+
+    it "should return false for a persisted parent without children" do
+      p = Parent.create!
+      p.children?.should == false
+    end
+
+    it "should return true for a persisted parent with children" do
+      p = Parent.create!
+      Child.create! parent: p
+      p.children?.should == true
+    end
+  end
+
+
   describe "#children" do
 
     it "should return nil for an unpersisted Parent" do
@@ -172,7 +192,7 @@ describe Parent do
         Child.delete_all
         Pet.delete_all
         @homer = Parent.create!
-          @bart = Child.create parent: @homer
+          @bart = Child.create parent_id: @homer.id
           @lisa = Child.create parent_id: @homer.id
           @maggie = Child.create parent_id: @homer.id
 
@@ -180,41 +200,11 @@ describe Parent do
 
         @peter = Parent.create!
           @meg = Child.create! parent_id: @peter.id
-          @chris = Child.create! parent: @peter
-          @stewie = Child.create parent: @peter
+          @chris = Child.create! parent_id: @peter.id
+          @stewie = Child.create parent_id: @peter.id
 
         @lois = Parent.create!
-          @brian = Pet.create! parent_id: @lois
-      end
-
-
-      describe "writing: " do
-
-        it "should not store arrays containing objects of incompatible type" do
-          expect { @homer.pets = [@maggie] }.
-            to raise_error(OceanDynamo::AssociationTypeMismatch, "an array element is not a Pet")
-        end
-
-        it "should not store non-arrays" do
-          expect { @homer.pets = @maggie }.
-            to raise_error(OceanDynamo::AssociationTypeMismatch, "not an array or nil")
-          expect { @homer.pets = "lalala" }.
-            to raise_error(OceanDynamo::AssociationTypeMismatch, "not an array or nil")
-        end
-
-        it "should store nil" do
-          expect { @homer.pets = nil }.not_to raise_error
-          expect { @homer.pets = false }.not_to raise_error
-          expect { @homer.pets = "" }.not_to raise_error
-          expect { @homer.pets = " " }.not_to raise_error
-        end
-
-        it "should persist the written data" do
-          @peter.children = []
-          @peter.reload
-          @peter.children.length.should == 0
-        end
-
+          @brian = Pet.create! parent_id: @lois.id
       end
 
 
@@ -256,8 +246,40 @@ describe Parent do
         end
       end
 
-  end
 
+      describe "writing: " do
+
+        it "should not store arrays containing objects of incompatible type" do
+          expect { @homer.pets = [@maggie]; @homer.save! }.
+            to raise_error(OceanDynamo::AssociationTypeMismatch, "an array element is not a Pet")
+        end
+
+        it "should not store non-arrays" do
+          expect { @homer.pets = @maggie; @homer.save! }.
+            to raise_error(OceanDynamo::AssociationTypeMismatch, "not an array or nil")
+          expect { @homer.pets = "lalala"; @homer.save! }.
+            to raise_error(OceanDynamo::AssociationTypeMismatch, "not an array or nil")
+        end
+
+        it "should store nil" do
+          expect { @homer.pets = nil }.not_to raise_error
+          expect { @homer.pets = false }.not_to raise_error
+          expect { @homer.pets = "" }.not_to raise_error
+          expect { @homer.pets = " " }.not_to raise_error
+        end
+
+        it "should destroy all children not in the new set" do
+          @peter.children = [@chris]
+          @peter.save!
+          @peter.reload
+          @peter.children.length.should == 1
+          Child.find_by_key(@peter.id, @meg.id).should == nil
+          Child.find_by_key(@peter.id, @chris.id).should == @chris
+          Child.find_by_key(@peter.id, @stewie.id).should == nil
+        end
+      end
+
+  end
 end
 
 

@@ -17,6 +17,17 @@ module OceanDynamo
       #
       #
       #
+      def relations_of_type(rel_type)
+        relations.inject([]) do |acc, rel|
+          kl, type = rel
+          acc << kl if type == rel_type
+          acc
+        end
+      end
+
+      #
+      #
+      #
       def relates_to(klass)
         relations[klass]
       end
