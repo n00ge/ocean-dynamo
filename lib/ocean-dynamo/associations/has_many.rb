@@ -104,7 +104,8 @@ module OceanDynamo
       self.class.relations_of_type(:has_many).each do |klass|
         attr_name = klass.to_s.pluralize.underscore
         # First create or update the children in the new set
-        new_children = instance_variable_get("@#{attr_name}") || []
+        new_children = instance_variable_get("@#{attr_name}")
+        next unless new_children
         write_children klass, new_children
         # Destroy all children not in the new set (this is not yet scalable)
         read_children(klass).each do |c|

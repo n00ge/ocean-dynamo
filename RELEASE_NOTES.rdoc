@@ -1,3 +1,14 @@
+== v0.4.1
+
+* has_many now works, in a minimalistic fashion. To implement the rest of the interface,
+  we need association proxies.
+* Instances of classes with one or more has_many relations now save all relations after
+  the instance has been saved. To save only dirty association collections, we need
+  association proxies. Collections which are nil are not saved. Collections which are []
+  are saved, which means they clear all children. This difference is crucial, until we
+  get association proxies.
+* #reload clears all relations.
+
 == v0.4.0
 
 * OceanDynamo::Table replaces OceanDynamo::Base. 

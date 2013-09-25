@@ -91,11 +91,11 @@ value will return the empty string, <tt>""</tt>.
    ...
  end
 
-=== +belongs_to+
+=== +has_many+ and +belongs_to+
 
 ==== Example
 
-The following example shows how to set up a +belongs_to+ relation:
+The following example shows how to set up a +has_many+ / +belongs_to+ relation:
 
  class Parent < OceanDynamo::Table
    dynamo_schema do
@@ -103,7 +103,7 @@ The following example shows how to set up a +belongs_to+ relation:
      attribute :that
      attribute :the_other
    end
-   #has_many :children       -- coming soon
+   has_many :children
  end
 
 
@@ -123,6 +123,9 @@ Restrictions for +belongs_to+ tables:
 * The range key must not be specified at all.
 * +belongs_to+ can be specified only once in each class.
 * +belongs_to+ must be placed after the +dynamo_schema+ attribute block.
+
+Restrictions for +has_many+ tables:
+* The +has_many+ table may not have a range key.
 
 These restrictions allow OceanDynamo to implement the +has_many+ / +belongs_to+ 
 relation in a very efficient and massively scalable way. 
@@ -157,18 +160,25 @@ controllers. OceanDynamo implements much of the infrastructure of ActiveRecord;
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 parameters.
 
-+belongs_to+ is now operational. The other side, +has_many+, is much simpler and should 
-follow very soon (probably today). 
+* has_many now works, in a minimalistic fashion. To implement the rest of the interface,
+  we need association proxies.
+
+* Instances of classes with one or more has_many relations now save all relations after
+  the instance has been saved. To save only dirty association collections, we need
+  association proxies. Collections which are nil are not saved. Collections which are []
+  are saved, which means they clear all children. This difference is crucial, until we
+  get association proxies.
+
+* #reload clears all relations.
 
 === Future milestones
 
-* After the +has_many+ / +belongs_to+ association, the +has_and_belongs_to_many+ assocation
-  will be implemented. 
+* Association proxies, to implement the same kind of interace as ActiveRecord, e.g.: 
+  <code>blog_entry.comments.build(body: "Cool!").save!</code>
+
+* The +has_and_belongs_to_many+ assocation. 
 
 * A generator to install the <tt>config/aws.yml</tt> file.
-
-* OceanDynamo will use association proxies to achieve the same kind of
-  interface as ActiveRecord, e.g.: <code>blog_entry.comments.build(body: "Cool!").save!</code>
 
 
 === Current use

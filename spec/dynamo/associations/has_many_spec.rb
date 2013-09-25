@@ -279,9 +279,9 @@ describe Parent do
           @peter.save!
           @peter.reload
           @peter.children.length.should == 1
-          Child.find_by_key(@peter.id, @meg.uuid, consistent: true).should == nil
-          Child.find_by_key(@peter.id, @chris.uuid, consistent: true).should == @chris
-          Child.find_by_key(@peter.id, @stewie.uuid, consistent: true).should == nil
+          Child.find_by_key(@peter.id, @meg.uuid).should == nil
+          Child.find_by_key(@peter.id, @chris.uuid).should == @chris
+          Child.find_by_key(@peter.id, @stewie.uuid).should == nil
         end
       end
 
