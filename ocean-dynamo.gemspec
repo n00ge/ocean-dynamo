@@ -18,11 +18,11 @@ ActiveRecord."
 OceanDynamo is a massively scalable Amazon DynamoDB near drop-in replacement for 
 ActiveRecord.
 
-As one important use case for OceanDynamo is to facilitate the conversion of SQL based
-ActiveRecord models to DynamoDB based models, it is important that the syntax and semantics
-of OceanDynamo's operations are as close as possible to those of ActiveRecord, including
-callbacks, exceptions and support methods. Ocean-dynamo follows this pattern closely and
-is of course based on ActiveModel.
+As one important use case for OceanDynamo is to facilitate the conversion of SQL
+databases to no-SQL DynamoDB databases, it is important that the syntax and semantics
+of OceanDynamo are as close as possible to those of ActiveRecord. This includes
+callbacks, exceptions and method chaining semantics. OceanDynamo follows this pattern 
+closely and is of course based on ActiveModel.
 
 The attribute and persistence layer of OceanDynamo is modeled on that of ActiveRecord:
 there's +save+, +save!+, +create+, +update+, +update!+, +update_attributes+, +find_each+,

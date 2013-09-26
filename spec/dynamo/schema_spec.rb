@@ -70,14 +70,14 @@ describe Idi do
 
   it "should correctly evaluate the id method when new" do
     i = Idi.new
-    i.id.should_not == nil      # BREAKS
+    i.id.should_not == nil
     i.id.should == ""
     i.id.should be_a String
   end
 
   it "should correctly evaluate the id method when persisted" do
     i = Idi.create!
-    i.id.should_not == nil      # BREAKS
+    i.id.should_not == nil
     i.id.should_not == ""
     i.id.should be_a String
   end
