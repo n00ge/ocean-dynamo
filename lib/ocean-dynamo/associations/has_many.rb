@@ -110,7 +110,7 @@ module OceanDynamo
         # Destroy all children not in the new set (this is not yet scalable)
         read_children(klass).each do |c|
           next if new_children.include?(c)
-          c.delete
+          c.destroy
         end
       end
 
