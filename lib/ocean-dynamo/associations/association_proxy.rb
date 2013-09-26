@@ -152,6 +152,7 @@ module OceanDynamo
 
 
       protected
+      
         # Does the association have a <tt>:dependent</tt> option?
         def dependent?
           @reflection.options[:dependent]
@@ -190,7 +191,10 @@ module OceanDynamo
           @reflection.klass.send :with_scope, *args, &block
         end
 
+
+
       private
+
         # Forwards any missing method call to the \target.
         def method_missing(method, *args)
           if load_target
@@ -266,6 +270,7 @@ module OceanDynamo
         def we_can_set_the_inverse_on_this?(record)
           false
         end
+
     end
   end
 end
