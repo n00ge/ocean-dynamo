@@ -22,8 +22,10 @@ module OceanDynamo
         children_attr = children.to_s.underscore                     # "children"
         child_class = children_attr.singularize.camelize.constantize # Child
         register_relation(child_class, :has_many)
+        attr_accessor children_attr
         # Define accessors for instances
-        self.class_eval "def #{children_attr} 
+        self.class_eval "def #{children_attr}(reload=false) 
+                           @#{children_attr} = false if reload
                            @#{children_attr} ||= read_children(#{child_class})
                          end"
         self.class_eval "def #{children_attr}=(value)

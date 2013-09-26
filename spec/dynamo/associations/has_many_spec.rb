@@ -82,11 +82,6 @@ describe Parent do
     }
   end
 
-  it "should implement #children" do
-    p = Parent.new
-    p.should respond_to :children
-  end
-
 
   it "should be reachable from all its children" do
     p = Parent.create!
@@ -148,6 +143,14 @@ describe Parent do
       children.should include c1
       children.should include c2
       children.should include c3
+    end
+
+    it "should take an optional boolean which if true should reload the relation" do
+      p = Parent.create!
+      p.children.should == []
+      c = Child.create! parent_id: p.id
+      p.children.should == []
+      p.children(true).should == [c]
     end
   end
 
