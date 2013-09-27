@@ -77,9 +77,9 @@ module OceanDynamo
     end
 
 
-    def dynamo_schema(*)
-      super
-    end
+    # def dynamo_schema(*)
+    #   super
+    # end
 
 
     def destroyed?
@@ -319,17 +319,11 @@ module OceanDynamo
 
     def serialize_attribute(attribute, value, metadata=fields[attribute],
                             target_class: metadata[:target_class],
-                            type: metadata[:type]
-                            )
+                            type: metadata[:type])
       return nil if value == nil
-      #value = value.id if value.kind_of?(target_class)
       case type
       when :reference
-        raise DynamoError, ":reference must always have a :target_class" unless target_class
-        return value if value.is_a?(String)
-        # The next two lines should be superfluous now
-        return value.id if value.kind_of?(target_class)
-        raise AssociationTypeMismatch, "can't save a #{value.class} in a #{target_class} :reference"
+        value
       when :string
         return nil if ["", []].include?(value)
         value

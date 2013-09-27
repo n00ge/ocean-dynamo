@@ -1,6 +1,7 @@
 require 'simplecov'
 SimpleCov.start do
   add_filter "/vendor/"
+  add_filter "spec/dummy/config/initializers/aws.rb"
 end
 
 # Configure Rails Environment

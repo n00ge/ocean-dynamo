@@ -44,6 +44,9 @@ describe Parent do
   end
 
 
+  it "should not require the child class to be already defined"
+
+
   it "should be saveable" do
     Parent.create!
   end
@@ -190,105 +193,119 @@ describe Parent do
 
   describe "associations:" do
 
-      before :each do
-        Parent.delete_all
-        Child.delete_all
-        Pet.delete_all
-        @homer = Parent.create!
-          @bart = Child.create parent: @homer
-          @lisa = Child.create parent: @homer
-          @maggie = Child.create parent: @homer
+    before :each do
+      Parent.delete_all
+      Child.delete_all
+      Pet.delete_all
+      @homer = Parent.create!
+        @bart = Child.create parent: @homer
+        @lisa = Child.create parent: @homer
+        @maggie = Child.create parent: @homer
 
-        @marge = Parent.create!
+      @marge = Parent.create!
 
-        @peter = Parent.create!
-          @meg = Child.create! parent: @peter
-          @chris = Child.create! parent: @peter
-          @stewie = Child.create parent: @peter
+      @peter = Parent.create!
+        @meg = Child.create! parent: @peter
+        @chris = Child.create! parent: @peter
+        @stewie = Child.create parent: @peter
 
-        @lois = Parent.create!
-          @brian = Pet.create! parent: @lois
+      @lois = Parent.create!
+        @brian = Pet.create! parent: @lois
+    end
+
+
+    it "should have findable children" do
+      @lisa.parent.should == @homer
+      Child.find(@homer.id, @lisa.uuid).should == @lisa
+    end
+
+
+    describe "reading:" do
+
+      it "Homer should have three children" do
+        @homer.children.length.should == 3
+      end
+
+      it "Homer should have no pets" do
+        @homer.pets.length.should == 0
       end
 
 
-      it "should have findable children" do
-        @lisa.parent.should == @homer
-        Child.find(@homer.id, @lisa.uuid).should == @lisa
+      it "Marge should have no children" do
+        @marge.children.length.should == 0
+      end
+
+      it "Marge should have no pets" do
+        @marge.pets.length.should == 0
       end
 
 
-      describe "reading:" do
+      it "Peter should have three children" do
+        @peter.children.length.should == 3
+      end
 
-        it "Homer should have three children" do
-          @homer.children.length.should == 3
-        end
-
-        it "Homer should have no pets" do
-          @homer.pets.length.should == 0
-        end
-
-
-        it "Marge should have no children" do
-          @marge.children.length.should == 0
-        end
-
-        it "Marge should have no pets" do
-          @marge.pets.length.should == 0
-        end
-
-
-        it "Peter should have three children" do
-          @peter.children.length.should == 3
-        end
-
-        it "Peter should have no pets" do
-          @peter.pets.length.should == 0
-        end
-
-
-        it "Lois should have no children" do
-          @lois.children.length.should == 0
-        end
-
-        it "Lois should have one pet" do
-          @lois.pets.length.should == 1
-        end
+      it "Peter should have no pets" do
+        @peter.pets.length.should == 0
       end
 
 
-      describe "writing: " do
-
-        it "should not store arrays containing objects of incompatible type" do
-          expect { @homer.pets = [@maggie]; @homer.save! }.
-            to raise_error(OceanDynamo::AssociationTypeMismatch, "an array element is not a Pet")
-        end
-
-        it "should not store non-arrays" do
-          expect { @homer.pets = @maggie; @homer.save! }.
-            to raise_error(OceanDynamo::AssociationTypeMismatch, "not an array or nil")
-          expect { @homer.pets = "lalala"; @homer.save! }.
-            to raise_error(OceanDynamo::AssociationTypeMismatch, "not an array or nil")
-        end
-
-        it "should store nil" do
-          expect { @homer.pets = nil }.not_to raise_error
-          expect { @homer.pets = false }.not_to raise_error
-          expect { @homer.pets = "" }.not_to raise_error
-          expect { @homer.pets = " " }.not_to raise_error
-        end
-
-        it "should destroy all children not in the new set" do
-          @peter.children = [@chris]
-          @peter.save!
-          @peter.reload
-          @peter.children.length.should == 1
-          Child.find_by_key(@peter.id, @meg.uuid).should == nil
-          Child.find_by_key(@peter.id, @chris.uuid).should == @chris
-          Child.find_by_key(@peter.id, @stewie.uuid).should == nil
-        end
+      it "Lois should have no children" do
+        @lois.children.length.should == 0
       end
 
+      it "Lois should have one pet" do
+        @lois.pets.length.should == 1
+      end
+    end
+
+
+    describe "writing: " do
+
+      it "should not store arrays containing objects of incompatible type" do
+        expect { @homer.pets = [@maggie]; @homer.save! }.
+          to raise_error(OceanDynamo::AssociationTypeMismatch, "an array element is not a Pet")
+      end
+
+      it "should not store non-arrays" do
+        expect { @homer.pets = @maggie; @homer.save! }.
+          to raise_error(OceanDynamo::AssociationTypeMismatch, "not an array or nil")
+        expect { @homer.pets = "lalala"; @homer.save! }.
+          to raise_error(OceanDynamo::AssociationTypeMismatch, "not an array or nil")
+      end
+
+      it "should store nil" do
+        expect { @homer.pets = nil }.not_to raise_error
+        expect { @homer.pets = false }.not_to raise_error
+        expect { @homer.pets = "" }.not_to raise_error
+        expect { @homer.pets = " " }.not_to raise_error
+      end
+
+      it "should destroy all children not in the new set" do
+        @peter.children = [@chris]
+        @peter.save!
+        @peter.reload
+        @peter.children.length.should == 1
+        Child.find_by_key(@peter.id, @meg.uuid).should == nil
+        Child.find_by_key(@peter.id, @chris.uuid).should == @chris
+        Child.find_by_key(@peter.id, @stewie.uuid).should == nil
+      end
+    end
   end
+
+  # it "should implement #children <<"
+  # it "should implement #children_singular_ids"
+  # it "should implement #children_singular_ids="
+
+  # it "should implement #children.delete"
+  # it "should implement #children.destroy"
+  # it "should implement #children.clear"
+  # it "should implement #children.empty?"
+  # it "should implement #children.size"
+  # it "should implement #children.find"
+  # it "should implement #children.where"
+  # it "should implement #children.exists?"
+  # it "should implement #children.build"
+  # it "should implement #children.create"
 end
 
 

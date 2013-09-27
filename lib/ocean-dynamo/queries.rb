@@ -24,11 +24,12 @@ module OceanDynamo
     rescue RecordNotFound
       nil
     end
+    alias find_by_id find_by_key
 
 
-    def find_by_id(*args)
-      find_by_key(*args)
-    end
+    # def find_by_id(*args)
+    #   find_by_key(*args)
+    # end
 
 
     #

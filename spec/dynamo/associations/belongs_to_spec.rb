@@ -28,6 +28,9 @@ describe Slave do
   end
 
 
+  it "should not require the parent class to be already defined"
+
+
   it "should match the DynamoDB hash_key" do
     Slave.establish_db_connection
     Slave.table_hash_key.to_s.should == Slave.dynamo_table.hash_key.name
@@ -253,6 +256,11 @@ describe Slave do
       to raise_error(OceanDynamo::AssociationMustBeUnique, 
                      "Slave already belongs_to Master")
   end
+
+
+  it "should define build_master"
+
+  it "should define create_master"
 
 
 end

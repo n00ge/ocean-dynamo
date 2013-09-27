@@ -15,7 +15,7 @@ module OceanDynamo
     module ClassMethods
       
       #
-      # 
+      # Class macro to define the +belongs_to+ relation.
       #
       def belongs_to(target)                             # :master, "master", Master
         target_attr = target.to_s.underscore             # "master"
@@ -55,29 +55,15 @@ module OceanDynamo
                          end"
 
         self.class_eval "def #{target_attr}=(value) 
-                           if !value
-                             target_id = nil
-                             target = nil
-                           elsif !value.kind_of?(#{target_class})
-                             raise AssociationTypeMismatch, \"can't save a #\{value.class\} in a #{target_class} foreign key\"
-                           else
-                             target_id = value.hash_key
-                             target = value
-                           end
+                           target, target_id = type_check_target(#{target_class}, value)
                            write_attribute('#{target_attr_id}', target_id) 
                            @#{target_attr} = target
                            value
                          end"
 
         self.class_eval "def #{target_attr_id}=(value)
-                           if !value
-                             target_id = nil
-                           elsif value.is_a?(String)
-                             target_id = value
-                           else
-                             raise AssociationTypeMismatch, 'Foreign key #{target_attr_id} must be nil or a string'
-                           end
-                           write_attribute('#{target_attr_id}', target_id) 
+                           type_check_foreign_key('#{target_attr_id}', value)
+                           write_attribute('#{target_attr_id}', value) 
                            @#{target_attr} = nil
                            value
                          end"
@@ -132,16 +118,17 @@ module OceanDynamo
     #  Instance variables and methods
     #
     # ---------------------------------------------------------
+    # def initialize(attrs={})
+    #   super
+    # end
 
-    def initialize(attrs={})
-      super
-    end
 
 
     #
     # This is run by #initialize and by #assign_attributes to set the
     # association instance variables (@master, for instance) and their associated 
-    # attributes (such as master_id) from a given value.
+    # attributes (such as master_id) from one single given value such as :master 
+    # and :master_id.
     #
     def set_belongs_to_association(attrs)  # :nodoc:
       parent_class = self.class.belongs_to_class
@@ -155,6 +142,20 @@ module OceanDynamo
       v = read_attribute(name)
       return nil unless v
       fields[name][:target_class].find(v, consistent: true)
+    end
+
+
+    def type_check_foreign_key(name, value)
+      return unless value
+      return if value.is_a?(String)
+      raise AssociationTypeMismatch, "Foreign key #{name} must be nil or a string"
+    end
+
+
+    def type_check_target(target_class, value)
+      return nil unless value
+      return [value, value.hash_key] if value.kind_of?(target_class)
+      raise AssociationTypeMismatch, "can't save a #{value.class} in a #{target_class} foreign key"
     end
 
   end
