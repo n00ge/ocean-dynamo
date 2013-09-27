@@ -247,9 +247,8 @@ NB: +aws.yml+ is excluded from source control. This allows you to enter your AWS
 safely. Note that +aws.yml.example+ is under source control: don't edit it.
 
 Make sure your have version 0.1.3 of the +fake_dynamo+ gem. It implements the +2011-12-05+ version
-of the DynamoDB API. We're not yet using the +2012-08-10+ version, as the +aws-sdk+ ruby gem
-doesn't fully support it. We'll make the change as soon as +aws-sdk+ is updated. Reportedly,
-it's in the works.
+of the DynamoDB API. We're not using the +2012-08-10+ version, as the +aws-sdk+ ruby gem
+doesn't fully support it.
 
 Next, start +fake_dynamo+:
 
