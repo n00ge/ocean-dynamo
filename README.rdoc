@@ -23,7 +23,6 @@ is always to implement as much of the ActiveRecord interface as possible, withou
 compromising scalability. This makes the task of switching from SQL to no-SQL much easier.
 
 Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
-To facilitate testing, future versions will keep track of and delete instances after tests.
 
 OceanDynamo uses only primary indices to retrieve related table items and collections, 
 which means it will scale without limits.
