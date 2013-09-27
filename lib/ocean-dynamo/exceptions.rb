@@ -48,7 +48,15 @@ module OceanDynamo
 
   class UnknownAttributeError < NoMethodError; end
 
-  class AttributeAssignmentError < DynamoError; end
+  class AttributeAssignmentError < DynamoError
+    attr_reader :exception, :attribute
+    def initialize(message, exception, attribute)
+      super(message)
+      @exception = exception
+      @attribute = attribute
+    end
+  end
+
 
   class MultiparameterAssignmentErrors < DynamoError; end
 

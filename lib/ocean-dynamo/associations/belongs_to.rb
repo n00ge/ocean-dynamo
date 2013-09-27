@@ -47,23 +47,40 @@ module OceanDynamo
 
         # Define accessors for instances
         self.class_eval "def #{target_attr}
-                           read_and_maybe_load_pointer('#{target_attr_id}')
-                         end"
-
-        self.class_eval "def #{target_attr}=(value) 
-                           write_attribute('#{target_attr_id}', value) 
-                           @#{target_attr} = value
+                           @#{target_attr} ||= load_target_from_id('#{target_attr_id}')
                          end"
 
         self.class_eval "def #{target_attr_id}
-                           get_pointer_id(@#{target_attr})
+                           read_attribute('#{target_attr_id}')
+                         end"
+
+        self.class_eval "def #{target_attr}=(value) 
+                           if !value
+                             target_id = nil
+                             target = nil
+                           elsif !value.kind_of?(#{target_class})
+                             raise AssociationTypeMismatch, \"can't save a #\{value.class\} in a #{target_class} foreign key\"
+                           else
+                             target_id = value.hash_key
+                             target = value
+                           end
+                           write_attribute('#{target_attr_id}', target_id) 
+                           @#{target_attr} = target
+                           value
                          end"
 
         self.class_eval "def #{target_attr_id}=(value)
-                           write_attribute('#{target_attr_id}', value) 
-                           @#{target_attr} = value
+                           if !value
+                             target_id = nil
+                           elsif value.is_a?(String)
+                             target_id = value
+                           else
+                             raise AssociationTypeMismatch, 'Foreign key #{target_attr_id} must be nil or a string'
+                           end
+                           write_attribute('#{target_attr_id}', target_id) 
+                           @#{target_attr} = nil
+                           value
                          end"
-        # TODO: "?" methods
       end
 
 
@@ -121,40 +138,23 @@ module OceanDynamo
     end
 
 
-    protected
-
     #
     # This is run by #initialize and by #assign_attributes to set the
-    # association variables (@master, for instance) and its associated attribute
-    # (such as master_id) to the value given. This is a hack, do away with
-    # the double storage when association proxies are introduced.
+    # association instance variables (@master, for instance) and their associated 
+    # attributes (such as master_id) from a given value.
     #
     def set_belongs_to_association(attrs)  # :nodoc:
       parent_class = self.class.belongs_to_class
       return unless parent_class
       parent_class = parent_class.to_s.underscore.to_sym
-      if attrs && attrs.include?(parent_class)
-        instance_variable_set("@#{parent_class}", attrs[parent_class])
-        write_attribute("#{parent_class}_id", attrs[parent_class])
-      end
+      send("#{parent_class}=", attrs[parent_class]) if attrs && attrs.include?(parent_class)
     end
 
 
-    def read_and_maybe_load_pointer(name)  # :nodoc:
-      ptr = read_attribute(name)
-      return nil if ptr.blank?
-      if persisted? && ptr.is_a?(String)
-        parent = fields[name][:target_class].find(ptr, consistent: true)  # TODO: true?
-        write_attribute(name, parent)  # Keep the instance we've just read
-      else
-        ptr
-      end
-    end
-
-
-    def get_pointer_id(ptr)  # :nodoc:
-      return nil if ptr.blank?
-      ptr.is_a?(String) ? ptr : ptr.id
+    def load_target_from_id(name)  # :nodoc:
+      v = read_attribute(name)
+      return nil unless v
+      fields[name][:target_class].find(v, consistent: true)
     end
 
   end

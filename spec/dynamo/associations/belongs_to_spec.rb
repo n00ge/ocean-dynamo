@@ -172,24 +172,32 @@ describe Slave do
 
   it "attr_id should be directly assignable" do
     s = Slave.new
-    s.master_id = "some-uurl"
-    s.master_id.should == "some-uurl"
+    s.master_id = "some-uuid"
+    s.master_id.should == "some-uuid"
+    s.instance_variable_get(:@master).should == nil
   end
 
   it "attr_id should be mass-assignable" do
     s = Slave.new master_id: "an-uuid"
     s.master_id.should == "an-uuid"
+    s.instance_variable_get(:@master).should == nil
   end
 
   it "attr should be directly assignable" do
     s = Slave.new
-    s.master = "some-uurl"
-    s.master.should == "some-uurl"
+    s.master = @m
+    s.instance_variable_get(:@master).should == @m
+    s.master.should == @m
+    s.master_id.should be_a String
+    s.master_id.should == @m.id
   end
 
-  it "attr should be mass-assignable" do     # crucial!
-    s = Slave.new master: "any-uuid"
-    s.master.should == "any-uuid"
+  it "attr should be mass-assignable" do
+    s = Slave.new master: @m
+    s.instance_variable_get(:@master).should == @m
+    s.master.should == @m
+    s.master_id.should be_a String
+    s.master_id.should == @m.id
   end
 
 
@@ -198,36 +206,17 @@ describe Slave do
     s.master.should == @m
   end
 
-  it "attr should be able to be directly assigned an instance of the associated type" do
-    s = Slave.new
-    s.master = @m
-    s.master.should == @m
-  end
-
-  it "an instance in attr_id should be saved as its UUID" do
-    s = Slave.create master: @m, id: "this-is-the-id", gniff: 2222
-    s.master_id.should == @m.id
-    s.reload
-    s.attributes['master_id'].should be_a String
-    s.attributes['master_id'].should_not == ""
-    s.master_id.should == @m.id
-  end
 
   it "an instance in attr must be of the correct target class" do
     wrong = Slave.create!(master: @m)
     expect { Slave.create master: wrong }.
-      to raise_error(OceanDynamo::AssociationTypeMismatch, "can't save a Slave in a Master :reference")
+      to raise_error(OceanDynamo::AssociationTypeMismatch, "can't save a Slave in a Master foreign key")
   end
 
-  it "an instance in attr_id must be of the correct target class" do
+  it "should barf on an instance in attr_id" do
     wrong = Slave.create!(master_id: @m.id)
     expect { Slave.create master_id: wrong }.
-      to raise_error(OceanDynamo::AssociationTypeMismatch, "can't save a Slave in a Master :reference")
-  end
-
-  it "the attr_id, if it contains an instance, should return the id of that instance" do
-    s = Slave.new master_id: @m
-    s.master_id.should == @m.id
+      to raise_error(StandardError, "Foreign key master_id must be nil or a string")
   end
 
   it "the attr, if it contains an instance, should load and return that instance when accessed after a save" do
@@ -238,7 +227,7 @@ describe Slave do
   end
 
   it "attr load should barf on an unknown key" do
-    s = Slave.create! master: "whatevah"
+    s = Slave.create! master_id: "whatevah"
     expect { s.master }.to raise_error(OceanDynamo::RecordNotFound, 
                                        "can't find a Master with primary key ['whatevah', nil]")
   end
@@ -249,7 +238,7 @@ describe Slave do
     s.send(:serialized_attributes)['master'].should == nil
   end
 
-  it "the attr, when loaded, should replace the string key with the instance" do
+  it "the attr should be cached" do
     s = Slave.create! master: @m
     s.reload
     Master.should_receive(:find).and_return @m

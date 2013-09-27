@@ -48,11 +48,11 @@ describe Parent do
     Parent.create!
   end
 
-  it "should have a .has_many method" do
+  it "should have a has_many class macro" do
     Parent.should respond_to :has_many
   end
 
-  it "should require an argument" do
+  it "should require an argument to has_many" do
     expect { Parent.has_many() }.to raise_error(ArgumentError)
   end
 
@@ -136,9 +136,9 @@ describe Parent do
 
     it "should store and return an array for a persisted Parent" do
       p = Parent.create!
-      c1 = Child.create! parent_id: p.id
-      c2 = Child.create! parent_id: p.id
-      c3 = Child.create! parent_id: p.id
+      c1 = Child.create! parent: p
+      c2 = Child.create! parent: p
+      c3 = Child.create! parent: p
       children = p.children
       children.should include c1
       children.should include c2
@@ -148,7 +148,7 @@ describe Parent do
     it "should take an optional boolean which if true should reload the relation" do
       p = Parent.create!
       p.children.should == []
-      c = Child.create! parent_id: p.id
+      c = Child.create! parent: p
       p.children.should == []
       p.children(true).should == [c]
     end
@@ -172,15 +172,15 @@ describe Parent do
     end
 
     it "should be instantiatable as instances" do
-      Pet.create!(parent_id: Parent.create!)
+      Pet.create!(parent: Parent.create!)
     end
 
     it "should return an array for a persisted Parent" do
       p = Parent.create!
-      c1 = Pet.create! parent_id: p.id  # We build these by hand until
-      c2 = Pet.create! parent_id: p.id  # the association proxies are
-      c3 = Pet.create! parent_id: p.id  # in place
-      pets = p.pets                     # Cache them locally for faster tests
+      c1 = Pet.create! parent: p  # We build these by hand until
+      c2 = Pet.create! parent: p  # the association proxies are
+      c3 = Pet.create! parent: p  # in place
+      pets = p.pets               # Cache them locally for faster tests
       pets.should include c1
       pets.should include c2
       pets.should include c3
@@ -195,24 +195,24 @@ describe Parent do
         Child.delete_all
         Pet.delete_all
         @homer = Parent.create!
-          @bart = Child.create parent_id: @homer.id
-          @lisa = Child.create parent_id: @homer.id
-          @maggie = Child.create parent_id: @homer.id
+          @bart = Child.create parent: @homer
+          @lisa = Child.create parent: @homer
+          @maggie = Child.create parent: @homer
 
         @marge = Parent.create!
 
         @peter = Parent.create!
-          @meg = Child.create! parent_id: @peter.id
-          @chris = Child.create! parent_id: @peter.id
-          @stewie = Child.create parent_id: @peter.id
+          @meg = Child.create! parent: @peter
+          @chris = Child.create! parent: @peter
+          @stewie = Child.create parent: @peter
 
         @lois = Parent.create!
-          @brian = Pet.create! parent_id: @lois.id
+          @brian = Pet.create! parent: @lois
       end
 
 
       it "should have findable children" do
-        @lisa.parent_id.should == @homer.id
+        @lisa.parent.should == @homer
         Child.find(@homer.id, @lisa.uuid).should == @lisa
       end
 

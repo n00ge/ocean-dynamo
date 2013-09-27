@@ -327,6 +327,7 @@ module OceanDynamo
       when :reference
         raise DynamoError, ":reference must always have a :target_class" unless target_class
         return value if value.is_a?(String)
+        # The next two lines should be superfluous now
         return value.id if value.kind_of?(target_class)
         raise AssociationTypeMismatch, "can't save a #{value.class} in a #{target_class} :reference"
       when :string

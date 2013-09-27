@@ -234,7 +234,7 @@ describe CloudModel do
     z.should == [:nix]
   end
 
-  it "should verify that structure isn't shared in defaults between instances" do
+  it "shouldn't share attribute structure between instances" do
     i = CloudModel.new
     i.list.should == ["1", "2", "3"]
     i.list << "4"
