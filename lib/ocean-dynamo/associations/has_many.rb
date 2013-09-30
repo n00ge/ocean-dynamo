@@ -23,6 +23,20 @@ module OceanDynamo
         child_class = children_attr.singularize.camelize.constantize # Child
         register_relation(child_class, :has_many)
 
+        # Handle children= after create and update
+        after_save do |p|
+          new_children = instance_variable_get("@#{children_attr}")  
+          if new_children  # TODO: only do this for dirty collections
+            write_children child_class, new_children
+            map_children child_class do |c|
+              next if new_children.include?(c)
+              c.destroy
+            end
+          end 
+          true
+        end
+
+        # Handle dependent: :delete
         before_destroy do |p|
           map_children(child_class, &:destroy)
           true
@@ -69,31 +83,6 @@ module OceanDynamo
 
 
     protected
-
-    #
-    # This version also writes back any relations. TODO: only
-    # dirty relations should be persisted. Introduce a dirty flag.
-    # Easiest done via an collection proxy object.
-    #
-    def dynamo_persist(*)  # :nodoc:
-      result = super
-
-      self.class.relations_of_type(:has_many).each do |klass|
-        attr_name = klass.to_s.pluralize.underscore
-        # First create or update the children in the new set
-        new_children = instance_variable_get("@#{attr_name}")
-        next unless new_children
-        write_children klass, new_children
-        # Destroy all children not in the new set
-        map_children(klass) do |c|
-          next if new_children.include?(c)
-          c.destroy
-        end
-      end
-
-      result
-    end
-
 
     #
     # Reads all children of a has_many relation.
