@@ -16,7 +16,7 @@ module OceanDynamo
 
 
       #
-      # Defines a has_many relation to a belongs_to class.
+      # Defines a +has_many+ relation to a +belongs_to+ class.
       #
       # The +dependent:+ keyword arg may be +:destroy+, +:delete+ or +:nullify+
       # and have the same semantics as in ActiveRecord. With +:nullify+, however,
