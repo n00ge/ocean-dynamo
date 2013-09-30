@@ -84,8 +84,8 @@ module OceanDynamo
         new_children = instance_variable_get("@#{attr_name}")
         next unless new_children
         write_children klass, new_children
-        # Destroy all children not in the new set (this is not yet scalable)
-        read_children(klass).each do |c|
+        # Destroy all children not in the new set
+        map_children(klass) do |c|
           next if new_children.include?(c)
           c.destroy
         end
