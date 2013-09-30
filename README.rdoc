@@ -162,12 +162,10 @@ controllers. OceanDynamo implements much of the infrastructure of ActiveRecord;
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 internal organisation.
 
-* +belongs_to+ now handles setting and retrieving the parent association correctly in
-  all cases, including direct and mass assignment (+:master+, +:master_id+, etc). 
-* +has_many=+ now destroys rather than deletes.
-* Got rid of the +fake_dynamo+ purge message.
-* Relations now take an optional reload arg, as in <tt>parent.children(true)</tt>.
-
+* +has_many+ now destroys all children before destroying itself. It thus behaves like
+  <tt>dependent: :destroy</tt> was declared in ActiveRecord. Soon, +has_many+ will take
+  a <tt>dependent:</tt> value of <tt>:destroy</tt>, <tt>:delete</tt>, or <tt>:nullify</tt>,
+  for full compatibility.
 
 === Future milestones
 

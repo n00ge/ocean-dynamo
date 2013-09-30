@@ -1,3 +1,10 @@
+== v0.4.3
+
+* +has_many+ now destroys all children before destroying itself. It thus behaves like
+  <tt>dependent: :destroy</tt> was declared in ActiveRecord. Soon, +has_many+ will take
+  a <tt>dependent:</tt> value of <tt>:destroy</tt>, <tt>:delete</tt>, or <tt>:nullify</tt>,
+  for full compatibility. 
+
 == v0.4.2
 
 * +belongs_to+ now handles setting and retrieving the parent association correctly in
