@@ -121,7 +121,7 @@ The following example shows how to set up a +has_many+ / +belongs_to+ relation:
 
 Restrictions for +belongs_to+ tables: 
 * The hash key must be specified and must not be +:id+. 
-* The range key must not be specified at all.
+* The range key must not be specified at all. (This restriction will soon be lifted.)
 * +belongs_to+ can be specified only once in each class.
 * +belongs_to+ must be placed after the +dynamo_schema+ attribute block.
 
