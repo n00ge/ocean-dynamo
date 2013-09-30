@@ -4,14 +4,16 @@ require 'spec_helper'
 class Parent < OceanDynamo::Table; end
 class Child < OceanDynamo::Table; end
 class Pet < OceanDynamo::Table; end
+class Car < OceanDynamo::Table; end
 
 
 # The parent class
 class Parent < OceanDynamo::Table
   dynamo_schema(create: true) do
   end
-  has_many :children
-  has_many :pets
+  has_many :children, dependent: :destroy
+  has_many :pets,     dependent: :nullify
+  has_many :cars,     dependent: :delete
 end
 
 
@@ -31,6 +33,14 @@ class Pet < OceanDynamo::Table
 end
 
 
+# Another child class, Car
+class Car < OceanDynamo::Table
+  dynamo_schema(:uuid, create: true) do
+  end
+  belongs_to :parent
+end
+
+
 class SpaceCadet < OceanDynamo::Table; end;
 
 
@@ -41,6 +51,7 @@ describe Parent do
     Parent.establish_db_connection
     Child.establish_db_connection
     Pet.establish_db_connection
+    Car.establish_db_connection
   end
 
 
@@ -197,12 +208,15 @@ describe Parent do
       Parent.delete_all
       Child.delete_all
       Pet.delete_all
+      Car.delete_all
       @homer = Parent.create!
-        @bart = Child.create parent: @homer
-        @lisa = Child.create parent: @homer
-        @maggie = Child.create parent: @homer
+        @bart = Child.create! parent: @homer
+        @lisa = Child.create! parent: @homer
+        @maggie = Child.create! parent: @homer
 
       @marge = Parent.create!
+        @volvo = Car.create! parent: @marge
+        @saab = Car.create! parent: @marge
 
       @peter = Parent.create!
         @meg = Child.create! parent: @peter
@@ -294,21 +308,42 @@ describe Parent do
 
     describe "destroying:" do
 
-        it "should behave like dependent: destroy" do
-          Child.count.should == 6
-          @homer.destroy
-          expect { @homer.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-          expect { @bart.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-          expect { @lisa.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-          expect { @maggie.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-          Child.count.should == 3
-          @peter.destroy
-          expect { @peter.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-          expect { @meg.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-          expect { @chris.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-          expect { @stewie.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-          Child.count.should == 0
-        end
+      it "children should implement dependent: destroy" do
+        Child.count.should == 6
+        @homer.should_receive(:map_children).with(Child).and_call_original
+        @homer.destroy
+        expect { @homer.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        expect { @bart.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        expect { @lisa.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        expect { @maggie.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        Child.count.should == 3
+        @peter.should_receive(:map_children).with(Child).and_call_original
+        @peter.destroy
+        expect { @peter.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        expect { @meg.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        expect { @chris.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        expect { @stewie.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        Child.count.should == 0
+      end
+
+      it "cars should implement dependent: :delete" do
+        Car.count.should == 2
+        @marge.should_receive(:delete_children).with(Car).and_call_original
+        @marge.should_not_receive(:map_children).with(Car)
+        @marge.destroy
+        expect { @volvo.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        expect { @saab.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        Car.count.should == 0
+      end
+
+      it "pets should implement dependent: :nullify" do
+        Pet.count.should == 1
+        @lois.destroy
+        Pet.count.should == 1
+        expect { @brian.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+        Pet.find("NULL", @brian.range_key).should be_a Pet
+      end
+
     end
   end
 

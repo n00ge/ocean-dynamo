@@ -1,3 +1,10 @@
+== v0.4.4
+
+* The +dependent:+ keyword arg may now be +:destroy+, +:delete+ or +:nullify+
+  with the same semantics as in ActiveRecord. With +:nullify+, however,
+  the hash key is set to the string "NULL" rather than binary NULL, as
+  DynamoDB doesn't permit storing empty fields.
+
 == v0.4.3
 
 * +has_many+ now destroys all children before destroying itself. It thus behaves like

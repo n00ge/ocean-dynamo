@@ -104,7 +104,7 @@ The following example shows how to set up a +has_many+ / +belongs_to+ relation:
      attribute :that
      attribute :the_other
    end
-   has_many :children
+   has_many :children, dependent: :destroy
  end
  
  
@@ -162,10 +162,10 @@ controllers. OceanDynamo implements much of the infrastructure of ActiveRecord;
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 internal organisation.
 
-* +has_many+ now destroys all children before destroying itself. It thus behaves like
-  <tt>dependent: :destroy</tt> was declared in ActiveRecord. Soon, +has_many+ will take
-  a <tt>dependent:</tt> value of <tt>:destroy</tt>, <tt>:delete</tt>, or <tt>:nullify</tt>,
-  for full compatibility.
+* The +dependent:+ keyword arg may now be +:destroy+, +:delete+ or +:nullify+
+  with the same semantics as in ActiveRecord. With +:nullify+, however,
+  the hash key is set to the string "NULL" rather than binary NULL, as
+  DynamoDB doesn't permit storing empty fields.
 
 === Future milestones
 

@@ -18,7 +18,12 @@ module OceanDynamo
       #
       # Defines a has_many relation to a belongs_to class.
       #
-      def has_many(children)                                         # :children
+      # The +dependent:+ keyword arg may be +:destroy+, +:delete+ or +:nullify+
+      # and have the same semantics as in ActiveRecord. With +:nullify+, however,
+      # the hash key is set to the string "NULL" rather than binary NULL, as
+      # DynamoDB doesn't permit storing empty fields.
+      #
+      def has_many(children, dependent: :nullify)                    # :children
         children_attr = children.to_s.underscore                     # "children"
         child_class = children_attr.singularize.camelize.constantize # Child
         register_relation(child_class, :has_many)
@@ -36,10 +41,28 @@ module OceanDynamo
           true
         end
 
-        # Handle dependent: :delete
-        before_destroy do |p|
-          map_children(child_class, &:destroy)
-          true
+        if dependent == :destroy
+          before_destroy do |p|
+            map_children(child_class, &:destroy)
+            p.instance_variable_set "@#{children_attr}", nil
+            true
+          end
+
+        elsif dependent == :delete
+          before_destroy do |p|
+            delete_children(child_class)
+            p.instance_variable_set "@#{children_attr}", nil
+         end
+
+        elsif dependent == :nullify
+          before_destroy do |p|
+            nullify_children(child_class)
+            p.instance_variable_set "@#{children_attr}", nil
+            true
+          end
+
+        else
+          raise ArgumentError, ":dependent must be :destroy, :delete, or :nullify"
         end
 
         # Define accessors for instances
@@ -94,7 +117,8 @@ module OceanDynamo
         result = Array.new
         _late_connect?
         child_items = child_class.dynamo_items
-        child_items.query(hash_value: id, range_gte: "0") do |item_data|
+        child_items.query(hash_value: id, range_gte: "0",
+                          batch_size: 1000, select: :all) do |item_data|
           result << child_class.new._setup_from_dynamo(item_data)
         end
         result
@@ -121,8 +145,40 @@ module OceanDynamo
     def map_children(child_class)
       return if new_record?
       child_items = child_class.dynamo_items
-      child_items.query(hash_value: id, range_gte: "0", batch_size: 1000) do |item_data|
+      child_items.query(hash_value: id, range_gte: "0", 
+                        batch_size: 1000, select: :all) do |item_data|
         yield child_class.new._setup_from_dynamo(item_data)
+      end
+    end
+
+
+    # 
+    # Delete all children without instantiating them first.
+    # 
+    def delete_children(child_class)
+      return if new_record?
+      child_items = child_class.dynamo_items
+      child_items.query(hash_value: id, range_gte: "0", 
+                        batch_size: 1000) do |item|
+        item.delete
+      end
+    end
+
+
+    #
+    # Set the hash key values of all children to the string "NULL", thereby turning them
+    # into orphans. Note that we're not setting the key to NULL as this isn't possible
+    # in DynamoDB. Instead, we're using the literal string "NULL".
+    #
+    def nullify_children(child_class)
+      return if new_record?
+      child_items = child_class.dynamo_items
+      child_items.query(hash_value: id, range_gte: "0", 
+                        batch_size: 1000, select: :all) do |item_data|
+        attrs = item_data.attributes
+        item_data.item.delete
+        attrs[child_class.table_hash_key.to_s] = "NULL"
+        child_items.create attrs
       end
     end
 
