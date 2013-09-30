@@ -121,12 +121,12 @@ The following example shows how to set up a +has_many+ / +belongs_to+ relation:
 
 Restrictions for +belongs_to+ tables: 
 * The hash key must be specified and must not be +:id+. 
-* The range key must not be specified at all. (This restriction will soon be lifted.)
+* The range key must not be specified at all.
 * +belongs_to+ can be specified only once in each class.
 * +belongs_to+ must be placed after the +dynamo_schema+ attribute block.
 
 Restrictions for +has_many+ tables:
-* The +has_many+ table may not have a range key.
+* The +has_many+ table may not have a range key. (This restriction will soon be lifted.)
 * +has_many+ must be placed after the +dynamo_schema+ attribute block.
 
 These restrictions allow OceanDynamo to implement the +has_many+ / +belongs_to+ 
