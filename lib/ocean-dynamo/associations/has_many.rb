@@ -22,8 +22,14 @@ module OceanDynamo
         children_attr = children.to_s.underscore                     # "children"
         child_class = children_attr.singularize.camelize.constantize # Child
         register_relation(child_class, :has_many)
-        attr_accessor children_attr
+
+        before_destroy do |p|
+          map_children(child_class, &:destroy)
+          true
+        end
+
         # Define accessors for instances
+        attr_accessor children_attr
         self.class_eval "def #{children_attr}(force_reload=false) 
                            @#{children_attr} = false if force_reload
                            @#{children_attr} ||= read_children(#{child_class})
@@ -48,37 +54,6 @@ module OceanDynamo
 
 
     #
-    # Reads all children of a has_many relation.
-    #
-    def read_children(child_class)
-      if new_record? 
-        nil
-      else
-        result = Array.new
-        _late_connect?
-        child_items = child_class.dynamo_items
-        child_items.query(hash_value: id, range_gte: "0") do |item_data|
-          result << child_class.new._setup_from_dynamo(item_data)
-        end
-        result
-      end
-    end
-
-
-    #
-    # Write all children in the arg, which should be nil or an array.
-    #
-    def write_children(child_class, arg)
-      return nil if arg.blank?
-      raise AssociationTypeMismatch, "not an array or nil" if !arg.is_a?(Array)
-      raise AssociationTypeMismatch, "an array element is not a #{child_class}" unless arg.all? { |m| m.is_a?(child_class) }
-      # We now know that arg is an array containing only members of the child_class
-      arg.each(&:save!)
-      arg
-    end
-
-
-    #
     # Sets all has_many relations to nil.
     #
     def reload(*)
@@ -98,7 +73,7 @@ module OceanDynamo
     #
     # This version also writes back any relations. TODO: only
     # dirty relations should be persisted. Introduce a dirty flag.
-    # Easiest done via an association proxy object.
+    # Easiest done via an collection proxy object.
     #
     def dynamo_persist(*)  # :nodoc:
       result = super
@@ -117,6 +92,49 @@ module OceanDynamo
       end
 
       result
+    end
+
+
+    #
+    # Reads all children of a has_many relation.
+    #
+    def read_children(child_class)  # :nodoc:
+      if new_record? 
+        nil
+      else
+        result = Array.new
+        _late_connect?
+        child_items = child_class.dynamo_items
+        child_items.query(hash_value: id, range_gte: "0") do |item_data|
+          result << child_class.new._setup_from_dynamo(item_data)
+        end
+        result
+      end
+    end
+
+
+    #
+    # Write all children in the arg, which should be nil or an array.
+    #
+    def write_children(child_class, arg)  # :nodoc:
+      return nil if arg.blank?
+      raise AssociationTypeMismatch, "not an array or nil" if !arg.is_a?(Array)
+      raise AssociationTypeMismatch, "an array element is not a #{child_class}" unless arg.all? { |m| m.is_a?(child_class) }
+      # We now know that arg is an array containing only members of the child_class
+      arg.each(&:save!)
+      arg
+    end
+
+
+    #
+    # Takes a block and yields each child to it. Batched for scalability.
+    #
+    def map_children(child_class)
+      return if new_record?
+      child_items = child_class.dynamo_items
+      child_items.query(hash_value: id, range_gte: "0", batch_size: 1000) do |item_data|
+        yield child_class.new._setup_from_dynamo(item_data)
+      end
     end
 
   end

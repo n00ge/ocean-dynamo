@@ -259,7 +259,7 @@ describe Parent do
     end
 
 
-    describe "writing: " do
+    describe "writing:" do
 
       it "should not store arrays containing objects of incompatible type" do
         expect { @homer.pets = [@maggie]; @homer.save! }.
@@ -289,6 +289,26 @@ describe Parent do
         Child.find_by_key(@peter.id, @chris.uuid).should == @chris
         Child.find_by_key(@peter.id, @stewie.uuid).should == nil
       end
+    end
+
+
+    describe "destroying:" do
+
+        it "should behave like dependent: destroy" do
+          Child.count.should == 6
+          @homer.destroy
+          expect { @homer.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+          expect { @bart.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+          expect { @lisa.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+          expect { @maggie.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+          Child.count.should == 3
+          @peter.destroy
+          expect { @peter.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+          expect { @meg.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+          expect { @chris.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+          expect { @stewie.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
+          Child.count.should == 0
+        end
     end
   end
 
