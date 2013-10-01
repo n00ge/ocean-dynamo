@@ -17,7 +17,7 @@ module OceanDynamo
       #
       # Class macro to define the +belongs_to+ relation.
       #
-      def belongs_to(target)                             # :master, "master", Master
+      def belongs_to(target, composite_key: false)       # :master, "master", Master
         target_attr = target.to_s.underscore             # "master"
         target_attr_id = "#{target_attr}_id"             # "master_id"
         class_name = target_attr.classify                # "Master"
@@ -49,7 +49,7 @@ module OceanDynamo
 
         # Define accessors for instances
         self.class_eval "def #{target_attr}
-                           @#{target_attr} ||= load_target_from_id('#{target_attr_id}')
+                           @#{target_attr} ||= load_target_from_id('#{target_attr_id}', #{composite_key})
                          end"
 
         self.class_eval "def #{target_attr_id}
@@ -57,7 +57,7 @@ module OceanDynamo
                          end"
 
         self.class_eval "def #{target_attr}=(value) 
-                           target, target_id = type_check_target(#{target_class}, value)
+                           target, target_id = type_check_target(#{target_class}, value, #{composite_key})
                            write_attribute('#{target_attr_id}', target_id) 
                            @#{target_attr} = target
                            value
@@ -120,11 +120,6 @@ module OceanDynamo
     #  Instance variables and methods
     #
     # ---------------------------------------------------------
-    # def initialize(attrs={})
-    #   super
-    # end
-
-
 
     #
     # This is run by #initialize and by #assign_attributes to set the
@@ -140,10 +135,11 @@ module OceanDynamo
     end
 
 
-    def load_target_from_id(name)  # :nodoc:
+    def load_target_from_id(name, composite_key)  # :nodoc:
       v = read_attribute(name)
       return nil unless v
-      fields[name][:target_class].find(v, consistent: true)
+      h, r = composite_key ? v.split(':') : v
+      fields[name][:target_class].find(h, r, consistent: true)
     end
 
 
@@ -154,10 +150,15 @@ module OceanDynamo
     end
 
 
-    def type_check_target(target_class, value)
+    def type_check_target(target_class, value, composite_key)
       return nil unless value
-      return [value, value.hash_key] if value.kind_of?(target_class)
-      raise AssociationTypeMismatch, "can't save a #{value.class} in a #{target_class} foreign key"
+      if value.kind_of?(target_class)
+        foreign_key = value.hash_key
+        foreign_key += ':' + value.range_key if composite_key
+        return [value, foreign_key]
+      else
+        raise AssociationTypeMismatch, "can't save a #{value.class} in a #{target_class} foreign key"
+      end
     end
 
   end

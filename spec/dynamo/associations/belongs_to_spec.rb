@@ -5,6 +5,7 @@ class Master < OceanDynamo::Table
   dynamo_schema(create: true) do
     attribute :name
   end
+  has_many :slaves
 end
 
 
@@ -13,6 +14,15 @@ class Slave < OceanDynamo::Table
     attribute :name
   end
   belongs_to :master
+  has_many :subslaves
+end
+
+
+class Subslave < OceanDynamo::Table
+  dynamo_schema(:uuid, create: true) do
+    attribute :name
+  end
+  belongs_to :slave, composite_key: true
 end
 
 
@@ -23,12 +33,22 @@ end
 
 describe Slave do
 
+  before :all do
+    Master.establish_db_connection
+    Slave.establish_db_connection
+    Subslave.establish_db_connection
+  end
+
   before :each do
     @m = Master.create!
   end
 
 
-  it "should handle a parent table with a composite key (declare using composite_key: true)"
+  it "should handle a parent table with a composite key (declare using composite_key: true)" do
+    s = Slave.create! master: @m
+    ss = Subslave.create! slave: s
+    ss.slave.should == s
+  end
 
 
   it "should match the DynamoDB hash_key" do
