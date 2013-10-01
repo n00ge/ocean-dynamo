@@ -28,8 +28,6 @@ describe Slave do
   end
 
 
-  it "should not require the parent class to be already defined"
-
   it "should handle a parent table with a composite key (declare using composite_key: true)"
 
 

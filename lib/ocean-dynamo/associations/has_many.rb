@@ -23,9 +23,11 @@ module OceanDynamo
       # the hash key is set to the string "NULL" rather than binary NULL, as
       # DynamoDB doesn't permit storing empty fields.
       #
-      def has_many(children, dependent: :nullify)                    # :children
-        children_attr = children.to_s.underscore                     # "children"
-        child_class = children_attr.singularize.camelize.constantize # Child
+      def has_many(children, dependent: :nullify)            # :children
+        children_attr = children.to_s.underscore             # "children"
+        class_name = children_attr.classify                  # "Child"
+        define_class_if_not_defined(class_name)
+        child_class = class_name.constantize                 # Child
         register_relation(child_class, :has_many)
 
         # Handle children= after create and update

@@ -1,11 +1,5 @@
 require 'spec_helper'
 
-# This is temporary
-class Parent < OceanDynamo::Table; end
-class Child < OceanDynamo::Table; end
-class Pet < OceanDynamo::Table; end
-class Car < OceanDynamo::Table; end
-
 
 # The parent class
 class Parent < OceanDynamo::Table
@@ -54,8 +48,6 @@ describe Parent do
     Car.establish_db_connection
   end
 
-
-  it "should not require the child class to be already defined"
 
 
   it "should be saveable" do

@@ -20,6 +20,8 @@ module OceanDynamo
       def belongs_to(target)                             # :master, "master", Master
         target_attr = target.to_s.underscore             # "master"
         target_attr_id = "#{target_attr}_id"             # "master_id"
+        class_name = target_attr.classify                # "Master"
+        define_class_if_not_defined(class_name)
         target_class = target_attr.camelize.constantize  # Master
 
         assert_only_one_belongs_to!

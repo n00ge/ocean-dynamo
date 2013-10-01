@@ -95,8 +95,6 @@ value will return the empty string, <tt>""</tt>.
 ==== Example
 
 The following example shows how to set up a +has_many+ / +belongs_to+ relation:
-
- class Child < OceanDynamo::Table; end
  
  class Parent < OceanDynamo::Table
    dynamo_schema do

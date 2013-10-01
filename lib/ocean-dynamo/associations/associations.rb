@@ -52,6 +52,11 @@ module OceanDynamo
         super
       end
 
+
+      def define_class_if_not_defined(class_name)
+        Object.const_set(class_name, Class.new(OceanDynamo::Table)) unless const_defined?(class_name)
+      end
+
     end
 
 
