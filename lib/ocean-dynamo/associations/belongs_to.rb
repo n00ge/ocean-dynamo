@@ -24,7 +24,7 @@ module OceanDynamo
       #    end
       #    has_many :topics, dependent: :destroy
       #  end
-      # 
+      #  
       # class Topic < OceanDynamo::Table
       #   dynamo_schema(:uuid) do
       #     attribute :title
@@ -32,14 +32,14 @@ module OceanDynamo
       #   belongs_to :forum
       #   has_many :posts, dependent: :destroy
       # end
-      # 
+      #  
       # class Post < OceanDynamo::Table
       #   dynamo_schema(:uuid) do
       #     attribute :body
       #   end
       #   belongs_to :topic, composite_key: true
       # end
-      # 
+      #
       # The only non-standard aspect of the above is <tt>composite_key: true</tt>, 
       # which is required as the Topic class itself has a +belongs_to+ relation and 
       # thus has a composite key. This must be declared in the child class as it 
