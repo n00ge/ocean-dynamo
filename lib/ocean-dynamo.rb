@@ -14,6 +14,7 @@ require "ocean-dynamo/attributes"
 require "ocean-dynamo/persistence"
 require "ocean-dynamo/queries"
 require "ocean-dynamo/associations/associations"
+require "ocean-dynamo/associations/relation"
 require "ocean-dynamo/associations/belongs_to"
 require "ocean-dynamo/associations/has_many"
 

@@ -67,6 +67,7 @@ module OceanDynamo
       # Barf on unknown attributes here?
       attrs && attrs.delete_if { |k, v| !fields.has_key?(k) }
       super(attrs)
+      yield self if block_given?
     end
 
 
