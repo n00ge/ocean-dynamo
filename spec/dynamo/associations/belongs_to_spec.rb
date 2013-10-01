@@ -74,7 +74,7 @@ describe Slave do
   end
 
 
-  it "should barf on an explicitly specified hash key of :id" do
+  it "should barf on a hash key called :id" do
     expect { 
       class IllegalOne < OceanDynamo::Table
         dynamo_schema() do
