@@ -15,7 +15,39 @@ module OceanDynamo
     module ClassMethods
       
       #
-      # Class macro to define the +belongs_to+ relation.
+      # Class macro to define the +belongs_to+ relation. For example:
+      #
+      #  class Forum < OceanDynamo::Table
+      #    dynamo_schema do
+      #      attribute :name
+      #      attribute :description
+      #    end
+      #    has_many :topics, dependent: :destroy
+      #  end
+      # 
+      # class Topic < OceanDynamo::Table
+      #   dynamo_schema(:uuid) do
+      #     attribute :title
+      #   end
+      #   belongs_to :forum
+      #   has_many :posts, dependent: :destroy
+      # end
+      # 
+      # class Post < OceanDynamo::Table
+      #   dynamo_schema(:uuid) do
+      #     attribute :body
+      #   end
+      #   belongs_to :topic, composite_key: true
+      # end
+      # 
+      # The only non-standard aspect of the above is <tt>composite_key: true</tt>, 
+      # which is required as the Topic class itself has a +belongs_to+ relation and 
+      # thus has a composite key. This must be declared in the child class as it 
+      # needs to know how to retrieve its parent. If you were to add a Comment class
+      # to the above with a <tt>has_many/belongs_to</tt> relation to Post, the Comment
+      # class would also have a <tt>belongs_to :post, composite_key: true</tt> statement,
+      # since Post already has a composite key due to its +belongs_to+ relation to
+      # the Topic class.
       #
       def belongs_to(target, composite_key: false)       # :master, "master", Master
         target_attr = target.to_s.underscore             # "master"

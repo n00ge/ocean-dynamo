@@ -94,26 +94,37 @@ value will return the empty string, <tt>""</tt>.
 
 ==== Example
 
-The following example shows how to set up a +has_many+ / +belongs_to+ relation:
+The following example shows how to set up +has_many+ / +belongs_to+ relations:
  
- class Parent < OceanDynamo::Table
+ class Forum < OceanDynamo::Table
    dynamo_schema do
-     attribute :this
-     attribute :that
-     attribute :the_other
+     attribute :name
+     attribute :description
    end
-   has_many :children, dependent: :destroy
+   has_many :topics, dependent: :destroy
  end
  
  
- class Child < OceanDynamo::Table
+ class Topic < OceanDynamo::Table
    dynamo_schema(:uuid) do
-     attribute :foo
-     attribute :bar
-     attribute :baz
+     attribute :title
    end
-   belongs_to :parent
+   belongs_to :forum
+   has_many :posts, dependent: :destroy
  end
+ 
+
+ class Post < OceanDynamo::Table
+   dynamo_schema(:uuid) do
+     attribute :body
+   end
+   belongs_to :topic, composite_key: true
+ end
+
+The only non-standard aspect of the above is <tt>composite_key: true</tt>, which 
+is required as the Topic class itself has a +belongs_to+ relation and thus has
+a composite key. This must be declared in the child class as it needs to know
+how to retrieve its parent.
 
 ==== Restrictions
 
@@ -124,7 +135,6 @@ Restrictions for +belongs_to+ tables:
 * +belongs_to+ must be placed after the +dynamo_schema+ attribute block.
 
 Restrictions for +has_many+ tables:
-* The +has_many+ table may not have a range key. (This restriction will soon be lifted.)
 * +has_many+ must be placed after the +dynamo_schema+ attribute block.
 
 These restrictions allow OceanDynamo to implement the +has_many+ / +belongs_to+ 
@@ -160,10 +170,8 @@ controllers. OceanDynamo implements much of the infrastructure of ActiveRecord;
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 internal organisation.
 
-* The +dependent:+ keyword arg may now be +:destroy+, +:delete+ or +:nullify+
-  with the same semantics as in ActiveRecord. With +:nullify+, however,
-  the hash key is set to the string "NULL" rather than binary NULL, as
-  DynamoDB doesn't permit storing empty fields.
+* +has_many+ can now be nested in multiple layers through the use of +:composite_key+ 
+  in +belongs_to+. See the documentation for +belongs_to+.
 
 === Future milestones
 
