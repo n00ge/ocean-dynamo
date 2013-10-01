@@ -22,7 +22,7 @@ module OceanDynamo
         target_attr_id = "#{target_attr}_id"             # "master_id"
         class_name = target_attr.classify                # "Master"
         define_class_if_not_defined(class_name)
-        target_class = target_attr.camelize.constantize  # Master
+        target_class = class_name.constantize            # Master
 
         assert_only_one_belongs_to!
 
