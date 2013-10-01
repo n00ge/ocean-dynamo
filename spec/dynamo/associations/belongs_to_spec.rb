@@ -44,7 +44,7 @@ describe Slave do
   end
 
 
-  it "should handle a parent table with a composite key (declare using composite_key: true)" do
+  it "should handle a parent table with a composite key" do
     s = Slave.create! master: @m
     ss = Subslave.create! slave: s
     ss.slave.should == s
@@ -62,8 +62,28 @@ describe Slave do
   end
 
 
-  it "should barf on an explicitly specified range key"
-  it "should barf on an explicitly specified hash key of :id"
+  it "should barf on an explicitly specified range key" do
+    expect { 
+      class IllegalOne < OceanDynamo::Table
+        dynamo_schema(:good, :not_so_good) do
+        end
+        belongs_to :something
+      end
+    }.to raise_error(OceanDynamo::RangeKeyMustNotBeSpecified, 
+                     "Tables with belongs_to relations may not specify the range key")
+  end
+
+
+  it "should barf on an explicitly specified hash key of :id" do
+    expect { 
+      class IllegalOne < OceanDynamo::Table
+        dynamo_schema() do
+        end
+        belongs_to :something
+      end
+    }.to raise_error(OceanDynamo::HashKeyMayNotBeNamedId, 
+                     "Tables with belongs_to relations may not name their hash key :id")
+  end
 
 
   it "should have a range key named :uuid" do

@@ -57,6 +57,8 @@ module OceanDynamo
         target_class = class_name.constantize            # Master
 
         assert_only_one_belongs_to!
+        assert_range_key_not_specified!
+        assert_hash_key_is_not_id!
 
         self.table_range_key = table_hash_key            # The RANGE KEY is variable
         self.table_hash_key = target_attr_id.to_sym      # The HASH KEY is the parent UUID
@@ -143,6 +145,24 @@ module OceanDynamo
                 "#{self} already belongs_to #{belongs_to_class}" 
         end
         false
+      end
+
+
+      #
+      # Make sure the range key isn't specified.
+      #
+      def assert_range_key_not_specified!  # :nodoc:
+        raise RangeKeyMustNotBeSpecified, 
+              "Tables with belongs_to relations may not specify the range key" if table_range_key
+      end
+
+
+      #
+      # Make sure the hash key isn't called :id.
+      #
+      def assert_hash_key_is_not_id!  # :nodoc:
+        raise HashKeyMayNotBeNamedId, 
+              "Tables with belongs_to relations may not name their hash key :id" if table_hash_key.to_s == "id"
       end
     end
 
