@@ -74,7 +74,6 @@ module OceanDynamo
         define_attribute_accessors(table_range_key)      # define uuid, uuid=, uuid?
 
 
-
         # Define the parent id attribute 
         attribute target_attr_id, :reference, default: nil, target_class: target_class,
                                   association: :belongs_to
@@ -102,6 +101,15 @@ module OceanDynamo
                            write_attribute('#{target_attr_id}', value) 
                            @#{target_attr} = nil
                            value
+                         end"
+
+        # Define parent builders
+        self.class_eval "def self.build_#{target_attr}(**opts)
+                           #{target_class}.new(opts)
+                         end"
+
+        self.class_eval "def self.create_#{target_attr}(**opts)
+                           #{target_class}.create(opts)
                          end"
       end
 

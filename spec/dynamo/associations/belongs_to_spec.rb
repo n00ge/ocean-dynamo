@@ -298,9 +298,20 @@ describe Slave do
   end
 
 
-  it "should define build_master"
+  it "should define build_master" do
+    m = Slave.build_master name: "Betty"
+    m.should be_a Master
+    m.persisted?.should_not == true
+    m.name.should == "Betty"
+    m.save!
+  end
 
-  it "should define create_master"
+  it "should define create_master" do
+    m = Slave.create_master name: "White"
+    m.should be_a Master
+    m.persisted?.should == true
+    m.name.should == "White"
+  end
 
 
 end
