@@ -1,3 +1,8 @@
+== v0.5.1
+
+* <tt>belongs_to :thingy now defines <tt>.build_thingy</tt> and <tt>.create_thingy</tt>.
+* Work begun on collection proxies, etc.
+
 == v0.5.0
 
 * +has_many+ can now be nested in multiple layers through the use of +:composite_key+ 

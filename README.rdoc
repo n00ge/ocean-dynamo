@@ -170,8 +170,8 @@ controllers. OceanDynamo implements much of the infrastructure of ActiveRecord;
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 internal organisation.
 
-* +has_many+ can now be nested in multiple layers through the use of +:composite_key+ 
-  in +belongs_to+. See the documentation for +belongs_to+.
+* <tt>belongs_to :thingy now defines <tt>.build_thingy</tt> and <tt>.create_thingy</tt>.
+* Work begun on collection proxies, etc.
 
 === Future milestones
 
