@@ -1,4 +1,4 @@
-module ActiveRecord
+module ActiveRecord #:nodoc:
   # = Active Record Reflection
   module Reflection # :nodoc:
     extend ActiveSupport::Concern
@@ -16,7 +16,7 @@ module ActiveRecord
     #
     # MacroReflection class has info for AggregateReflection and AssociationReflection
     # classes.
-    module ClassMethods
+    module ClassMethods #:nodoc:
       def create_reflection(macro, name, scope, options, active_record)
         case macro
         when :has_many, :belongs_to, :has_one, :has_and_belongs_to_many

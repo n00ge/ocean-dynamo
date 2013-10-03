@@ -1,5 +1,5 @@
-module ActiveRecord
-  module Associations
+module ActiveRecord #:nodoc:
+  module Associations #:nodoc:
     # = Active Record Association Collection
     #
     # CollectionAssociation is an abstract class that provides common stuff to

@@ -1,10 +1,21 @@
 module OceanDynamo
   module Associations
     #
+    # This is the root class of all Associations.
+    # The class structure is exactly like in ActiveRecord:
+    #
     #   Association
     #     CollectionAssociation
     #       HasAndBelongsToManyAssociation
     #       HasManyAssociation
+    #
+    # It should be noted, however, that the documentation of ActiveRecord
+    # is misleading: belongs_to and has_one no longer are implemented using
+    # proxies, even though the documentation and the source itself says it is.
+    #
+    # In OceanDynamo, we have removed the unused classes and stripped away
+    # the SQL-specific features such as scopes. We have kept the same module
+    # and class structure for compatibility, though.
     #
     class Association #:nodoc:
 
@@ -13,20 +24,13 @@ module OceanDynamo
       attr_reader :target
 
 
+      #
+      # 
+      #
       def initialize(owner, reflection)
         @owner, @reflection = owner, reflection
         reset
       end
-
-
-      #
-      # Returns the class of the target. belongs_to polymorphic overrides this to look at the
-      # polymorphic_type field on the owner.
-      #
-      def klass
-        reflection.klass
-      end
-
 
       #
       # Resets the \loaded flag to +false+ and sets the \target to +nil+.
@@ -92,6 +96,24 @@ module OceanDynamo
         reset
       end
 
+      #
+      # Returns the class of the target. belongs_to polymorphic used to override this 
+      # to look at the polymorphic_type field on the owner. However, belongs_to is no
+      # longer implemented in AR using an Assocation, so we keep this only for structural
+      # compatibility.
+      #
+      def klass
+        reflection.klass
+      end
+
+      #
+      # Reloads the \target and returns +self+ on success.
+      #
+      def reload
+        reset
+        load_target
+        self unless target.nil?
+      end
 
 
       private

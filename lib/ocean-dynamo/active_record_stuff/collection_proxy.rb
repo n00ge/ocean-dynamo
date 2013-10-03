@@ -1,5 +1,5 @@
-module OceanDynamo
-  module Associations
+module OceanDynamo #:nodoc:
+  module Associations #:nodoc:
     #
     # This entire file shamelessly lifted from ActiveRecord, for compatibility
     # reasons. OceanDynamo must implement the same query interface as ActiveRecord.

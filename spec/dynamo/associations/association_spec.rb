@@ -94,7 +94,13 @@ module OceanDynamo
           @a.load_target.should == []
           @a.load_target.should == []
         end
+      end
 
+
+      it "should have a #reload method which resets and loads the target" do
+        @a.should_receive(:find_target).once.and_return([])
+        @a.reload.should == @a
+        @a.loaded?.should == true
       end
 
     end
