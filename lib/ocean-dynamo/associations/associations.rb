@@ -4,6 +4,10 @@ module OceanDynamo
     def self.included(base)
       base.extend(ClassMethods)
     end
+
+    # This class really does some of the stuff that in ActiveRecord is
+    # handled by the Reflection class. We could switch to the AR paradigm
+    # at some point.
   
 
     # ---------------------------------------------------------
