@@ -170,7 +170,7 @@ controllers. OceanDynamo implements much of the infrastructure of ActiveRecord;
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 internal organisation.
 
-* <tt>belongs_to :thingy now defines <tt>.build_thingy</tt> and <tt>.create_thingy</tt>.
+* <tt>belongs_to :thingy</tt> now defines <tt>.build_thingy</tt> and <tt>.create_thingy</tt>.
 * Work begun on collection proxies, etc.
 
 === Future milestones
