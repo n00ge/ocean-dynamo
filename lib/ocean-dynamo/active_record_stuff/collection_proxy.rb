@@ -1,12 +1,6 @@
 module OceanDynamo #:nodoc:
   module Associations #:nodoc:
     #
-    # This entire file shamelessly lifted from ActiveRecord, for compatibility
-    # reasons. OceanDynamo must implement the same query interface as ActiveRecord.
-    #
-    
-
-    #
     # Association proxies in OceanDynamo are middlemen between the object that
     # holds the association, known as the <tt>@owner</tt>, and the actual associated
     # object, known as the <tt>@target</tt>. The kind of association any proxy is

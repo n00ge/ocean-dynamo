@@ -9,9 +9,11 @@ module OceanDynamo
     #       HasAndBelongsToManyAssociation
     #       HasManyAssociation
     #
-    # It should be noted, however, that the documentation of ActiveRecord
+    # It should be noted, however, that the ActiveRecord documentation  
     # is misleading: belongs_to and has_one no longer are implemented using
     # proxies, even though the documentation and the source itself says it is.
+    # Furthermore, method_missing is no longer used at all, despite what the
+    # documentation and source comments say.
     #
     # In OceanDynamo, we have removed the unused classes and stripped away
     # the SQL-specific features such as scopes. We have kept the same module
