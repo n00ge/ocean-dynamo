@@ -53,13 +53,6 @@ module OceanDynamo
       end
 
       #
-      # It's up to subclasses to implement the stale_state method if relevant.
-      #
-      def stale_state
-        nil
-      end
-
-      #
       # Sets the target of this association to <tt>\target</tt>, and the \loaded flag to +true+.
       #
       def target=(target)
@@ -118,6 +111,17 @@ module OceanDynamo
         #
         def foreign_key_present?
           false
+        end
+
+        #
+        # This should be implemented to return the values of the relevant key(s) on the owner,
+        # so that when stale_state is different from the value stored on the last find_target,
+        # the target is stale.
+        #
+        # This is only relevant to certain associations, which is why it returns nil by default.
+        #
+        def stale_state
+          nil
         end
 
     end
