@@ -16,8 +16,9 @@ module OceanDynamo
     # documentation and source comments say.
     #
     # In OceanDynamo, we have removed the unused classes and stripped away
-    # the SQL-specific features such as scopes. We have kept the same module
-    # and class structure for compatibility, though.
+    # the SQL-specific features such as scopes. Neither do we implement counter
+    # caches. We have kept the same module and class structure for compatibility, 
+    # though.
     #
     class Association #:nodoc:
 
@@ -132,6 +133,10 @@ module OceanDynamo
         #
         # Currently implemented by belongs_to (vanilla and polymorphic) and
         # has_one/has_many :through associations which go through a belongs_to
+        #
+        # This method is, nowadays, merely an archaeological artifact, since
+        # +belongs_to+ no longer uses Associations, meaning this method will
+        # never be overridden.
         #
         def foreign_key_present?
           false
