@@ -134,7 +134,7 @@ module OceanDynamo
         # Currently implemented by belongs_to (vanilla and polymorphic) and
         # has_one/has_many :through associations which go through a belongs_to
         #
-        # This method is, nowadays, merely an archaeological artifact, since
+        # This method is, nowadays, merely an archaeological artifact since
         # +belongs_to+ no longer uses Associations, meaning this method will
         # never be overridden.
         #
