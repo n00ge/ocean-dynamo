@@ -149,8 +149,8 @@ all children have their parent UUID as their hash key, and their own UUID in the
 range key.
 
 This type of relation is even more efficient than its ActiveRecord counterpart as
-it uses only the primary index of the child model in both directions of the
-+has_many+ / +belongs_to+ association. No scans.
+it uses only primary indices in both directions of the +has_many+ / +belongs_to+ 
+association. No scans.
 
 Furthermore, since DynamoDB has powerful primary index searches involving substrings
 and matching, the fact that the range key is a string can be used to implement
