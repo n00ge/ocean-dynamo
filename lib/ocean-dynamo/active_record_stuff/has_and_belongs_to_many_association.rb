@@ -1,6 +1,6 @@
-module ActiveRecord #:nodoc:
+module ActiveRecord #:nodoc: all
   # = Active Record Has And Belongs To Many Association
-  module Associations #:nodoc:
+  module Associations 
     class HasAndBelongsToManyAssociation < CollectionAssociation #:nodoc:
       attr_reader :join_table
 

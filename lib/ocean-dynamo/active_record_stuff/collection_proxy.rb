@@ -1,5 +1,5 @@
-module OceanDynamo #:nodoc:
-  module Associations #:nodoc:
+module OceanDynamo  #:nodoc: all
+  module Associations 
     #
     # Association proxies in OceanDynamo are middlemen between the object that
     # holds the association, known as the <tt>@owner</tt>, and the actual associated

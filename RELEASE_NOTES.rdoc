@@ -1,3 +1,7 @@
+== v0.5.2
+
+* Only minor doc changes. Nodoc of the ActiveRecord reference files.
+
 == v0.5.1
 
 * <tt>belongs_to :thingy now defines <tt>.build_thingy</tt> and <tt>.create_thingy</tt>.

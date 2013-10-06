@@ -1,6 +1,6 @@
-module ActiveRecord #:nodoc:
+module ActiveRecord #:nodoc: all
   # = Active Record Has Many Association
-  module Associations #:nodoc:
+  module Associations 
     # This is the proxy that handles a has many association.
     #
     # If the association has a <tt>:through</tt> option further specialization

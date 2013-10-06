@@ -1,6 +1,6 @@
-module ActiveRecord #:nodoc:
+module ActiveRecord  #:nodoc: all
   # = Active Record Reflection
-  module Reflection # :nodoc:
+  module Reflection 
     extend ActiveSupport::Concern
 
     included do
