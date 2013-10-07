@@ -1,7 +1,7 @@
 require 'active_support/core_ext/array/wrap'
 
 module ActiveRecord #:nodoc: all
-  module Associations 
+  module Associations  #:nodoc: all
     # = Active Record Associations
     #
     # This is the root class of all associations ('+ Foo' signifies an included module Foo):
@@ -16,7 +16,7 @@ module ActiveRecord #:nodoc: all
     #       HasAndBelongsToManyAssociation
     #       HasManyAssociation
     #         HasManyThroughAssociation + ThroughAssociation
-    class Association #:nodoc:
+    class Association  #:nodoc: all
       attr_reader :owner, :target, :reflection
 
       delegate :options, :to => :reflection

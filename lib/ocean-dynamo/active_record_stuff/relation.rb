@@ -1,6 +1,6 @@
 module ActiveRecord  #:nodoc: all
   # = Active Record Relation
-  class Relation
+  class Relation #:nodoc: all
     JoinOperation = Struct.new(:relation, :join_class, :on)
 
     MULTI_VALUE_METHODS  = [:includes, :eager_load, :preload, :select, :group,

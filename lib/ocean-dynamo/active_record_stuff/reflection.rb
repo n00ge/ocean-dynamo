@@ -1,6 +1,6 @@
 module ActiveRecord  #:nodoc: all
   # = Active Record Reflection
-  module Reflection 
+  module Reflection  #:nodoc: all
     extend ActiveSupport::Concern
 
     included do
@@ -16,7 +16,7 @@ module ActiveRecord  #:nodoc: all
     #
     # MacroReflection class has info for AggregateReflection and AssociationReflection
     # classes.
-    module ClassMethods #:nodoc:
+    module ClassMethods  #:nodoc: all
       def create_reflection(macro, name, scope, options, active_record)
         case macro
         when :has_many, :belongs_to, :has_one, :has_and_belongs_to_many
@@ -82,7 +82,7 @@ module ActiveRecord  #:nodoc: all
     #     AggregateReflection
     #     AssociationReflection
     #       ThroughReflection
-    class MacroReflection
+    class MacroReflection #:nodoc: all
       # Returns the name of the macro.
       #
       # <tt>composed_of :balance, class_name: 'Money'</tt> returns <tt>:balance</tt>
@@ -152,7 +152,7 @@ module ActiveRecord  #:nodoc: all
 
     # Holds all the meta-data about an aggregation as it was specified in the
     # Active Record class.
-    class AggregateReflection < MacroReflection #:nodoc:
+    class AggregateReflection < MacroReflection  #:nodoc: all
       def mapping
         mapping = options[:mapping] || [name, name]
         mapping.first.is_a?(Array) ? mapping : [mapping]
@@ -161,7 +161,7 @@ module ActiveRecord  #:nodoc: all
 
     # Holds all the meta-data about an association as it was specified in the
     # Active Record class.
-    class AssociationReflection < MacroReflection #:nodoc:
+    class AssociationReflection < MacroReflection  #:nodoc: all
       # Returns the target association's class.
       #
       #   class Author < ActiveRecord::Base
@@ -394,7 +394,7 @@ module ActiveRecord  #:nodoc: all
 
     # Holds all the meta-data about a :through association as it was specified
     # in the Active Record class.
-    class ThroughReflection < AssociationReflection #:nodoc:
+    class ThroughReflection < AssociationReflection  #:nodoc: all
       delegate :foreign_key, :foreign_type, :association_foreign_key,
                :active_record_primary_key, :type, :to => :source_reflection
 

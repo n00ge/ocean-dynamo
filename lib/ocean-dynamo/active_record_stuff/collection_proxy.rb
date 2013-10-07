@@ -1,5 +1,5 @@
-module OceanDynamo  #:nodoc: all
-  module Associations 
+module ActiveRecord #:nodoc: all
+  module Associations #:nodoc: all
     #
     # Association proxies in OceanDynamo are middlemen between the object that
     # holds the association, known as the <tt>@owner</tt>, and the actual associated
@@ -24,10 +24,10 @@ module OceanDynamo  #:nodoc: all
     #
     # The <tt>@target</tt> object is not \loaded until needed.
     #
-    class CollectionProxy < Relation
+    class CollectionProxy < Relation #:nodoc: all
       #delegate(*(ActiveRecord::Calculations.public_instance_methods - [:count]), to: :scope)
 
-      def initialize(klass, association) #:nodoc:
+      def initialize(klass, association)
         @association = association
         super klass, klass.arel_table
         self.default_scoped = true

@@ -1,7 +1,7 @@
 module ActiveRecord #:nodoc: all
   # = Active Record Has And Belongs To Many Association
-  module Associations 
-    class HasAndBelongsToManyAssociation < CollectionAssociation #:nodoc:
+  module Associations  #:nodoc: all
+    class HasAndBelongsToManyAssociation < CollectionAssociation  #:nodoc: all
       attr_reader :join_table
 
       def initialize(owner, reflection)

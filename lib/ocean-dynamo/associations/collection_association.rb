@@ -1,5 +1,5 @@
-module OceanDynamo #:nodoc:
-  module Associations #:nodoc:
+module OceanDynamo 
+  module Associations 
     #
     # CollectionAssociation is an abstract class that provides common stuff to
     # ease the implementation of association proxies that represent
@@ -24,7 +24,7 @@ module OceanDynamo #:nodoc:
     # If you need to work on all current children, new and existing records,
     # +load_target+ and the +loaded+ flag are your friends.
     #
-    class CollectionAssociation < Association #:nodoc:
+    class CollectionAssociation < Association 
 
       #
       # Resets the collection to the empty array.

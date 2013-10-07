@@ -1,5 +1,5 @@
 module ActiveRecord  #:nodoc: all
-  module Associations 
+  module Associations  #:nodoc: all
     # = Active Record Association Collection
     #
     # CollectionAssociation is an abstract class that provides common stuff to
@@ -24,7 +24,7 @@ module ActiveRecord  #:nodoc: all
     #
     # If you need to work on all current children, new and existing records,
     # +load_target+ and the +loaded+ flag are your friends.
-    class CollectionAssociation < Association #:nodoc:
+    class CollectionAssociation < Association  #:nodoc: all
 
       # Implements the reader method, e.g. foo.items for Foo.has_many :items
       def reader(force_reload = false)

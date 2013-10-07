@@ -1,3 +1,9 @@
+== v0.5.3
+
+* There's something weird going on with the documentation generator at rubydoc.info.
+  It doesn't seem to understand :nodoc: all. Sorry, folks, we'll give it another try,
+  this time after going completely bonkers on the :nodoc:.
+
 == v0.5.2
 
 * Only minor doc changes. Nodoc of the ActiveRecord reference files.
