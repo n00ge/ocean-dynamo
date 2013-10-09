@@ -25,7 +25,7 @@ module ActiveRecord #:nodoc: all
     # The <tt>@target</tt> object is not \loaded until needed.
     #
     class CollectionProxy < Relation #:nodoc: all
-      #delegate(*(ActiveRecord::Calculations.public_instance_methods - [:count]), to: :scope)
+      delegate(*(ActiveRecord::Calculations.public_instance_methods - [:count]), to: :scope)
 
       def initialize(klass, association)
         @association = association

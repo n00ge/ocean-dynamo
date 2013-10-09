@@ -20,15 +20,15 @@ module OceanDynamo
       Relation.new(Target).model.should == Target
     end
 
-    it "should take an optional hash, store it in @values and define a reader for them" do
-      r = Relation.new Target, foo: :bar, baz: :quux
-      r.instance_variable_get(:@values).should == {foo: :bar, baz: :quux}
-      r.values.should == {foo: :bar, baz: :quux}
-    end
+    # it "should take an optional hash, store it in @values and define a reader for them" do
+    #   r = Relation.new Target, foo: :bar, baz: :quux
+    #   r.instance_variable_get(:@values).should == {foo: :bar, baz: :quux}
+    #   r.values.should == {foo: :bar, baz: :quux}
+    # end
 
-    it "should return {} for values if not given at cons" do
-    	Relation.new(Target).values.should == {}
-    end
+    # it "should return {} for values if not given at cons" do
+    # 	Relation.new(Target).values.should == {}
+    # end
 
     it "should when newly consed have a reader #loaded which returns false" do
       Relation.new(Target).loaded.should == false

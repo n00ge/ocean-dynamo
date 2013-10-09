@@ -17,6 +17,7 @@ require "ocean-dynamo/associations/associations"
 require "ocean-dynamo/associations/association"
 require "ocean-dynamo/associations/collection_association"
 require "ocean-dynamo/associations/relation"
+require "ocean-dynamo/associations/collection_proxy"
 require "ocean-dynamo/associations/belongs_to"
 require "ocean-dynamo/associations/has_many"
 

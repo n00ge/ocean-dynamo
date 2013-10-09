@@ -304,7 +304,7 @@ module ActiveRecord  #:nodoc: all
         end
       end
 
-      # Returns true if the collections is not empty.
+      # Returns true if the collection is not empty.
       # Equivalent to +!collection.empty?+.
       def any?
         if block_given?

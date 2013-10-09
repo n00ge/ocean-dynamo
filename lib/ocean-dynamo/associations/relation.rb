@@ -1,18 +1,22 @@
 module OceanDynamo
 
+  #
+  # Relation             (@klass, @loaded)
+  #   CollectionProxy    (@association)
+  #
+  #
+
   class Relation
 
   	attr_reader :klass
-  	attr_reader :values
   	attr_reader :loaded
 
   	alias :model :klass
     alias :loaded? :loaded
 
 
-  	def initialize(klass, **values)
+  	def initialize(klass)
   	  @klass = klass
-  	  @values = values
   	  @loaded = false
   	end
 

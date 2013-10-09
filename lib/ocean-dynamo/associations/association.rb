@@ -101,8 +101,8 @@ module OceanDynamo
 
       #
       # Returns the class of the target. belongs_to polymorphic used to override this 
-      # to look at the polymorphic_type field on the owner. However, belongs_to is no
-      # longer implemented in AR using an Assocation, so we keep this only for structural
+      # to look at the polymorphic_type field on the owner. However, as belongs_to is no
+      # longer implemented in AR using an Assocation, we keep this only for structural
       # compatibility.
       #
       def klass

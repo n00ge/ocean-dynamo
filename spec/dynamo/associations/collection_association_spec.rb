@@ -1,5 +1,11 @@
 require 'spec_helper'
 
+    #  Association
+    #    CollectionAssociation:
+    #      HasAndBelongsToManyAssociation => has_and_belongs_to_many
+    #      HasManyAssociation => has_many
+    #        HasManyThroughAssociation + ThroughAssociation => has_many :through
+
 
 class Owner < OceanDynamo::Table
   dynamo_schema(create: true) do
@@ -23,6 +29,11 @@ module OceanDynamo
         @o = Owner.create!
         @r = double(klass: Target)
         @ca = CollectionAssociation.new(@o, @r)
+      end
+
+
+      it "should inherit from Association" do
+        @ca.should be_an Association
       end
 
 
