@@ -1,3 +1,7 @@
+== v0.5.4
+
+* The :nodoc: problem solved.
+
 == v0.5.3
 
 * There's something weird going on with the documentation generator at rubydoc.info.
