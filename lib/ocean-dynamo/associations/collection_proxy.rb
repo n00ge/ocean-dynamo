@@ -1,10 +1,39 @@
 module OceanDynamo
   module Associations
+    #
+    # Collection proxies in OceanDynamo are middlemen between the object that
+    # holds the association, known as the <tt>@owner</tt>, and the actual associated
+    # object, known as the <tt>@target</tt>. The kind of association any proxy is
+    # about is available in <tt>@reflection</tt>. That's an instance of the class
+    # OceanDynamo::Reflection::AssociationReflection.
+    #
+    # For example, given
+    #
+    #   class Blog < OceanDynamo::Table
+    #     has_many :posts
+    #   end
+    #
+    #   blog = Blog.first
+    #
+    # the collection proxy in <tt>blog.posts</tt> has the object in +blog+ as
+    # <tt>@owner</tt>, the collection of its posts as <tt>@target</tt>, and
+    # the <tt>@reflection</tt> object represents a <tt>:has_many</tt> macro.
+    #
+    # This class delegates unknown methods to <tt>@target</tt> NOT via
+    # <tt>method_missing</tt> (as the ActiveRecord documentation falsely states),
+    # but through explicit proxy methods for each separate operation.
+    #
+    # The <tt>@target</tt> object is not \loaded until needed. As it turns out,
+    # the key to this lazy loading scheme is <tt>to_ary</tt>.
+    #
+    #
+    # Inheritance chain:
+    #
+    #   Relation             (@klass, @loaded)
+    #     CollectionProxy    (@association)
+    #
 
-    #
-    # Relation             (@klass, @loaded)
-    #   CollectionProxy    (@association)
-    #
+
 
     class CollectionProxy < Relation
 

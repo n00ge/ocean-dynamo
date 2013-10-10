@@ -27,11 +27,6 @@ module OceanDynamo
     alias find_by_id find_by_key
 
 
-    # def find_by_id(*args)
-    #   find_by_key(*args)
-    # end
-
-
     #
     # The number of records in the table.
     #

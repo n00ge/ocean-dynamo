@@ -115,7 +115,7 @@ module OceanDynamo
 
 
       #
-      # Returns true if the class has a belongs_to association.
+      # Returns +true+ if the class has a +belongs_to+ association.
       #
       def has_belongs_to?
         fields[table_hash_key]['association'] == :belongs_to
@@ -124,7 +124,7 @@ module OceanDynamo
 
 
       #
-      # Returns the class of the belongs_to association, or false if none.
+      # Returns the class of the +belongs_to+ association, or +false+ if none.
       #
       def belongs_to_class
         has_belongs_to? && fields[table_hash_key]['target_class']
@@ -135,17 +135,7 @@ module OceanDynamo
       protected
 
       #
-      # belongs_to can be specified only once in each model, since we use the range key to
-      # store its UUID and the hash key to store the UUID of the parent, as in
-      # ["parent_uuid", "child_uuid"]. This allows the parent to find all its children 
-      # extremely efficiently by using only the primary index. It also allows the child
-      # to find its parent using only its own hash key. Presto: scalability without any
-      # secondary indices in the has_many/belongs_to association.
-      #
-      # Caveat: the parent must have a simple primary key, not a composite one. It *is*
-      # possible to use a composite key, but then the children must use scans to find
-      # their parents. We could conditionalise this, of course, so that the lookup
-      # strategy is transparent to the user.
+      # Make sure the class doesn't already have a +belongs_to+ relation.
       #
       def assert_only_one_belongs_to!  # :nodoc:
         if has_belongs_to?
@@ -166,7 +156,7 @@ module OceanDynamo
 
 
       #
-      # Make sure the hash key isn't called :id.
+      # Make sure the hash key isn't named <tt>:id</tt>.
       #
       def assert_hash_key_is_not_id!  # :nodoc:
         raise HashKeyMayNotBeNamedId, 

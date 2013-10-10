@@ -1,8 +1,15 @@
 module OceanDynamo
 
+
   #
-  # Relation             (@klass, @loaded)
-  #   CollectionProxy    (@association)
+  # Relation is a stripped-down version of the corresponding ActiveRecord 
+  # class. OceanDynamo doesn't implement scopes or counter caches, which
+  # simplifies the code considerably. 
+  #
+  # Inheritance chain:
+  #
+  #   Relation             (@klass, @loaded)
+  #     CollectionProxy    (@association)
   #
   #
 

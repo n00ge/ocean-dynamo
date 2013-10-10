@@ -57,7 +57,6 @@ module OceanDynamo
 
 
       def setup_dynamo
-        #self.dynamo_client = AWS::DynamoDB::Client.new(:api_version => '2012-08-10') 
         self.dynamo_client ||= AWS::DynamoDB.new
         self.dynamo_table = dynamo_client.tables[table_full_name]
         self.dynamo_items = dynamo_table.items

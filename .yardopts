@@ -1,0 +1,2 @@
+--exclude /active_record_stuff/
+--no-private 
