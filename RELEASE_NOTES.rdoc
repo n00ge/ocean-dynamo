@@ -1,3 +1,8 @@
+== v0.5.5
+
+* Minimum Ruby version removed from gemspec file. The requirement is still there,
+  just not explicitly stated.
+
 == v0.5.4
 
 * Minimum Ruby version specified as '~> 2' instead of '>= 2.0.0' as the latter

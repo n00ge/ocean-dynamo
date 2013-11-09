@@ -37,7 +37,7 @@ meaning it scales without limits.
 
 See also Ocean, a Rails framework for creating highly scalable SOAs in the cloud, in which
 ocean-dynamo is used as a central component: http://wiki.oceanframework.net"
-  s.required_ruby_version = '~> 2'
+  #s.required_ruby_version = '~> 2'
   s.license = 'MIT'
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
