@@ -1,3 +1,7 @@
+== v0.5.6
+
+* Removed fake_dynamo as an explicit development requirement.
+
 == v0.5.5
 
 * Minimum Ruby version removed from gemspec file. The requirement is still there,
