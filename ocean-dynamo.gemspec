@@ -52,5 +52,5 @@ ocean-dynamo is used as a central component: http://wiki.oceanframework.net"
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency "simplecov"
   s.add_development_dependency "factory_girl_rails", "~> 4.0"
-  s.add_development_dependency "fake_dynamo", "~> 0.1.3"
+  #s.add_development_dependency "fake_dynamo", "~> 0.1.3"
 end

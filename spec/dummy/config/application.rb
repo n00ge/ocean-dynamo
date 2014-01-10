@@ -69,6 +69,9 @@ module Dummy
 
     # Disable the asset pipeline
     config.assets.enabled = false
+
+    # No locale
+    I18n.enforce_available_locales = false
   end
 end
 
