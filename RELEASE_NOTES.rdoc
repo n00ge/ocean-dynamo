@@ -1,3 +1,7 @@
+== v0.5.7
+
+* Maintenance release due to diffs.
+
 == v0.5.6
 
 * Removed fake_dynamo as an explicit development requirement.
