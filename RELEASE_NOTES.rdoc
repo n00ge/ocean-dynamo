@@ -1,3 +1,7 @@
+== v0.5.9
+
+* Rails 4.1.
+
 == v0.5.8
 
 * Maintenance release due to the release of Rails 4.1.

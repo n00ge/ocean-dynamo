@@ -54,7 +54,7 @@ class Voom < OceanDynamo::Table
 
   before_destroy do
     log "before_destroy"
-    return false if no_destroy
+    !no_destroy
   end
 
   after_destroy do
