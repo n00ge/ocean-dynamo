@@ -1,3 +1,9 @@
+== v0.6.0
+
+* Range keys could previously only be strings, now they can also be integers,
+  floats, and datetimes.
+* +#delete_all+ and +#destroy_all+ no longer barf on empty datasets.
+
 == v0.5.8
 
 * Maintenance release due to the release of Rails 4.1.

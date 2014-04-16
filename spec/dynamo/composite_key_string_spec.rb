@@ -1,11 +1,9 @@
 require 'spec_helper'
 
 class VaVaVoom < OceanDynamo::Table
-
   dynamo_schema(:hash, :range, create: true) do
     attribute :contents
   end
-
 end
 
 

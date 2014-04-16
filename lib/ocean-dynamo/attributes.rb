@@ -171,11 +171,11 @@ module OceanDynamo
         return value.collect(&:to_s) if value.is_a?(Array)
         value
       when :integer
-        return nil if value == nil
+        return nil if value == nil || value == false || value.is_a?(String) && value.blank?
         return value.collect(&:to_i) if value.is_a?(Array)
         value.to_i
       when :float
-        return nil if value == nil
+        return nil if value == nil || value == false || value.is_a?(String) && value.blank?
         return value.collect(&:to_f) if value.is_a?(Array)
         value.to_f
       when :boolean

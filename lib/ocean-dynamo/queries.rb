@@ -11,6 +11,7 @@ module OceanDynamo
       return hash.collect {|elem| find elem, range, consistent: consistent } if hash.is_a?(Array)
       _late_connect?
       hash = hash.id if hash.kind_of?(Table)    # TODO: We have (innocuous) leakage, fix!
+      range = range.to_i if range.is_a?(Time)
       item = dynamo_items[hash, range]
       unless item.exists?
         raise RecordNotFound, "can't find a #{self} with primary key ['#{hash}', #{range.inspect}]" 

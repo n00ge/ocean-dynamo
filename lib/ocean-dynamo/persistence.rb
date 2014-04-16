@@ -39,6 +39,7 @@ module OceanDynamo
 
 
       def delete_all
+        return nil unless dynamo_items
         dynamo_items.each() do |item|
           item.delete
         end
@@ -47,6 +48,7 @@ module OceanDynamo
 
 
       def destroy_all
+        return nil unless dynamo_items
         dynamo_items.select() do |item_data|
           new._setup_from_dynamo(item_data).destroy
         end

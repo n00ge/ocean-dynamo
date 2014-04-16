@@ -89,7 +89,7 @@ module OceanDynamo
         dynamo_table.hash_key = [table_hash_key, hash_key_type]
 
         if table_range_key
-          range_key_type = fields[table_range_key][:type]
+          range_key_type = generalise_range_key_type
           dynamo_table.range_key = [table_range_key, range_key_type]
         end
       end
@@ -98,8 +98,7 @@ module OceanDynamo
       def create_table
         hash_key_type = fields[table_hash_key][:type]
         hash_key_type = :string if hash_key_type == :reference
-
-        range_key_type = table_range_key && fields[table_range_key][:type]
+        range_key_type = generalise_range_key_type
 
         self.dynamo_table = dynamo_client.tables.create(table_full_name, 
           table_read_capacity_units, table_write_capacity_units,
@@ -109,6 +108,17 @@ module OceanDynamo
         sleep 1 until dynamo_table.status == :active
         setup_dynamo
         true
+      end
+
+
+      def generalise_range_key_type
+        return false unless table_range_key
+        t = fields[table_range_key][:type]
+        return :string if t == :string
+        return :number if t == :integer
+        return :number if t == :float
+        return :number if t == :datetime
+        raise "Unsupported range key type: #{t}"
       end
 
 
