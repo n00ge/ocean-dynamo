@@ -3,7 +3,7 @@ require 'spec_helper'
 
 # The parent class
 class Parent < OceanDynamo::Table
-  dynamo_schema(create: true) do
+  dynamo_schema(create: true, table_name_suffix: Api.basename_suffix) do
   end
   has_many :children, dependent: :destroy
   has_many :pets,     dependent: :nullify
@@ -13,7 +13,7 @@ end
 
 # The Child class
 class Child < OceanDynamo::Table
-  dynamo_schema(:uuid, create: true) do
+  dynamo_schema(:uuid, create: true, table_name_suffix: Api.basename_suffix) do
   end
   belongs_to :parent
 end
@@ -21,7 +21,7 @@ end
 
 # Another child class, Pet
 class Pet < OceanDynamo::Table
-  dynamo_schema(:uuid, create: true) do
+  dynamo_schema(:uuid, create: true, table_name_suffix: Api.basename_suffix) do
   end
   belongs_to :parent
 end
@@ -29,7 +29,7 @@ end
 
 # Another child class, Car
 class Car < OceanDynamo::Table
-  dynamo_schema(:uuid, create: true) do
+  dynamo_schema(:uuid, create: true, table_name_suffix: Api.basename_suffix) do
   end
   belongs_to :parent
 end

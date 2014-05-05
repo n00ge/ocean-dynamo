@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class Badabing < OceanDynamo::Table
-  dynamo_schema(:uuid, :digitus, create:true) do
+  dynamo_schema(:uuid, :digitus, create:true, table_name_suffix: Api.basename_suffix) do
     attribute :digitus, :integer
   end
 end

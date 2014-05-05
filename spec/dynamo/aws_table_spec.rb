@@ -14,9 +14,9 @@ describe CloudModel do
     @saved_table_name = CloudModel.table_name
     @saved_prefix = CloudModel.table_name_prefix
     @saved_suffix = CloudModel.table_name_suffix
-    CloudModel.table_name = "cloud_models"
-    CloudModel.table_name_prefix = nil
-    CloudModel.table_name_suffix = nil
+    #CloudModel.table_name = "cloud_models"
+    #CloudModel.table_name_prefix = nil
+    #CloudModel.table_name_suffix = nil
   end
 
   after :each do
@@ -37,13 +37,11 @@ describe CloudModel do
   end
 
   it "should have a table_name_suffix" do
-    CloudModel.table_name_suffix.should == nil
-    CloudModel.table_name_suffix = "_bar"
-    CloudModel.table_name_suffix.should == "_bar"
+    CloudModel.table_name_suffix.should == Api.basename_suffix
   end
 
   it "should have a table_full_name method" do
-    CloudModel.table_full_name.should == "cloud_models"
+    CloudModel.table_full_name.should == "cloud_models" + Api.basename_suffix
     CloudModel.table_name_prefix = "foo_"
     CloudModel.table_name_suffix = "_bar"
     CloudModel.table_full_name.should == "foo_cloud_models_bar"
@@ -117,7 +115,7 @@ describe CloudModel do
     allow(t).to receive(:hash_key=).once
     allow(t).to receive(:range_key=).once
     AWS::DynamoDB::TableCollection.any_instance.should_receive(:create).
-      with("cloud_models", 
+      with("cloud_models" + Api.basename_suffix, 
            10, 
            5, 
            hash_key: {uuid: :string}, 

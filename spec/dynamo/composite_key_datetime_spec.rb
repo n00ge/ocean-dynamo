@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class Ragadish < OceanDynamo::Table
-  dynamo_schema(:uuid, :tempus, create:true) do
+  dynamo_schema(:uuid, :tempus, create:true, table_name_suffix: Api.basename_suffix) do
     attribute :tempus, :datetime
   end
 end

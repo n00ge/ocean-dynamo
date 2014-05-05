@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 class Owner < OceanDynamo::Table
-  dynamo_schema(create: true) do
+  dynamo_schema(create: true, table_name_suffix: Api.basename_suffix) do
     attribute :thing
   end
 end
 
 class Target < OceanDynamo::Table
-  dynamo_schema(create: true) do
+  dynamo_schema(create: true, table_name_suffix: Api.basename_suffix) do
     attribute :name
   end
 end

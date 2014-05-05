@@ -1,6 +1,6 @@
 class Voom < OceanDynamo::Table
 
-  dynamo_schema(create: true,
+  dynamo_schema(create: true, table_name_suffix: Api.basename_suffix,
                 timestamps: [:made_at, :changed_at]) do
     attribute :logged,     :serialized, default: []
     attribute :no_destroy, :boolean,    default: false

@@ -154,11 +154,11 @@ describe CloudModel do
       describe "after instantiation" do
 
         it "should return a stored value" do
-          i = CloudModel.create int: [1, 2, 3]
-          i.int.should == [1, 2, 3]
+          i = CloudModel.create int: [55, -1, 2000]
+          i.int.should == [55, -1, 2000]
           i.reload(consistent: true)
-          i.int.should == [1, 2, 3]
-          CloudModel.find(i.uuid, consistent: true).int.should == [1, 2, 3]
+          i.int.to_set.should == [55, -1, 2000].to_set
+          CloudModel.find(i.uuid, consistent: true).int.to_set.should == [55, -1, 2000].to_set
         end
 
         it "should return a stored empty set" do

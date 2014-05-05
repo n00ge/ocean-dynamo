@@ -2,7 +2,7 @@ require 'spec_helper'
 
 
 class Master < OceanDynamo::Table
-  dynamo_schema(create: true) do
+  dynamo_schema(create: true, table_name_suffix: Api.basename_suffix) do
     attribute :name
   end
   has_many :slaves
@@ -10,7 +10,7 @@ end
 
 
 class Slave < OceanDynamo::Table
-  dynamo_schema(:uuid, create: true) do
+  dynamo_schema(:uuid, create: true, table_name_suffix: Api.basename_suffix) do
     attribute :name
   end
   belongs_to :master
@@ -19,7 +19,7 @@ end
 
 
 class Subslave < OceanDynamo::Table
-  dynamo_schema(:uuid, create: true) do
+  dynamo_schema(:uuid, create: true, table_name_suffix: Api.basename_suffix) do
     attribute :name
   end
   belongs_to :slave, composite_key: true
