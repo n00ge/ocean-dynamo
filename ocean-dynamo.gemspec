@@ -44,6 +44,7 @@ ocean-dynamo is used as a central component: http://wiki.oceanframework.net"
 
   
   s.add_dependency "aws-sdk", '~> 1.0' 
+  s.add_dependency "aws-sdk-core"
   s.add_dependency "activemodel", '~> 4.1.0'  
   s.add_dependency "activesupport", '~> 4.1.0' 
 
