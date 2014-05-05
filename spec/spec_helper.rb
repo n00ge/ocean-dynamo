@@ -34,3 +34,26 @@ RSpec.configure do |config|
   config.before(:suite) { `curl -s -X DELETE http://localhost:4567` }
   # config.after(:suite)  { `curl -s -X DELETE http://localhost:4567` }
 end
+
+
+class Api
+  #
+  # Special version of Api.adorn_basename.
+  #
+  def self.adorn_basename(basename, chef_env: "dev", rails_env: "development",
+                          suffix_only: false)
+    fullname = suffix_only ? "_#{chef_env}" : "#{basename}_#{chef_env}"
+    local_ip = UDPSocket.open {|s| s.connect("64.233.187.99", 1); s.addr.last}.gsub('.', '-')
+    fullname += "_#{local_ip}_#{rails_env}"
+    fullname
+  end
+
+
+  #
+  # Special version of Api.basename_suffix.
+  #
+  def self.basename_suffix
+    adorn_basename '', suffix_only: true, rails_env: Rails.env
+  end
+
+end

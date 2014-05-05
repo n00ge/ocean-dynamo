@@ -2,7 +2,7 @@ require 'spec_helper'
 
 class VaVaVoom < OceanDynamo::Table
 
-  dynamo_schema(:hash, :range, create: true) do
+  dynamo_schema(:hash, :range, create: true, table_name_suffix: Api.basename_suffix) do
     attribute :contents
   end
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class Target < OceanDynamo::Table
-  dynamo_schema() do
+  dynamo_schema(table_name_suffix: Api.basename_suffix) do
   	attribute :name
   end
 end

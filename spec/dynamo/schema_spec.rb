@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class Quux < OceanDynamo::Table
-  dynamo_schema(:index, :foo) do
+  dynamo_schema(:index, :foo, table_name_suffix: Api.basename_suffix) do
     attribute :index,     :string,  default: "unlikely"
     attribute :foo,       :string
     attribute :bar,       :string,  default: "zuul"
@@ -15,11 +15,10 @@ end
 class Blahonga < OceanDynamo::Table
   dynamo_schema(:uuid, table_name: "caramba",
                        table_name_prefix: "pre_",
-                       table_name_suffix: "_post",
                        read_capacity_units: 100,
                        write_capacity_units: 50,
                        connect: false,
-                       create: true,
+                       create: true, table_name_suffix: Api.basename_suffix,
                        locking: :optimism,
                        timestamps: [:made_at, :changed_at]
                ) do
@@ -36,7 +35,7 @@ end
 
 
 class Idi < OceanDynamo::Table
-  dynamo_schema(create: true) do
+  dynamo_schema(create: true, table_name_suffix: Api.basename_suffix) do
     attribute :unused
   end
 end
@@ -148,12 +147,12 @@ describe Blahonga do
   end
 
   it "should allow the name suffix to be specified" do
-    Blahonga.table_name_suffix.should == "_post"
+    Blahonga.table_name_suffix.should == Api.basename_suffix
   end
 
   it "should produce full table names" do
-    Quux.table_full_name.should == "quuxes"
-    Blahonga.table_full_name.should == "pre_caramba_post"
+    Quux.table_full_name.should == "quuxes" + Api.basename_suffix
+    Blahonga.table_full_name.should == "pre_caramba" + Api.basename_suffix
   end
 
   it "should default the read capacity to 10" do
