@@ -27,6 +27,7 @@ module OceanDynamo
 
     include ActiveModel::Model
     include ActiveModel::Validations::Callbacks
+    extend ActiveModel::Naming
 
     define_model_callbacks :initialize, only: :after
     define_model_callbacks :save
