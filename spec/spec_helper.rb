@@ -31,7 +31,7 @@ RSpec.configure do |config|
 
   # To clear the fake_dynamo DB before and/or after each run, uncomment as desired:
   config.before(:suite) { `curl -s -X DELETE http://localhost:4567` }
-  # config.after(:suite)  { `curl -s -X DELETE http://localhost:4567` }
+  config.after(:suite)  { `curl -s -X DELETE http://localhost:4567` }
 end
 
 
