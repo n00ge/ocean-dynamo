@@ -25,82 +25,82 @@ module OceanDynamo
 
 
       it "should take two parameters, owner and reflection, and define readers for them" do
-        @a.owner.should == @o
-        @a.reflection.should == @r
+        expect(@a.owner).to eq @o
+        expect(@a.reflection).to eq @r
         expect { @a.owner = :nono }.to raise_error
         expect { @a.reflection = :never }.to raise_error
       end
 
       it "should have a target and a reader" do
-        @a.target.should == nil
+        expect(@a.target).to eq nil
       end
 
       it "should have a #loaded? flag method which initially should be false" do
-        @a.loaded?.should == false
+        expect(@a.loaded?).to eq false
       end
 
       it "should have a #loaded! method which sets #loaded flag to true" do
         @a.loaded!
-        @a.loaded?.should == true
+        expect(@a.loaded?).to eq true
       end
 
       it "should have a reset method which resets the target and the loaded flag" do
         @a.loaded!
-        @a.loaded?.should == true
+        expect(@a.loaded?).to eq true
         @a.reset
-        @a.loaded?.should == false
+        expect(@a.loaded?).to eq false
       end
 
       it "should have a target writer which also should set the loaded flag" do
-        @a.target.should == nil
-        @a.loaded?.should == false
+        expect(@a.target).to eq nil
+        expect(@a.loaded?).to eq false
         @a.target = []
-        @a.target.should == []
-        @a.loaded?.should == true
+        expect(@a.target).to eq []
+        expect(@a.loaded?).to eq true
       end
 
       it "should have a #stale_target? method" do
-        @a.stale_target?.should == false
+        expect(@a.stale_target?).to eq false
       end
 
       it "should let #stale_target? return true if the target is loaded and @stale_state differs from stale_state" do
         @a.loaded!
-        @a.stale_target?.should == false
+        expect(@a.stale_target?).to eq false
         @a.instance_variable_set(:@stale_state, :foo)
-        @a.stale_target?.should == true
+        expect(@a.stale_target?).to eq true
         @a.reset
-        @a.stale_target?.should == false
+        expect(@a.stale_target?).to eq false
       end
 
       it "should have a klass method which defers to the reflection klass" do
-        @a.klass.should == @a.reflection.klass
+        expect(@a.klass).to eq @a.reflection.klass
       end
 
 
       describe "load_target" do 
 
         it "should exist" do
-          @a.should respond_to :load_target
+          expect(@a).to respond_to :load_target
         end
 
         it "should call find_target, which subclasses should implement" do
-          @a.should_receive(:find_target).once.and_return([])
+          expect(@a).to receive(:find_target).once.and_return([])
           @a.load_target
         end
 
         it "should cache the loaded target and return it" do
-          @a.should_receive(:find_target).once.and_return([])
-          @a.load_target.should == []
-          @a.load_target.should == []
-          @a.load_target.should == []
+          expect(@a).to receive(:find_target).once.and_return([])
+          expect(@a.load_target).to eq []
+          expect(@a.load_target).to eq []
+          expect(@a.load_target).to eq []
         end
       end
 
 
       it "should have a #reload method which resets and loads the target" do
-        @a.should_receive(:find_target).once.and_return([])
-        @a.reload.should == @a
-        @a.loaded?.should == true
+        expect(@a).to receive(:find_target).once.and_return([])
+        expect(@a.reload).to eq @a
+        expect(@a.loaded?).to eq true
       end
 
     end

@@ -10,28 +10,28 @@ describe CloudModel do
 
   it "save should not raise an exception for a valid model" do
   	i = CloudModel.new
-  	i.valid?.should == true
-  	i.save.should == true
+  	expect(i.valid?).to eq true
+  	expect(i.save).to eq true
   end
 
   it "save! should not raise an exception for a valid model" do
   	i = CloudModel.new
-  	i.valid?.should == true
-  	i.save!.should == true
+  	expect(i.valid?).to eq true
+  	expect(i.save!).to eq true
   end
 
 
   it "save should not raise an exception for an invalid model" do
   	i = CloudModel.new
   	i.steps = nil
-  	i.valid?.should == false
-  	i.save.should == false
+  	expect(i.valid?).to eq false
+  	expect(i.save).to eq false
   end
 
   it "save! should raise an exception for a valid model" do
   	i = CloudModel.new
   	i.steps = nil
-  	i.valid?.should == false
+  	expect(i.valid?).to eq false
   	expect { i.save! }.to raise_error(OceanDynamo::RecordInvalid)
   end
 
@@ -39,15 +39,15 @@ describe CloudModel do
   it "update should not raise an exception for a valid model" do
   	i = CloudModel.new
   	i.save!
-  	i.valid?.should == true
-  	i.save.should == true
+  	expect(i.valid?).to eq true
+  	expect(i.save).to eq true
   end
 
   it "update! should not raise an exception for a valid model" do
   	i = CloudModel.new
   	i.save!
-  	i.valid?.should == true
-  	i.save!.should == true
+  	expect(i.valid?).to eq true
+  	expect(i.save!).to eq true
   end
 
 
@@ -55,15 +55,15 @@ describe CloudModel do
   	i = CloudModel.new
   	i.save!
   	i.steps = nil
-  	i.valid?.should == false
-  	i.save.should == false
+  	expect(i.valid?).to eq false
+  	expect(i.save).to eq false
   end
 
   it "update! should raise an exception for a valid model" do
   	i = CloudModel.new
   	i.save!
   	i.steps = nil
-  	i.valid?.should == false
+  	expect(i.valid?).to eq false
   	expect { i.save! }.to raise_error(OceanDynamo::RecordInvalid)
   end
 

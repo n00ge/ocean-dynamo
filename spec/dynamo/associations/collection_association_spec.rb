@@ -33,14 +33,14 @@ module OceanDynamo
 
 
       it "should inherit from Association" do
-        @ca.should be_an Association
+        expect(@ca).to be_an Association
       end
 
 
       it "should have a reset method which sets @target to []" do
         @ca.reset
-        @ca.target.should == []
-        @ca.loaded?.should == false
+        expect(@ca.target).to eq []
+        expect(@ca.loaded?).to eq false
       end
 
 

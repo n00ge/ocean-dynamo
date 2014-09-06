@@ -14,9 +14,9 @@ describe Badabing do
   end
 
   it "should set the keys correctly" do
-    Badabing.table_hash_key.should == :uuid
-    Badabing.table_range_key.should == :digitus
-    Badabing.fields.should include :digitus
+    expect(Badabing.table_hash_key).to eq :uuid
+    expect(Badabing.table_range_key).to eq :digitus
+    expect(Badabing.fields).to include :digitus
   end
 
   it "should be instantiatiable" do
@@ -25,21 +25,21 @@ describe Badabing do
 
   it "should be invalid if the range key is absent" do
     v = Badabing.new()
-    v.valid?.should == false
-    v.errors.messages.should == {digitus: ["can't be blank"]}
+    expect(v.valid?).to eq false
+    expect(v.errors.messages).to eq({digitus: ["can't be blank"]})
   end
 
   it "should be persistable when both args are specified" do
     v = Badabing.create! uuid: "foo", digitus: 10000
-    v.should be_a Badabing
-    v.uuid.should == "foo"
-    v.digitus.should == 10000
+    expect(v).to be_a Badabing
+    expect(v.uuid).to eq "foo"
+    expect(v.digitus).to eq 10000
   end
 
   it "should assign a UUID to the hash key when unspecified" do
     v = Badabing.create! digitus: 555
-    v.uuid.should be_a String
-    v.uuid.should_not == ""
+    expect(v.uuid).to be_a String
+    expect(v.uuid).not_to eq ""
   end
 
   it "should not persist if the range key is empty or unspecified" do
@@ -52,7 +52,7 @@ describe Badabing do
   it "instances should be findable" do
     orig = Badabing.create! digitus: 100000
     found = Badabing.find(orig.uuid, 100000, consistent: true)
-    found.should == orig
+    expect(found).to eq orig
   end
 
   it "instances should be reloadable" do

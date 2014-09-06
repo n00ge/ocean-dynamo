@@ -7,13 +7,13 @@ describe Voom do
   end
 
   it "should have :id as its key" do
-    Voom.table_hash_key.should == :id
+    expect(Voom.table_hash_key).to eq :id
   end
 
 
   it "should do instantiation callbacks in the correct order" do
     @i.valid?
-    @i.logged.should == [
+    expect(@i.logged).to eq [
       "after_initialize", 
       "before_validation", 
       "after_validation"
@@ -22,7 +22,7 @@ describe Voom do
 
   it "should do save callbacks in the correct order" do
     @i.save!
-    @i.logged.should == [
+    expect(@i.logged).to eq [
       "after_initialize", 
       "before_validation", 
       "after_validation", 
@@ -38,7 +38,7 @@ describe Voom do
     @i.save!
     @i.logged = []
     @i.save!
-    @i.logged.should == [
+    expect(@i.logged).to eq [
       "before_validation", 
       "after_validation", 
       "before_save", 
@@ -53,7 +53,7 @@ describe Voom do
     @i.save!
     @i.logged = []
     @i.destroy
-    @i.logged.should == [
+    expect(@i.logged).to eq [
       "before_destroy", 
       "after_destroy", 
       "after_commit"
@@ -74,7 +74,7 @@ describe Voom do
     @i.save!
     @i.logged = []
     @i.touch
-    @i.logged.should == [
+    expect(@i.logged).to eq [
       "before_touch", 
       "after_touch"
     ]

@@ -55,7 +55,7 @@ describe Parent do
   end
 
   it "should have a has_many class macro" do
-    Parent.should respond_to :has_many
+    expect(Parent).to respond_to :has_many
   end
 
   it "should require an argument to has_many" do
@@ -63,29 +63,29 @@ describe Parent do
   end
 
   it "should know it has a :has_many relation to the Child class" do
-    Parent.relates_to(Child).should == :has_many
+    expect(Parent.relates_to(Child)).to eq :has_many
   end
 
   it "should know it has a :has_many relation to the Kid class" do
-    Parent.relates_to(Pet).should == :has_many
+    expect(Parent.relates_to(Pet)).to eq :has_many
   end
 
   it "should know it has no relation to the SpaceCadet class" do
-    Parent.relates_to(SpaceCadet).should == nil
+    expect(Parent.relates_to(SpaceCadet)).to eq nil
   end
 
   it "should have no extra attributes" do
-    Parent.new.attributes.should == { 
+    expect(Parent.new.attributes).to eq({ 
       "id"=>"", 
       "created_at"=>nil, "updated_at"=>nil, "lock_version"=>0
-    }
+    })
   end
 
   it "child class Child should have one extra attribute" do
-    Child.new.attributes.should == {
+    expect(Child.new.attributes).to eq({
       "uuid"=>"", "parent_id"=>nil,
       "created_at"=>nil, "updated_at"=>nil, "lock_version"=>0 
-    }
+    })
   end
 
 
@@ -95,11 +95,11 @@ describe Parent do
     c2 = Child.create! parent: p
     c3 = Child.create! parent: p
     c1.reload
-    c1.parent.should == p
+    expect(c1.parent).to eq p
     c2.reload
-    c2.parent.should == p
+    expect(c2.parent).to eq p
     c3.reload
-    c3.parent.should == p
+    expect(c3.parent).to eq p
   end
 
 
@@ -107,18 +107,18 @@ describe Parent do
 
     it "should return false for an unpersisted parent" do
       p = Parent.new
-      p.children?.should == false
+      expect(p.children?).to eq false
     end
 
     it "should return false for a persisted parent without children" do
       p = Parent.create!
-      p.children?.should == false
+      expect(p.children?).to eq false
     end
 
     it "should return true for a persisted parent with children" do
       p = Parent.create!
       Child.create! parent: p
-      p.children?.should == true
+      expect(p.children?).to eq true
     end
   end
 
@@ -127,13 +127,13 @@ describe Parent do
 
     it "should return nil for an unpersisted Parent" do
       p = Parent.new
-      p.children.should == nil
+      expect(p.children).to eq nil
     end
 
     it "should return an array for a persisted Parent" do
       p = Parent.create!
       children = p.children
-      children.should be_an Array
+      expect(children).to be_an Array
     end
 
     it "should be instantiatable as instances" do
@@ -146,17 +146,17 @@ describe Parent do
       c2 = Child.create! parent: p
       c3 = Child.create! parent: p
       children = p.children
-      children.should include c1
-      children.should include c2
-      children.should include c3
+      expect(children).to include c1
+      expect(children).to include c2
+      expect(children).to include c3
     end
 
     it "should take an optional boolean which if true should reload the relation" do
       p = Parent.create!
-      p.children.should == []
+      expect(p.children).to eq []
       c = Child.create! parent: p
-      p.children.should == []
-      p.children(true).should == [c]
+      expect(p.children).to eq []
+      expect(p.children(true)).to eq [c]
     end
   end
 
@@ -165,16 +165,16 @@ describe Parent do
 
     it "should return nil for an unpersisted Parent" do
       p = Parent.new
-      p.pets.should == nil
+      expect(p.pets).to eq nil
     end
 
     it "should return an array of Pets for a persisted Parent" do
       p = Parent.create!
       Pet.create! parent: p
       pets = p.pets
-      pets.should be_an Array
-      pets.should_not == []
-      pets.first.should be_a Pet
+      expect(pets).to be_an Array
+      expect(pets).not_to eq []
+      expect(pets.first).to be_a Pet
     end
 
     it "should be instantiatable as instances" do
@@ -187,9 +187,9 @@ describe Parent do
       c2 = Pet.create! parent: p  # the association proxies are
       c3 = Pet.create! parent: p  # in place
       pets = p.pets               # Cache them locally for faster tests
-      pets.should include c1
-      pets.should include c2
-      pets.should include c3
+      expect(pets).to include c1
+      expect(pets).to include c2
+      expect(pets).to include c3
     end
   end
 
@@ -221,46 +221,46 @@ describe Parent do
 
 
     it "should have findable children" do
-      @lisa.parent.should == @homer
-      Child.find(@homer.id, @lisa.uuid).should == @lisa
+      expect(@lisa.parent).to eq @homer
+      expect(Child.find(@homer.id, @lisa.uuid)).to eq @lisa
     end
 
 
     describe "reading:" do
 
       it "Homer should have three children" do
-        @homer.children.length.should == 3
+        expect(@homer.children.length).to eq 3
       end
 
       it "Homer should have no pets" do
-        @homer.pets.length.should == 0
+        expect(@homer.pets.length).to eq 0
       end
 
 
       it "Marge should have no children" do
-        @marge.children.length.should == 0
+        expect(@marge.children.length).to eq 0
       end
 
       it "Marge should have no pets" do
-        @marge.pets.length.should == 0
+        expect(@marge.pets.length).to eq 0
       end
 
 
       it "Peter should have three children" do
-        @peter.children.length.should == 3
+        expect(@peter.children.length).to eq 3
       end
 
       it "Peter should have no pets" do
-        @peter.pets.length.should == 0
+        expect(@peter.pets.length).to eq 0
       end
 
 
       it "Lois should have no children" do
-        @lois.children.length.should == 0
+        expect(@lois.children.length).to eq 0
       end
 
       it "Lois should have one pet" do
-        @lois.pets.length.should == 1
+        expect(@lois.pets.length).to eq 1
       end
     end
 
@@ -290,10 +290,10 @@ describe Parent do
         @peter.children = [@chris]
         @peter.save!
         @peter.reload
-        @peter.children.length.should == 1
-        Child.find_by_key(@peter.id, @meg.uuid).should == nil
-        Child.find_by_key(@peter.id, @chris.uuid).should == @chris
-        Child.find_by_key(@peter.id, @stewie.uuid).should == nil
+        expect(@peter.children.length).to eq 1
+        expect(Child.find_by_key(@peter.id, @meg.uuid)).to eq nil
+        expect(Child.find_by_key(@peter.id, @chris.uuid)).to eq @chris
+        expect(Child.find_by_key(@peter.id, @stewie.uuid)).to eq nil
       end
     end
 
@@ -301,39 +301,39 @@ describe Parent do
     describe "destroying:" do
 
       it "children should implement dependent: destroy" do
-        Child.count.should == 6
-        @homer.should_receive(:map_children).with(Child).and_call_original
+        expect(Child.count).to eq 6
+        expect(@homer).to receive(:map_children).with(Child).and_call_original
         @homer.destroy
         expect { @homer.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @bart.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @lisa.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @maggie.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-        Child.count.should == 3
-        @peter.should_receive(:map_children).with(Child).and_call_original
+        expect(Child.count).to eq 3
+        expect(@peter).to receive(:map_children).with(Child).and_call_original
         @peter.destroy
         expect { @peter.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @meg.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @chris.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @stewie.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-        Child.count.should == 0
+        expect(Child.count).to eq 0
       end
 
       it "cars should implement dependent: :delete" do
-        Car.count.should == 2
-        @marge.should_receive(:delete_children).with(Car).and_call_original
-        @marge.should_not_receive(:map_children).with(Car)
+        expect(Car.count).to eq 2
+        expect(@marge).to receive(:delete_children).with(Car).and_call_original
+        expect(@marge).not_to receive(:map_children).with(Car)
         @marge.destroy
         expect { @volvo.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @saab.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-        Car.count.should == 0
+        expect(Car.count).to eq 0
       end
 
       it "pets should implement dependent: :nullify" do
-        Pet.count.should == 1
+        expect(Pet.count).to eq 1
         @lois.destroy
-        Pet.count.should == 1
+        expect(Pet.count).to eq 1
         expect { @brian.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-        Pet.find("NULL", @brian.range_key).should be_a Pet
+        expect(Pet.find("NULL", @brian.range_key)).to be_a Pet
       end
 
     end

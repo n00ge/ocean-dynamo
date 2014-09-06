@@ -14,9 +14,9 @@ describe Ragadish do
   end
 
   it "should set the keys correctly" do
-    Ragadish.table_hash_key.should == :uuid
-    Ragadish.table_range_key.should == :tempus
-    Ragadish.fields.should include :tempus
+    expect(Ragadish.table_hash_key).to eq :uuid
+    expect(Ragadish.table_range_key).to eq :tempus
+    expect(Ragadish.fields).to include :tempus
   end
 
   it "should be instantiatiable" do
@@ -25,22 +25,22 @@ describe Ragadish do
 
   it "should be invalid if the range key is absent" do
     v = Ragadish.new()
-    v.valid?.should == false
-    v.errors.messages.should == {tempus: ["can't be blank"]}
+    expect(v.valid?).to eq false
+    expect(v.errors.messages).to eq({tempus: ["can't be blank"]})
   end
 
   it "should be persistable when both args are specified" do
     t = Time.now.utc
     v = Ragadish.create! uuid: "foo", tempus: t
-    v.should be_a Ragadish
-    v.uuid.should == "foo"
-    v.tempus.should == t
+    expect(v).to be_a Ragadish
+    expect(v.uuid).to eq "foo"
+    expect(v.tempus).to eq t
   end
 
   it "should assign a UUID to the hash key when unspecified" do
     v = Ragadish.create! tempus: 1.year.from_now.utc
-    v.uuid.should be_a String
-    v.uuid.should_not == ""
+    expect(v.uuid).to be_a String
+    expect(v.uuid).not_to eq ""
   end
 
   it "should not persist if the range key is empty or unspecified" do
@@ -54,7 +54,7 @@ describe Ragadish do
     t = 1.day.ago.utc
     orig = Ragadish.create! tempus: t
     found = Ragadish.find(orig.uuid, t, consistent: true)
-    found.uuid.should == orig.uuid
+    expect(found.uuid).to eq orig.uuid
   end
 
   it "instances should be reloadable" do

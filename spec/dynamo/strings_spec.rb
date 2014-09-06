@@ -13,13 +13,13 @@ describe CloudModel do
       describe "before create" do
 
         it 'should default to the empty string' do
-          CloudModel.new.token.should == ""
+          expect(CloudModel.new.token).to eq ""
         end
 
         it "should be able to receive any init value" do
-          CloudModel.new(token: nil).token.should == nil
-          CloudModel.new(token: "Edwin").token.should == "Edwin"
-          CloudModel.new(token: 3.14).token.should == 3.14
+          expect(CloudModel.new(token: nil).token).to eq nil
+          expect(CloudModel.new(token: "Edwin").token).to eq "Edwin"
+          expect(CloudModel.new(token: 3.14).token).to eq 3.14
         end
       end
 
@@ -27,18 +27,18 @@ describe CloudModel do
 
         it "should return a stored value" do
           i = CloudModel.create token: "hey"
-          i.token.should == "hey"
+          expect(i.token).to eq "hey"
           i.reload
-          i.token.should == "hey"
-          CloudModel.find(i.uuid, consistent: true).token.should == "hey"
+          expect(i.token).to eq "hey"
+          expect(CloudModel.find(i.uuid, consistent: true).token).to eq "hey"
         end
 
         it "should return a stored empty string" do
           i = CloudModel.create token: ""
-          i.token.should == ""
+          expect(i.token).to eq ""
           i.reload
-          i.token.should == ""
-          CloudModel.find(i.uuid, consistent: true).token.should == ""
+          expect(i.token).to eq ""
+          expect(CloudModel.find(i.uuid, consistent: true).token).to eq ""
         end
       end
     end
@@ -47,13 +47,13 @@ describe CloudModel do
       describe "before create" do
 
         it 'should be assigned the default' do
-          CloudModel.new.credentials.should == "blah"
+          expect(CloudModel.new.credentials).to eq "blah"
         end
 
         it "should be able to receive any init value" do
-          CloudModel.new(credentials: nil).credentials.should == nil
-          CloudModel.new(credentials: "Edwin").credentials.should == "Edwin"
-          CloudModel.new(credentials: 3.14).credentials.should == 3.14
+          expect(CloudModel.new(credentials: nil).credentials).to eq nil
+          expect(CloudModel.new(credentials: "Edwin").credentials).to eq "Edwin"
+          expect(CloudModel.new(credentials: 3.14).credentials).to eq 3.14
         end
       end
 
@@ -61,26 +61,26 @@ describe CloudModel do
 
         it "should return a stored value" do
           i = CloudModel.create credentials: "hey"
-          i.credentials.should == "hey"
+          expect(i.credentials).to eq "hey"
           i.reload
-          i.credentials.should == "hey"
-          CloudModel.find(i.uuid, consistent: true).credentials.should == "hey"
+          expect(i.credentials).to eq "hey"
+          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq "hey"
         end
 
         it "should return a stored empty string" do
           i = CloudModel.create credentials: ""
-          i.credentials.should == ""
+          expect(i.credentials).to eq ""
           i.reload
-          i.credentials.should == ""
-          CloudModel.find(i.uuid, consistent: true).credentials.should == ""
+          expect(i.credentials).to eq ""
+          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq ""
         end
 
         it "should return a stored nil as the empty string" do
           i = CloudModel.create credentials: nil
-          i.credentials.should == nil
+          expect(i.credentials).to eq nil
           i.reload
-          i.credentials.should == ""
-          CloudModel.find(i.uuid, consistent: true).credentials.should == ""
+          expect(i.credentials).to eq ""
+          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq ""
         end
       end
     end
@@ -91,13 +91,13 @@ describe CloudModel do
       describe "before create" do
 
         it 'should default to the empty string' do
-          CloudModel.new.token.should == ""
+          expect(CloudModel.new.token).to eq ""
         end
 
         it "should be able to receive any init value" do
-          CloudModel.new(token: nil).token.should == nil
-          CloudModel.new(token: "Edwin").token.should == "Edwin"
-          CloudModel.new(token: 3.14).token.should == 3.14
+          expect(CloudModel.new(token: nil).token).to eq nil
+          expect(CloudModel.new(token: "Edwin").token).to eq "Edwin"
+          expect(CloudModel.new(token: 3.14).token).to eq 3.14
         end
       end
 
@@ -105,18 +105,18 @@ describe CloudModel do
 
         it "should return a stored set" do
           i = CloudModel.create token: "hey"
-          i.token.should == "hey"
+          expect(i.token).to eq "hey"
           i.reload
-          i.token.should == "hey"
-          CloudModel.find(i.uuid, consistent: true).token.should == "hey"
+          expect(i.token).to eq "hey"
+          expect(CloudModel.find(i.uuid, consistent: true).token).to eq "hey"
         end
 
         it "should return a stored empty set as the empty string" do
           i = CloudModel.create token: []
-          i.token.should == []
+          expect(i.token).to eq []
           i.reload
-          i.token.should == ""
-          CloudModel.find(i.uuid, consistent: true).token.should == ""
+          expect(i.token).to eq ""
+          expect(CloudModel.find(i.uuid, consistent: true).token).to eq ""
         end
       end
     end
@@ -125,13 +125,13 @@ describe CloudModel do
       describe "before create" do
 
         it 'should be assigned the default' do
-          CloudModel.new.credentials.should == "blah"
+          expect(CloudModel.new.credentials).to eq "blah"
         end
 
         it "should be able to receive any init value" do
-          CloudModel.new(credentials: nil).credentials.should == nil
-          CloudModel.new(credentials: "Edwin").credentials.should == "Edwin"
-          CloudModel.new(credentials: 3.14).credentials.should == 3.14
+          expect(CloudModel.new(credentials: nil).credentials).to eq nil
+          expect(CloudModel.new(credentials: "Edwin").credentials).to eq "Edwin"
+          expect(CloudModel.new(credentials: 3.14).credentials).to eq 3.14
         end
       end
 
@@ -139,26 +139,26 @@ describe CloudModel do
 
         it "should return a stored value" do
           i = CloudModel.create credentials: ["hey", "jude"]
-          i.credentials.should == ["hey", "jude"]
+          expect(i.credentials).to eq ["hey", "jude"]
           i.reload
-          i.credentials.should == ["hey", "jude"]
-          CloudModel.find(i.uuid, consistent: true).credentials.should == ["hey", "jude"]
+          expect(i.credentials).to eq ["hey", "jude"]
+          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq ["hey", "jude"]
         end
 
         it "should return a stored empty set" do
           i = CloudModel.create credentials: []
-          i.credentials.should == []
+          expect(i.credentials).to eq []
           i.reload
-          i.credentials.should == ""
-          CloudModel.find(i.uuid, consistent: true).credentials.should == ""
+          expect(i.credentials).to eq ""
+          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq ""
         end
 
         it "should return a stored nil as the empty string" do
           i = CloudModel.create credentials: nil
-          i.credentials.should == nil
+          expect(i.credentials).to eq nil
           i.reload
-          i.credentials.should == ""
-          CloudModel.find(i.uuid, consistent: true).credentials.should == ""
+          expect(i.credentials).to eq ""
+          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq ""
         end
       end
     end

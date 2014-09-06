@@ -43,7 +43,7 @@ end
 
 describe Zulu do
   it "the default key must be :id" do
-    Zulu.table_hash_key.should == :id
+    expect(Zulu.table_hash_key).to eq :id
   end
 end
 
@@ -51,34 +51,34 @@ end
 describe Idi do
 
   it "the default key must be :id" do
-    Idi.table_hash_key.should == :id
+    expect(Idi.table_hash_key).to eq :id
   end
 
   it "the attributes hash should be properly initialised" do
     i = Idi.new
-    i.attributes.should == {"id"=>"", "created_at"=>nil, "updated_at"=>nil, "lock_version"=>0, "unused"=>""}
-    i.attributes['id'].should == ""
+    expect(i.attributes).to eq({"id"=>"", "created_at"=>nil, "updated_at"=>nil, "lock_version"=>0, "unused"=>""})
+    expect(i.attributes['id']).to eq ""
   end
 
   it "the persisted :id table_hash_key must be an UUID" do
     i = Idi.create!
-    i.attributes['id'].should be_a String
-    i.attributes['id'].should_not == ""
-    i.attributes['id'].length.should == 36
+    expect(i.attributes['id']).to be_a String
+    expect(i.attributes['id']).not_to eq ""
+    expect(i.attributes['id'].length).to eq 36
   end
 
   it "should correctly evaluate the id method when new" do
     i = Idi.new
-    i.id.should_not == nil
-    i.id.should == ""
-    i.id.should be_a String
+    expect(i.id).not_to eq nil
+    expect(i.id).to eq ""
+    expect(i.id).to be_a String
   end
 
   it "should correctly evaluate the id method when persisted" do
     i = Idi.create!
-    i.id.should_not == nil
-    i.id.should_not == ""
-    i.id.should be_a String
+    expect(i.id).not_to eq nil
+    expect(i.id).not_to eq ""
+    expect(i.id).to be_a String
   end
 
   it "the uuid attribute should not be available" do
@@ -88,34 +88,34 @@ describe Idi do
 
   it "should correctly read the :id attribute" do
     i = Idi.new
-    i.read_attribute(:id).should_not == nil
-    i.read_attribute(:id).should == ""
-    i.read_attribute(:id).should be_a String
+    expect(i.read_attribute(:id)).not_to eq nil
+    expect(i.read_attribute(:id)).to eq ""
+    expect(i.read_attribute(:id)).to be_a String
     i.save!
-    i.read_attribute(:id).should_not == nil
-    i.read_attribute(:id).should_not == ""
-    i.read_attribute(:id).should be_a String
+    expect(i.read_attribute(:id)).not_to eq nil
+    expect(i.read_attribute(:id)).not_to eq ""
+    expect(i.read_attribute(:id)).to be_a String
   end
 
   it "should correctly read the 'id' attribute" do
     i = Idi.new
-    i.read_attribute('id').should_not == nil
-    i.read_attribute('id').should == ""
-    i.read_attribute('id').should be_a String
+    expect(i.read_attribute('id')).not_to eq nil
+    expect(i.read_attribute('id')).to eq ""
+    expect(i.read_attribute('id')).to be_a String
     i.save!
-    i.read_attribute('id').should_not == nil
-    i.read_attribute('id').should_not == ""
-    i.read_attribute('id').should be_a String
+    expect(i.read_attribute('id')).not_to eq nil
+    expect(i.read_attribute('id')).not_to eq ""
+    expect(i.read_attribute('id')).to be_a String
   end
 
   it "should have a normal field list" do
-    Idi.fields.should == {
+    expect(Idi.fields).to eq({
       "id"=>{"type"=>:string, "default"=>""}, 
       "created_at"=>{"type"=>:datetime, "default"=>nil}, 
       "updated_at"=>{"type"=>:datetime, "default"=>nil}, 
       "lock_version"=>{"type"=>:integer, "default"=>0}, 
       "unused"=>{"type"=>:string, "default"=>nil}
-    }
+    })
   end
 end
 
@@ -123,97 +123,97 @@ end
 describe Blahonga do
 
   it "should set the hash key" do
-    Quux.table_hash_key.should == :index
+    expect(Quux.table_hash_key).to eq :index
   end
 
   it "should have the hash key :uuid" do
-    Blahonga.table_hash_key.should == :uuid
+    expect(Blahonga.table_hash_key).to eq :uuid
   end
 
   it "should set the range key" do
-    Quux.table_range_key.should == :foo
+    expect(Quux.table_range_key).to eq :foo
   end
 
   it "should default the table name like ActiveRecord" do
-    Quux.table_name.should == "quuxes"
+    expect(Quux.table_name).to eq "quuxes"
   end
 
   it "should allow the name to be specified" do
-    Blahonga.table_name.should == "caramba"
+    expect(Blahonga.table_name).to eq "caramba"
   end
 
   it "should allow the name prefix to be specified" do
-    Blahonga.table_name_prefix.should == "pre_"
+    expect(Blahonga.table_name_prefix).to eq "pre_"
   end
 
   it "should allow the name suffix to be specified" do
-    Blahonga.table_name_suffix.should == Api.basename_suffix
+    expect(Blahonga.table_name_suffix).to eq Api.basename_suffix
   end
 
   it "should produce full table names" do
-    Quux.table_full_name.should == "quuxes" + Api.basename_suffix
-    Blahonga.table_full_name.should == "pre_caramba" + Api.basename_suffix
+    expect(Quux.table_full_name).to eq "quuxes" + Api.basename_suffix
+    expect(Blahonga.table_full_name).to eq "pre_caramba" + Api.basename_suffix
   end
 
   it "should default the read capacity to 10" do
-    Quux.table_read_capacity_units.should == 10
+    expect(Quux.table_read_capacity_units).to eq 10
   end
 
   it "should default the write capacity to 5" do
-    Quux.table_write_capacity_units.should == 5
+    expect(Quux.table_write_capacity_units).to eq 5
   end
 
   it "should allow the read capacity to be set" do
-    Blahonga.table_read_capacity_units.should == 100
+    expect(Blahonga.table_read_capacity_units).to eq 100
   end
 
   it "should allow the write capacity to be set" do
-    Blahonga.table_write_capacity_units.should == 50
+    expect(Blahonga.table_write_capacity_units).to eq 50
   end
 
   it "should automatically define a string attribute for the hash_key, if not given" do
-    Blahonga.fields['uuid'].should == {"type" => :string, "default" => ""}
+    expect(Blahonga.fields['uuid']).to eq({"type" => :string, "default" => ""})
   end
 
   it "should respect an explicitly declared id field" do
-    Quux.fields['index'].should == {"type" => :string, "default" => "unlikely"}
+    expect(Quux.fields['index']).to eq({"type" => :string, "default" => "unlikely"})
   end
 
   it "should default the table_connect_policy to :late" do
-    Quux.table_connect_policy.should == :late
+    expect(Quux.table_connect_policy).to eq :late
   end
 
   it "should allow the table_connect_policy to be overridden" do
-    Blahonga.table_connect_policy.should == false
+    expect(Blahonga.table_connect_policy).to eq false
   end
 
   it "should default the table_create_policy to false" do
-    Quux.table_create_policy.should == false
+    expect(Quux.table_create_policy).to eq false
   end
 
   it "should allow the table_create_policy to be overridden" do
-    Blahonga.table_create_policy.should == true
+    expect(Blahonga.table_create_policy).to eq true
   end
 
   it "should default the locking attribute to :lock_version" do
-    Quux.lock_attribute.should == :lock_version
+    expect(Quux.lock_attribute).to eq :lock_version
   end
 
   it "should allow locking attribute to be overridden" do
-    Blahonga.lock_attribute.should == :optimism
+    expect(Blahonga.lock_attribute).to eq :optimism
   end
 
   it "should allow locking attribute to be set to nil" do
-    Zulu.lock_attribute.should == nil
+    expect(Zulu.lock_attribute).to eq nil
   end
 
 
   it "should default the timestamps to created_at and updated_at" do
-    Quux.timestamp_attributes.should == [:created_at, :updated_at]
+    expect(Quux.timestamp_attributes).to eq [:created_at, :updated_at]
   end
 
   it "should allow the timestamp attributes to be overridden" do
-    Blahonga.timestamp_attributes.should == [:made_at, :changed_at]
+    expect(Blahonga.timestamp_attributes).to eq [:made_at, :changed_at]
   end
 
 end

@@ -11,16 +11,16 @@ describe CloudModel do
   it_should_behave_like "ActiveModel"
 
   it "should be instantiatable" do
-    CloudModel.new.should be_a CloudModel
+    expect(CloudModel.new).to be_a CloudModel
   end
 
 
   it "should have a class method table_hash_key" do
-    CloudModel.table_hash_key.should == :uuid
+    expect(CloudModel.table_hash_key).to eq :uuid
   end
 
   it "should have a class method table_range_key" do
-    CloudModel.table_range_key.should == nil
+    expect(CloudModel.table_range_key).to eq nil
   end
 
   it "should barf on a missing primary key at instantiation" do
@@ -33,37 +33,37 @@ describe CloudModel do
 
   it "should be possible to refer to the hash_key attribute using #id, regardless of its name" do
     i = CloudModel.new uuid: "blahonga"
-    i.uuid.should == "blahonga"
-    i.id.should == "blahonga"
-    i[:uuid].should == "blahonga"
-    i[:id].should == "blahonga"
+    expect(i.uuid).to eq "blahonga"
+    expect(i.id).to eq "blahonga"
+    expect(i[:uuid]).to eq "blahonga"
+    expect(i[:id]).to eq "blahonga"
   end
 
   it "should be possible to set the hash_key attribute using #id, regardless of its name" do
     i = CloudModel.new uuid: "blahonga"
-    i.id.should == "blahonga"
+    expect(i.id).to eq "blahonga"
     i.id = "snyko"
-    i.uuid.should == "snyko"
+    expect(i.uuid).to eq "snyko"
     i.uuid = "moose"
-    i.id.should == "moose"
+    expect(i.id).to eq "moose"
     i[:uuid] = "elk"
-    i.uuid.should == "elk"
+    expect(i.uuid).to eq "elk"
     i[:id] = "badger"
-    i.id.should == "badger"
-    i.id.should == i.uuid
-    i[:id].should == i[:uuid]
+    expect(i.id).to eq "badger"
+    expect(i.id).to eq i.uuid
+    expect(i[:id]).to eq i[:uuid]
   end
 
   it "should assign an UUID to the hash_key attribute if nil at create" do
     i = CloudModel.new uuid: nil
-    i.save.should == true
-    i.uuid.should_not == nil
+    expect(i.save).to eq true
+    expect(i.uuid).not_to eq nil
   end
 
 
   it "should define accessors for all attributes, both explicit and implicit" do
     i = CloudModel.new
-    i.attributes.keys.should == [
+    expect(i.attributes.keys).to eq [
       "uuid", 
       "created_at", 
       "updated_at", 
@@ -92,34 +92,34 @@ describe CloudModel do
 
   it "undeclared attributes should not be stored at all" do
     i = CloudModel.new(quux: 23, flouf: "nyx", blipp: nil, token: "store me")
-    i.attributes.keys.should == i.fields.keys
-    i.attributes.keys.should include 'token' 
-    i.attributes.keys.should_not include 'quux' 
-    i.attributes.keys.should_not include 'flouf' 
-    i.token.should == "store me"
+    expect(i.attributes.keys).to eq i.fields.keys
+    expect(i.attributes.keys).to include 'token' 
+    expect(i.attributes.keys).not_to include 'quux' 
+    expect(i.attributes.keys).not_to include 'flouf' 
+    expect(i.token).to eq "store me"
   end
 
 
   it "should allow fields to be read and written" do
     i = CloudModel.new
-    i.token.should == ""
+    expect(i.token).to eq ""
     i.token = "foo"
-    i.token.should == "foo"
+    expect(i.token).to eq "foo"
   end
 
   it "should define an xxxxx? method for each attribute" do
     i = CloudModel.new
     i.token = ""  # This is already the default, this is for clarity
-    i.token?.should == false
+    expect(i.token?).to eq false
     i.token = "foo"
-    i.token?.should == true
+    expect(i.token?).to eq true
   end
 
   it "should implement assign_attributes" do
     i = CloudModel.new
     i.assign_attributes token: "changed", default_poison_limit: 10
-    i.token.should == "changed"
-    i.default_poison_limit.should == 10
+    expect(i.token).to eq "changed"
+    expect(i.default_poison_limit).to eq 10
   end
 
   it "assign_attributes should take the :without_protection key arg" do
@@ -145,8 +145,8 @@ describe CloudModel do
       i = CloudModel.new
       args = {token: "changed", default_poison_limit: 10}
       i.assign_attributes args
-      i.token.should == "changed"
-      i.default_poison_limit.should == 10
+      expect(i.token).to eq "changed"
+      expect(i.default_poison_limit).to eq 10
     end
 
     # it "blahonga" do
@@ -164,24 +164,24 @@ describe CloudModel do
 
   it "should assign the fields values supplied in the call to new" do
     i = CloudModel.new uuid: "Barack-Obladiobladama", created_by: "http://somewhere"
-    i.uuid.should == "Barack-Obladiobladama"
-    i.created_by.should == "http://somewhere"
+    expect(i.uuid).to eq "Barack-Obladiobladama"
+    expect(i.created_by).to eq "http://somewhere"
   end
 
   it "should set defaults for field values not supplied in the call to new" do
     i = CloudModel.new
-    i.default_poison_limit.should == 5
+    expect(i.default_poison_limit).to eq 5
   end
 
 
   it "should require the uuid to be present" do
-    CloudModel.new(steps: nil).valid?.should == false
-    CloudModel.new(steps: [1,2,3]).valid?.should == true
+    expect(CloudModel.new(steps: nil).valid?).to eq false
+    expect(CloudModel.new(steps: [1,2,3]).valid?).to eq true
   end
 
 
   it "should have an attribute reader with as many elements as there are fields" do
-    CloudModel.new.attributes.length.should == CloudModel.fields.length
+    expect(CloudModel.new.attributes.length).to eq CloudModel.fields.length
   end
 
   it "should not have an attributes writer" do
@@ -189,67 +189,67 @@ describe CloudModel do
   end
 
   it "should have string keys" do
-    CloudModel.new.attributes.should include 'uuid'
-    CloudModel.new.attributes.should include 'created_at'
+    expect(CloudModel.new.attributes).to include 'uuid'
+    expect(CloudModel.new.attributes).to include 'created_at'
   end
 
 
   it "to_key should return nil when the instance hasn't been persisted" do
-    CloudModel.any_instance.should_receive(:persisted?).and_return(false)
-    CloudModel.new.to_key.should == nil
+    expect_any_instance_of(CloudModel).to receive(:persisted?).and_return(false)
+    expect(CloudModel.new.to_key).to eq nil
   end
 
   it "to_key should return an array of the present index key when the instance has been persisted" do
-    CloudModel.any_instance.should_receive(:persisted?).and_return(true)
+    expect_any_instance_of(CloudModel).to receive(:persisted?).and_return(true)
     i = CloudModel.create
-    i.to_key.should == [i.uuid]
+    expect(i.to_key).to eq [i.uuid]
   end
 
   it "@i[:foo] and @i['foo'] should be equivalent to @i.foo" do
     i = CloudModel.new uuid: "trala"
-    i[:uuid].should == "trala"
-    i['uuid'].should == "trala"
+    expect(i[:uuid]).to eq "trala"
+    expect(i['uuid']).to eq "trala"
   end
 
   it "@i[:foo]= and @i['foo']= should be equivalent to @i.foo=" do
     i = CloudModel.new uuid: "trala"
     i[:uuid] = "wow"
-    i[:uuid].should == "wow"
+    expect(i[:uuid]).to eq "wow"
     i['uuid'] = "yowza"
-    i['uuid'].should == "yowza"
+    expect(i['uuid']).to eq "yowza"
   end
 
   it "should verify that << works normally" do
     x = [:foo, :bar, :baz]
-    x.should == [:foo, :bar, :baz]
+    expect(x).to eq [:foo, :bar, :baz]
     x << :quux
-    x.should == [:foo, :bar, :baz, :quux]
+    expect(x).to eq [:foo, :bar, :baz, :quux]
     y = []
-    y.should == []
+    expect(y).to eq []
     y << :nix
-    y.should == [:nix]
+    expect(y).to eq [:nix]
     z = []
-    z.should == []
+    expect(z).to eq []
     z << :nix
-    z.should == [:nix]
+    expect(z).to eq [:nix]
   end
 
   it "shouldn't share attribute structure between instances" do
     i = CloudModel.new
-    i.list.should == ["1", "2", "3"]
+    expect(i.list).to eq ["1", "2", "3"]
     i.list << "4"
-    i.list.should == ["1", "2", "3", "4"]
+    expect(i.list).to eq ["1", "2", "3", "4"]
 
     j = CloudModel.new
-    j.list.should == ["1", "2", "3"]
+    expect(j.list).to eq ["1", "2", "3"]
     j.list << "4"
-    j.list.should == ["1", "2", "3", "4"]
+    expect(j.list).to eq ["1", "2", "3", "4"]
   end
 
   it "should implement freeze" do
     i = CloudModel.new
     i.freeze
-    i.token.should == ""
+    expect(i.token).to eq ""
     expect { i.token = "Hey, mister!" }.to raise_error(RuntimeError, "can't modify frozen Hash")
   end
 
@@ -261,7 +261,7 @@ describe CloudModel do
 
   it "_assign_attribute should call write_attribute" do
     i = CloudModel.create!
-    i.should_receive(:_assign_attribute).with("token", "hey")
+    expect(i).to receive(:_assign_attribute).with("token", "hey")
     i.assign_attributes(token: "hey")
   end
 
@@ -274,19 +274,19 @@ describe CloudModel do
   it "implement the == operator for OceanDynamo instances" do
     a = CloudModel.new
     b = CloudModel.new
-    a.should_not == b
+    expect(a).not_to eq b
     a.save!
     b.save!
-    a.should_not == b
+    expect(a).not_to eq b
     c = CloudModel.find(a.uuid)
-    c.should == a
-    c.should_not == b
+    expect(c).to eq a
+    expect(c).not_to eq b
   end
 
   it "implement the <=> to allow for sorting" do
     a = CloudModel.create!
     b = CloudModel.create!
-    (a <=> b).should be_an Integer
+    expect(a <=> b).to be_an Integer
   end
 
 

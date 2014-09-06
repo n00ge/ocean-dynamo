@@ -31,15 +31,15 @@ describe Bang do
 
   it "should require must" do
     @i.must = nil
-    @i.save.should == false
-    @i.errors[:must].should == ["can't be blank"]
+    expect(@i.save).to eq false
+    expect(@i.errors[:must]).to eq ["can't be blank"]
   end
 
   it "should not require soso at create, but at update" do
-    @i.save.should == true
+    expect(@i.save).to eq true
     @i.soso = nil
-    @i.save.should == false
-    @i.errors[:soso].should == ["can't be blank"]
+    expect(@i.save).to eq false
+    expect(@i.errors[:soso]).to eq ["can't be blank"]
   end
 
   it "should raise an exception if hate is nil" do
@@ -49,10 +49,10 @@ describe Bang do
 
 
   it "valid? should take new_record? into account" do
-    @i.valid?.should == true
+    expect(@i.valid?).to eq true
     @i.save!
     @i.soso = false
-    @i.valid?.should == false
+    expect(@i.valid?).to eq false
   end
 
 

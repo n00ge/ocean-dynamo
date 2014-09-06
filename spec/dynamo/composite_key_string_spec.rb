@@ -14,9 +14,9 @@ describe VaVaVoom do
   end
 
   it "should set the keys correctly" do
-    VaVaVoom.table_hash_key.should == :hash
-    VaVaVoom.table_range_key.should == :range
-    VaVaVoom.fields.should include :range
+    expect(VaVaVoom.table_hash_key).to eq :hash
+    expect(VaVaVoom.table_range_key).to eq :range
+    expect(VaVaVoom.fields).to include :range
   end
 
   it "should be instantiatiable" do
@@ -25,21 +25,21 @@ describe VaVaVoom do
 
   it "should be invalid if the range key is absent" do
     v = VaVaVoom.new()
-    v.valid?.should == false
-    v.errors.messages.should == {range: ["can't be blank"]}
+    expect(v.valid?).to eq false
+    expect(v.errors.messages).to eq({range: ["can't be blank"]})
   end
 
   it "should be persistable when both args are specified" do
     v = VaVaVoom.create! hash: "foo", range: "bar"
-    v.should be_a VaVaVoom
-    v.hash.should == "foo"
-    v.range.should == "bar"
+    expect(v).to be_a VaVaVoom
+    expect(v.hash).to eq "foo"
+    expect(v.range).to eq "bar"
   end
 
   it "should assign an UUID to the hash key when unspecified" do
     v = VaVaVoom.create! range: "bar"
-    v.hash.should be_a String
-    v.hash.should_not == ""
+    expect(v.hash).to be_a String
+    expect(v.hash).not_to eq ""
   end
 
   it "should not persist if the range key is empty or unspecified" do
@@ -52,7 +52,7 @@ describe VaVaVoom do
   it "instances should be findable" do
     orig = VaVaVoom.create! range: "woohoo"
     found = VaVaVoom.find(orig.hash, "woohoo", consistent: true)
-    found.should == orig
+    expect(found).to eq orig
   end
 
   it "instances should be reloadable" do

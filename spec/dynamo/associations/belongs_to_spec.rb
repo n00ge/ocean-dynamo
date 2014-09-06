@@ -47,18 +47,18 @@ describe Slave do
   it "should handle a parent table with a composite key" do
     s = Slave.create! master: @m
     ss = Subslave.create! slave: s
-    ss.slave.should == s
+    expect(ss.slave).to eq s
   end
 
 
   it "should match the DynamoDB hash_key" do
     Slave.establish_db_connection
-    Slave.table_hash_key.to_s.should == Slave.dynamo_table.hash_key.name
+    expect(Slave.table_hash_key.to_s).to eq Slave.dynamo_table.hash_key.name
   end
 
   it "should match the DynamoDB range_key" do
     Slave.establish_db_connection
-    Slave.table_range_key.to_s.should == Slave.dynamo_table.range_key.name
+    expect(Slave.table_range_key.to_s).to eq Slave.dynamo_table.range_key.name
   end
 
 
@@ -87,86 +87,86 @@ describe Slave do
 
 
   it "should have a range key named :uuid" do
-    Slave.table_range_key.should == :uuid
+    expect(Slave.table_range_key).to eq :uuid
   end
 
   it "should have a hash key named :master_id" do
-    Slave.table_hash_key.should == :master_id
+    expect(Slave.table_hash_key).to eq :master_id
   end
 
 
   it "should have an :uuid attribute" do
-    Slave.fields.should include :uuid
+    expect(Slave.fields).to include :uuid
     i = Slave.new
-    i.uuid.should == ""            # String because it's an empty UUID
+    expect(i.uuid).to eq ""            # String because it's an empty UUID
     i.uuid = "2345"
-    i[:uuid].should == "2345"
+    expect(i[:uuid]).to eq "2345"
   end
 
   it "should not have a :master attribute" do
-    Slave.fields.should_not include :master
+    expect(Slave.fields).not_to include :master
   end
 
   it "should have a :master_id attribute" do
-    Slave.fields.should include :master_id
+    expect(Slave.fields).to include :master_id
     i = Slave.new
-    i.master_id.should == nil      # nil because it's an empty reference
+    expect(i.master_id).to eq nil      # nil because it's an empty reference
     i.master_id = "the-master-id"
-    i[:master_id].should == "the-master-id"
+    expect(i[:master_id]).to eq "the-master-id"
   end
 
 
   it "should have a :master_id attribute with target_class: Master" do
-    Slave.fields[:master_id][:target_class].should == Master
+    expect(Slave.fields[:master_id][:target_class]).to eq Master
   end
 
   it "should not have the target_class setting on any other attributes" do
-    Slave.fields[:name][:target_class].should == nil
+    expect(Slave.fields[:name][:target_class]).to eq nil
   end
 
 
   it "the :id reader should read the :master_id attribute" do
     i = Slave.new
     i.master_id = "hash key"
-    i.attributes.should == {
+    expect(i.attributes).to eq({
       "uuid"=>"", 
       "created_at"=>nil, 
       "updated_at"=>nil, 
       "lock_version"=>0, 
       "name"=>"", 
       "master_id"=>"hash key"
-    }
-    i[:master_id].should == "hash key"
-    i.id.should == "hash key"
-    i[:id].should == "hash key"
+    })
+    expect(i[:master_id]).to eq "hash key"
+    expect(i.id).to eq "hash key"
+    expect(i[:id]).to eq "hash key"
   end
 
   it "the :id writer should set the :master_id attribute" do
     i = Slave.new
     i.id = "I'm the ID now"
-    i.attributes.should == {
+    expect(i.attributes).to eq({
       "uuid"=>"", 
       "created_at"=>nil, 
       "updated_at"=>nil, 
       "lock_version"=>0, 
       "name"=>"", 
       "master_id"=>"I'm the ID now"
-    }
+    })
   end
 
   it "the :master_id reader should read the :master_id attribute" do
     i = Slave.new
     i.master_id = "range key"
-    i.attributes.should == {
+    expect(i.attributes).to eq({
       "uuid"=>"", 
       "created_at"=>nil, 
       "updated_at"=>nil, 
       "lock_version"=>0, 
       "name"=>"", 
       "master_id"=>"range key"
-    }
-    i.master_id.should == "range key"
-    i[:master_id].should == "range key"
+    })
+    expect(i.master_id).to eq "range key"
+    expect(i[:master_id]).to eq "range key"
   end
 
 
@@ -187,66 +187,66 @@ describe Slave do
 
 
   it "a new instance should have nil in the assocation attr" do
-    Slave.new.master.should == nil
+    expect(Slave.new.master).to eq nil
   end
 
   it "a new instance should have nil in attr_id" do
-    Slave.new.master_id.should == nil
+    expect(Slave.new.master_id).to eq nil
   end
 
 
   it "a saved instance should not have nil in the assocation attr" do
-    Slave.create!(master:@m).master.should_not == nil
+    expect(Slave.create!(master:@m).master).not_to eq nil
   end
 
   it "a saved instance should not have nil in attr_id" do
-    Slave.create!(master: @m).master_id.should_not == nil
+    expect(Slave.create!(master: @m).master_id).not_to eq nil
   end
 
 
   it "a reloaded instance should not have nil in the assocation attr" do
-    Slave.create!(master: @m).reload.master.should_not == nil
+    expect(Slave.create!(master: @m).reload.master).not_to eq nil
   end
 
   it "a reloaded instance should not have nil in attr_id" do
-    Slave.create!(master: @m).reload.master_id.should_not == nil
+    expect(Slave.create!(master: @m).reload.master_id).not_to eq nil
   end
 
 
   it "attr_id should be directly assignable" do
     s = Slave.new
     s.master_id = "some-uuid"
-    s.master_id.should == "some-uuid"
-    s.instance_variable_get(:@master).should == nil
+    expect(s.master_id).to eq "some-uuid"
+    expect(s.instance_variable_get(:@master)).to eq nil
   end
 
   it "attr_id should be mass-assignable" do
     s = Slave.new master_id: "an-uuid"
-    s.master_id.should == "an-uuid"
-    s.instance_variable_get(:@master).should == nil
+    expect(s.master_id).to eq "an-uuid"
+    expect(s.instance_variable_get(:@master)).to eq nil
   end
 
   it "attr should be directly assignable" do
     s = Slave.new
     s.master = @m
-    s.instance_variable_get(:@master).should == @m
-    s.master.should == @m
-    s.master_id.should be_a String
-    s.master_id.should == @m.id
+    expect(s.instance_variable_get(:@master)).to eq @m
+    expect(s.master).to eq @m
+    expect(s.master_id).to be_a String
+    expect(s.master_id).to eq @m.id
   end
 
   it "attr should be mass-assignable" do
     s = Slave.new master: @m
-    s.instance_variable_get(:@master).should == @m
-    s.master.should == @m
-    s.master_id.should be_a String
-    s.master_id.should == @m.id
+    expect(s.instance_variable_get(:@master)).to eq @m
+    expect(s.master).to eq @m
+    expect(s.master_id).to be_a String
+    expect(s.master_id).to eq @m.id
   end
 
 
   it "attr should be able to be mass-assigned an instance of the associated type" do
     s = Slave.new master: @m
-    s.master.should == @m
+    expect(s.master).to eq @m
   end
 
 
@@ -264,9 +264,9 @@ describe Slave do
 
   it "the attr, if it contains an instance, should load and return that instance when accessed after a save" do
     s = Slave.create! master: @m
-    s.master.should == @m
+    expect(s.master).to eq @m
     s.reload
-    s.master.should == @m
+    expect(s.master).to eq @m
   end
 
   it "attr load should barf on an unknown key" do
@@ -277,17 +277,17 @@ describe Slave do
 
   it "the attr shouldn't be persisted, only the attr_id" do
     s = Slave.create! master: @m
-    s.send(:serialized_attributes)['master_id'].should be_a String
-    s.send(:serialized_attributes)['master'].should == nil
+    expect(s.send(:serialized_attributes)['master_id']).to be_a String
+    expect(s.send(:serialized_attributes)['master']).to eq nil
   end
 
   it "the attr should be cached" do
     s = Slave.create! master: @m
     s.reload
-    Master.should_receive(:find).and_return @m
-    s.master.should == @m
-    s.master.should == @m
-    s.master.should == @m
+    expect(Master).to receive(:find).and_return @m
+    expect(s.master).to eq @m
+    expect(s.master).to eq @m
+    expect(s.master).to eq @m
   end
 
 
@@ -300,17 +300,17 @@ describe Slave do
 
   it "should define build_master" do
     m = Slave.build_master name: "Betty"
-    m.should be_a Master
-    m.persisted?.should_not == true
-    m.name.should == "Betty"
+    expect(m).to be_a Master
+    expect(m.persisted?).not_to eq true
+    expect(m.name).to eq "Betty"
     m.save!
   end
 
   it "should define create_master" do
     m = Slave.create_master name: "White"
-    m.should be_a Master
-    m.persisted?.should == true
-    m.name.should == "White"
+    expect(m).to be_a Master
+    expect(m.persisted?).to eq true
+    expect(m.name).to eq "White"
   end
 
 

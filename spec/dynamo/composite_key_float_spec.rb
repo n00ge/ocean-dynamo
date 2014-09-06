@@ -14,9 +14,9 @@ describe Kaching do
   end
 
   it "should set the keys correctly" do
-    Kaching.table_hash_key.should == :uuid
-    Kaching.table_range_key.should == :digitus
-    Kaching.fields.should include :digitus
+    expect(Kaching.table_hash_key).to eq :uuid
+    expect(Kaching.table_range_key).to eq :digitus
+    expect(Kaching.fields).to include :digitus
   end
 
   it "should be instantiatiable" do
@@ -25,21 +25,21 @@ describe Kaching do
 
   it "should be invalid if the range key is absent" do
     v = Kaching.new()
-    v.valid?.should == false
-    v.errors.messages.should == {digitus: ["can't be blank"]}
+    expect(v.valid?).to eq false
+    expect(v.errors.messages).to eq({digitus: ["can't be blank"]})
   end
 
   it "should be persistable when both args are specified" do
     v = Kaching.create! uuid: "foo", digitus: 3.14
-    v.should be_a Kaching
-    v.uuid.should == "foo"
-    v.digitus.should == 3.14
+    expect(v).to be_a Kaching
+    expect(v.uuid).to eq "foo"
+    expect(v.digitus).to eq 3.14
   end
 
   it "should assign a UUID to the hash key when unspecified" do
     v = Kaching.create! digitus: 23.1
-    v.uuid.should be_a String
-    v.uuid.should_not == ""
+    expect(v.uuid).to be_a String
+    expect(v.uuid).not_to eq ""
   end
 
   it "should not persist if the range key is empty or unspecified" do
@@ -52,7 +52,7 @@ describe Kaching do
   it "instances should be findable" do
     orig = Kaching.create! digitus: 17.0
     found = Kaching.find(orig.uuid, 17.0, consistent: true)
-    found.should == orig
+    expect(found).to eq orig
   end
 
   it "instances should be reloadable" do
