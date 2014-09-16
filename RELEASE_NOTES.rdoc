@@ -1,7 +1,10 @@
+== v0.6.4
+
+* <tt>.all</tt> and <tt>.find_each</tt> now accept the :consistent keyword.
+
 == v0.6.3
 
 * RSpec 3.
-* 
 
 == v0.6.2
 

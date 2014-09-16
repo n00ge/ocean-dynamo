@@ -90,12 +90,20 @@ describe CloudModel do
       expect(CloudModel.all.length).to eq CloudModel.count
     end
 
+    it "should accept a consistent: keyword parameter and hand it down to _setup_from_dynamo" do
+      CloudModel.delete_all
+      1.times { CloudModel.create! }
+      expect_any_instance_of(CloudModel).to receive(:_setup_from_dynamo).
+        with(anything, consistent: true)
+      CloudModel.all(consistent: true)
+    end
+
   end
 
 
   describe "find_each" do
 
-    before :all do
+    before :each do
       CloudModel.delete_all
       24.times { CloudModel.create! }
     end
@@ -124,6 +132,14 @@ describe CloudModel do
       i = 0
       CloudModel.find_each(batch_size: 5) { |item| i += 1 }
       expect(i).to eq c
+    end
+
+    it "should accept a consistent: keyword parameter and hand it down to _setup_from_dynamo" do
+      CloudModel.delete_all
+      1.times { CloudModel.create! }
+      expect_any_instance_of(CloudModel).to receive(:_setup_from_dynamo).
+        with(anything, consistent: true)
+      CloudModel.find_each(consistent: true) { |item| }
     end
   end
 

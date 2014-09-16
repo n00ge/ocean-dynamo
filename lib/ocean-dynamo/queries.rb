@@ -40,11 +40,11 @@ module OceanDynamo
     #
     # Returns all records in the table.
     #
-    def all(**options)
+    def all(consistent: false, **options)
       _late_connect?
       result = []
       dynamo_items.select(options) do |item_data| 
-        result << new._setup_from_dynamo(item_data)
+        result << new._setup_from_dynamo(item_data, consistent: consistent)
       end
       result
     end
@@ -57,9 +57,9 @@ module OceanDynamo
     # In that case, batch processing methods allow you to work with the records in batches, 
     # thereby greatly reducing memory consumption.
     #
-    def find_each(limit: nil, batch_size: 1000)
-      dynamo_items.select(limit: limit, batch_size: 1000) do |item_data|
-        yield new._setup_from_dynamo(item_data)
+    def find_each(limit: nil, batch_size: 1000, consistent: false)
+      dynamo_items.select(limit: limit, batch_size: batch_size) do |item_data|
+        yield new._setup_from_dynamo(item_data, consistent: consistent)
       end
       true
     end
