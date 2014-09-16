@@ -1,3 +1,7 @@
+== v0.6.5
+
+* <tt>.all</tt> and <tt>.find_each</tt> refactored.
+
 == v0.6.4
 
 * <tt>.all</tt> and <tt>.find_each</tt> now accept the :consistent keyword.

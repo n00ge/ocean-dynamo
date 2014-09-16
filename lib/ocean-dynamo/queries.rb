@@ -43,8 +43,14 @@ module OceanDynamo
     def all(consistent: false, **options)
       _late_connect?
       result = []
-      dynamo_items.select(options) do |item_data| 
-        result << new._setup_from_dynamo(item_data, consistent: consistent)
+      if consistent
+        dynamo_items.each(options) do |item|
+          result << new._setup_from_dynamo(item, consistent: consistent)
+        end
+      else
+        dynamo_items.select(options) do |item_data| 
+          result << new._setup_from_dynamo(item_data)
+        end
       end
       result
     end
@@ -58,8 +64,14 @@ module OceanDynamo
     # thereby greatly reducing memory consumption.
     #
     def find_each(limit: nil, batch_size: 1000, consistent: false)
-      dynamo_items.select(limit: limit, batch_size: batch_size) do |item_data|
-        yield new._setup_from_dynamo(item_data, consistent: consistent)
+      if consistent
+        dynamo_items.each(limit: limit, batch_size: batch_size) do |item|
+          yield new._setup_from_dynamo(item, consistent: consistent)
+        end
+      else
+        dynamo_items.select(limit: limit, batch_size: batch_size) do |item_data|
+          yield new._setup_from_dynamo(item_data)
+        end
       end
       true
     end
