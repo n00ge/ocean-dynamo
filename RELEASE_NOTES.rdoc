@@ -1,3 +1,7 @@
+== v0.6.6
+
+* Rails 4.1.6.
+
 == v0.6.5
 
 * <tt>.all</tt> and <tt>.find_each</tt> refactored.
