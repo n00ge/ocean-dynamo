@@ -32,12 +32,13 @@ compromising scalability. This makes the task of switching from SQL to no-SQL mu
 
 Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
 
-OceanDynamo uses primary indices to retrieve related table items, 
-meaning it scales without limits.
+OceanDynamo uses primary indices to retrieve related table items, meaning it scales without 
+limits.
 
 See also Ocean, a Rails framework for creating highly scalable SOAs in the cloud, in which
 ocean-dynamo is used as a central component: http://wiki.oceanframework.net"
-  #s.required_ruby_version = '~> 2'
+
+  s.required_ruby_version = '~> 2.1'
   s.license = 'MIT'
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
@@ -45,10 +46,13 @@ ocean-dynamo is used as a central component: http://wiki.oceanframework.net"
   
   s.add_dependency "aws-sdk", '~> 1.0' 
   s.add_dependency "aws-sdk-core"
-  s.add_dependency "activemodel", '~> 4.1.0'  
-  s.add_dependency "activesupport", '~> 4.1.0' 
+  s.add_dependency "activemodel"
+  s.add_dependency "activesupport"
 
-  s.add_development_dependency "rails", "~> 4.1.0"
+  s.add_dependency "mini_portile", "0.6.0"  # Lose this ASAP
+  s.add_dependency "nokogiri", "1.6.3.1"    # Lose this ASAP
+
+  s.add_development_dependency "rails", "~> 4.2.0"
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency "simplecov"
