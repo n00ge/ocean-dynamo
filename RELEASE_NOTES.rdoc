@@ -1,3 +1,7 @@
+== v0.7.1
+
+* Removed nokogiri.
+
 == v0.7.0
 
 * Rails 4.2.0.
