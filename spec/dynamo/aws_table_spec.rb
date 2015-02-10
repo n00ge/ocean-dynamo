@@ -30,7 +30,7 @@ describe CloudModel do
     expect(CloudModel.table_name).to eq "cloud_models"
   end
 
-  it "should have a proper table_name derived from a namespaced class" do
+  it "should handle a table_name derived from a namespaced class" do
     expect(CloudNamespace::CloudModel.table_name).to eq "cloud_namespace_cloud_models"
   end
 
