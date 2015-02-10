@@ -23,7 +23,7 @@ module OceanDynamo
 
 
     def compute_table_name
-      name.pluralize.underscore
+      name.pluralize.underscore.gsub('/', '_')
     end
 
 
