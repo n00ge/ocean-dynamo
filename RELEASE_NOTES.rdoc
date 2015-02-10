@@ -1,3 +1,9 @@
+== v0.7.3
+
+* Thanks to a patch from kramerc, ocean-dynamo now handles namespaced tables.
+  For an example, see spec/dummy/app/models/cloud_namespace/cloud_model.rb and
+  the corresponding spec/dynamo/aws_table_spec.rb, line 33.
+
 == v0.7.2
 
 * Minimum Ruby version is now 2.0.
