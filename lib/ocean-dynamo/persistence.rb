@@ -312,7 +312,7 @@ module OceanDynamo
     def dynamo_deserialize_attributes(hash) # :nodoc:
       result = Hash.new
       fields.each do |attribute, metadata|
-        next if metadata[:no_save]
+        next if metadata['no_save']
         result[attribute] = deserialize_attribute(hash[attribute], metadata)
       end
       assign_attributes(result)
@@ -320,8 +320,8 @@ module OceanDynamo
 
 
     def serialize_attribute(attribute, value, metadata=fields[attribute],
-                            target_class: metadata[:target_class],
-                            type: metadata[:type])
+                            target_class: metadata['target_class'],
+                            type: metadata['type'])
       return nil if value == nil
       case type
       when :reference
