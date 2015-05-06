@@ -1,3 +1,7 @@
+== v0.7.4
+
+* Support for Rails 4.2.1 and Ruby 2.2.2.
+
 == v0.7.3
 
 * Thanks to a patch from kramerc, ocean-dynamo now handles namespaced tables.
