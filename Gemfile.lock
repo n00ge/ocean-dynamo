@@ -148,7 +148,7 @@ PLATFORMS
 DEPENDENCIES
   factory_girl_rails (~> 4.0)
   ocean-dynamo!
-  rails (~> 4.2.0)
+  rails (~> 4)
   rspec-rails
   simplecov
   sqlite3
