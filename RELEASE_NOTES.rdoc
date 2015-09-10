@@ -1,3 +1,7 @@
+== v0.7.5
+
+* Empty collections mapping error fixed in has_many.
+
 == v0.7.4
 
 * Support for Rails 4.2.1 and Ruby 2.2.2.

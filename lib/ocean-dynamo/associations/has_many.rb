@@ -147,6 +147,7 @@ module OceanDynamo
     def map_children(child_class)
       return if new_record?
       child_items = child_class.dynamo_items
+      return if child_items.blank?
       child_items.query(hash_value: id, range_gte: "0", 
                         batch_size: 1000, select: :all) do |item_data|
         yield child_class.new._setup_from_dynamo(item_data)
@@ -160,6 +161,7 @@ module OceanDynamo
     def delete_children(child_class)
       return if new_record?
       child_items = child_class.dynamo_items
+      return if child_items.blank?
       child_items.query(hash_value: id, range_gte: "0", 
                         batch_size: 1000) do |item|
         item.delete
@@ -175,6 +177,7 @@ module OceanDynamo
     def nullify_children(child_class)
       return if new_record?
       child_items = child_class.dynamo_items
+      return if child_items.blank?
       child_items.query(hash_value: id, range_gte: "0", 
                         batch_size: 1000, select: :all) do |item_data|
         attrs = item_data.attributes
