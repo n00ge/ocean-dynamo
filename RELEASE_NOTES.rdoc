@@ -1,3 +1,7 @@
+== v0.7.6
+
+* All RSpec raise_error assertions now have a type.
+
 == v0.7.5
 
 * Empty collections mapping error fixed in has_many.

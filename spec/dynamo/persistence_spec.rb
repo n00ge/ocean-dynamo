@@ -157,7 +157,7 @@ describe CloudModel do
   end
 
   it "update_attributes! should barf on an invalid record" do
-    expect { @i.update_attributes!(steps: nil) }.to raise_error
+    expect { @i.update_attributes!(steps: nil) }.to raise_error OceanDynamo::RecordInvalid
   end
 
   it "should implement touch" do

@@ -44,7 +44,7 @@ describe Bang do
 
   it "should raise an exception if hate is nil" do
     @i.hate = false
-    expect { @i.save }.to raise_error  #(ActiveModel::StrictValidationFailed)
+    expect { @i.save }.to raise_error ActiveModel::StrictValidationFailed
   end
 
 

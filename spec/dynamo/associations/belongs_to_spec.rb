@@ -312,6 +312,4 @@ describe Slave do
     expect(m.persisted?).to eq true
     expect(m.name).to eq "White"
   end
-
-
 end

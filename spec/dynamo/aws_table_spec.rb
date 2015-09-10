@@ -55,7 +55,7 @@ describe CloudModel do
     CloudModel.dynamo_table
     CloudModel.new.dynamo_table
     CloudModel.dynamo_table = true
-    expect { CloudModel.new.dynamo_table = true }.to raise_error
+    expect { CloudModel.new.dynamo_table = true }.to raise_error NoMethodError
     CloudModel.dynamo_table = nil
   end
 

@@ -54,7 +54,7 @@ describe Parent do
     Parent.create!
   end
 
-  it "should have a has_many class macro" do
+  it "should have an has_many class macro" do
     expect(Parent).to respond_to :has_many
   end
 

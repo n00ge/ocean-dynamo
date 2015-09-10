@@ -26,7 +26,7 @@ describe CloudModel do
   it "should barf on a missing primary key at instantiation" do
      expect { CloudModel.new }.not_to raise_error
      CloudModel.table_hash_key = false
-     expect { CloudModel.new }.to raise_error
+     expect { CloudModel.new }.to raise_error OceanDynamo::UnknownPrimaryKey
      CloudModel.table_hash_key = :uuid   # We restore the expected value, as classes aren't reloaded between tests
   end
 
@@ -185,7 +185,7 @@ describe CloudModel do
   end
 
   it "should not have an attributes writer" do
-    expect { CloudModel.new.attributes = {} }.to raise_error
+    expect { CloudModel.new.attributes = {} }.to raise_error NoMethodError
   end
 
   it "should have string keys" do

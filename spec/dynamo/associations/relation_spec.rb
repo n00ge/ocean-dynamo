@@ -32,7 +32,7 @@ module OceanDynamo
 
     it "should when newly consed have a reader #loaded which returns false" do
       expect(Relation.new(Target).loaded).to eq false
-      expect { Relation.new(Target).loaded = true }.to raise_error
+      expect { Relation.new(Target).loaded = true }.to raise_error NoMethodError
     end
 
     it "should define #loaded? as an alias for #loaded" do

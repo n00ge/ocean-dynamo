@@ -119,7 +119,7 @@ module OceanDynamo
         result = Array.new
         _late_connect?
         child_items = child_class.dynamo_items
-        child_items.query(hash_value: id, range_gte: "0",
+        child_items.present? && child_items.query(hash_value: id, range_gte: "0",
                           batch_size: 1000, select: :all) do |item_data|
           result << child_class.new._setup_from_dynamo(item_data)
         end

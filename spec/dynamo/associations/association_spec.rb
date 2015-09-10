@@ -27,8 +27,8 @@ module OceanDynamo
       it "should take two parameters, owner and reflection, and define readers for them" do
         expect(@a.owner).to eq @o
         expect(@a.reflection).to eq @r
-        expect { @a.owner = :nono }.to raise_error
-        expect { @a.reflection = :never }.to raise_error
+        expect { @a.owner = :nono }.to raise_error NoMethodError
+        expect { @a.reflection = :never }.to raise_error NoMethodError
       end
 
       it "should have a target and a reader" do
