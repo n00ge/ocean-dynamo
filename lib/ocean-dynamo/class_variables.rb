@@ -1,14 +1,17 @@
 module OceanDynamo
   class Table
 
+    class_attribute :dynamo_resource, instance_writer: false
+    self.dynamo_resource = nil
+
     class_attribute :dynamo_client, instance_writer: false
     self.dynamo_client = nil
 
     class_attribute :dynamo_table, instance_writer: false
     self.dynamo_table = nil
 
-    class_attribute :dynamo_items, instance_writer: false
-    self.dynamo_items = nil
+    # class_attribute :dynamo_items, instance_writer: false
+    # self.dynamo_items = nil
 
     class_attribute :table_name, instance_writer: false
     self.table_name = nil

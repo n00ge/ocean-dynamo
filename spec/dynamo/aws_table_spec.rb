@@ -8,9 +8,10 @@ describe CloudModel do
   end
 
   before :each do
+    CloudModel.dynamo_resource = nil
     CloudModel.dynamo_client = nil
     CloudModel.dynamo_table = nil
-    CloudModel.dynamo_items = nil
+    #CloudModel.dynamo_items = nil
     @saved_table_name = CloudModel.table_name
     @saved_prefix = CloudModel.table_name_prefix
     @saved_suffix = CloudModel.table_name_suffix
@@ -60,100 +61,92 @@ describe CloudModel do
   end
 
 
-  it "establish_db_connection should set dynamo_client, dynamo_table and dynamo_items" do
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:exists?).and_return(true)
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:status).and_return(:active)
+  it "establish_db_connection should set dynamo_resource, dynamo_client, and dynamo_table" do
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).and_return(true)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).and_return("ACTIVE")
     expect(CloudModel).not_to receive(:create_table)
+    expect(CloudModel.dynamo_resource).to eq nil
     expect(CloudModel.dynamo_client).to eq nil
     expect(CloudModel.dynamo_table).to eq nil
-    expect(CloudModel.dynamo_items).to eq nil
+    #expect(CloudModel.dynamo_items).to eq nil
     CloudModel.establish_db_connection
-    expect(CloudModel.dynamo_client).to be_an AWS::DynamoDB
-    expect(CloudModel.dynamo_table).to be_an AWS::DynamoDB::Table
-    expect(CloudModel.dynamo_items).to be_an AWS::DynamoDB::ItemCollection
+    expect(CloudModel.dynamo_resource).to be_an Aws::DynamoDB::Resource
+    expect(CloudModel.dynamo_client).to be_an Aws::DynamoDB::Client
+    expect(CloudModel.dynamo_table).to be_an Aws::DynamoDB::Table
+    #expect(CloudModel.dynamo_items).to be_an Aws::DynamoDB::ItemCollection
   end
 
   it "establish_db_connection should return true if the table exists and is active" do
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:exists?).and_return(true)
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:status).and_return(:active)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).and_return(true)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).and_return("ACTIVE")
     expect(CloudModel).not_to receive(:create_table)
     CloudModel.establish_db_connection
   end
 
   it "establish_db_connection should wait for the table to complete creation" do
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:exists?).and_return(true)
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:status).
-      and_return(:creating, :creating, :creating, :creating, :active)
-    expect(Object).to receive(:sleep).with(1).exactly(4).times
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).and_return(true)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).
+      and_return("CREATING", "CREATING", "CREATING", "CREATING", "ACTIVE")
+    expect_any_instance_of(Object).to receive(:sleep).with(1).exactly(4).times
     expect(CloudModel).not_to receive(:create_table)
     CloudModel.establish_db_connection
   end
 
   it "establish_db_connection should wait for the table to delete before trying to create it again" do
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:exists?).and_return(true)
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:status).and_return(:deleting)
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:exists?).and_return(true, true, true, false)
-    expect(Object).to receive(:sleep).with(1).exactly(3).times
-    expect(CloudModel).to receive(:create_table).and_return(true)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).and_return("DELETING")
+    expect(CloudModel).to receive(:table_exists?).and_return(true, true, true, false)
+    expect_any_instance_of(Object).to receive(:sleep).with(1).exactly(4).times  
+    expect(CloudModel).to receive(:create_table).and_return(true)  
     CloudModel.establish_db_connection
   end
 
   it "establish_db_connection should try to create the table if it doesn't exist" do
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:exists?).and_return(false)
-    expect(CloudModel).to receive(:create_table).and_return(true)
+    expect(CloudModel).to receive(:table_exists?).and_return(false)
+    expect(CloudModel).to receive(:create_table)
     CloudModel.establish_db_connection
   end
 
   it "establish_db_connection should barf on an unknown table status" do
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:exists?).and_return(true)
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:status).twice.and_return(:syphilis)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).and_return(true)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).twice.and_return("SYPHILIS")
     expect(CloudModel).not_to receive(:create_table)
     expect { CloudModel.establish_db_connection }. 
-      to raise_error(OceanDynamo::UnknownTableStatus, "Unknown DynamoDB table status 'syphilis'")
+      to raise_error(OceanDynamo::UnknownTableStatus, "Unknown DynamoDB table status 'SYPHILIS'")
   end
 
-  it "create_table should try to create the table if it doesn't exist" do
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:exists?).and_return(false)
-    t = double(AWS::DynamoDB::Table)
-    allow(t).to receive(:status).and_return(:creating, :creating, :creating, :active)
-    allow(t).to receive(:hash_key=).once
-    allow(t).to receive(:range_key=).once
-    expect_any_instance_of(AWS::DynamoDB::TableCollection).to receive(:create).
-      with("cloud_models" + Api.basename_suffix, 
-           10, 
-           5, 
-           hash_key: {uuid: :string}, 
-           range_key: nil).
-      and_return(t)
-    expect(Object).to receive(:sleep).with(1).exactly(3).times
+  it "create_table should sleep until the table becomes active after creating it" do
+    expect(CloudModel).to receive(:table_exists?).and_return(false)
+    expect_any_instance_of(Aws::DynamoDB::Resource).to receive(:create_table)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).and_return("CREATING", "CREATING", "CREATING", "ACTIVE")
+    expect_any_instance_of(Object).to receive(:sleep).with(1).exactly(3).times
     CloudModel.establish_db_connection
   end
 
 
   it "delete_table should return true if the table was :active" do
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:exists?).twice.and_return(true)
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:status).twice.and_return(:active)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).twice.and_return(true)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).twice.and_return("ACTIVE")
     expect(CloudModel).not_to receive(:create_table)
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:delete)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:delete)
     CloudModel.establish_db_connection
     expect(CloudModel.delete_table).to eq true
   end
 
   it "delete_table should return false if the table wasn't :active" do
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:exists?).twice.and_return(true)
-    expect_any_instance_of(AWS::DynamoDB::Table).to receive(:status).and_return(:active, :deleting)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).twice.and_return(true)
+    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).and_return("ACTIVE", "DELETING")
     CloudModel.establish_db_connection
     expect(CloudModel.delete_table).to eq false
   end
 
 
-  it "should keep the connection between two instantiations" do
-    CloudModel.establish_db_connection
-    i1 = CloudModel.new
-    i1.save!
-    i2 = CloudModel.new
-    i2.save!
-  end
+  it "should keep the connection between two instantiations" #do
+    # CloudModel.establish_db_connection
+    # i1 = CloudModel.new
+    # i1.save!
+    # i2 = CloudModel.new
+    # i2.save!
+  #end
 
 
   it "table_read_capacity_units should default to 10" do

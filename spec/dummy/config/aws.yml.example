@@ -1,16 +1,13 @@
 fake_dynamo: &local
-  use_ssl:            false
-  dynamo_db_endpoint: localhost
-  dynamo_db_port:     4567
+  region:             eu-west-1
+  endpoint:           http://localhost:8000
   access_key_id:      xxx
   secret_access_key:  xxx
-  user_agent_prefix:  Ocean
 
 amazon: &amazon
+  region:             eu-west-1
   access_key_id:      YOURACCESSKEYHERE
   secret_access_key:  YOURSECRETKEYHERE
-  region:             eu-west-1
-  user_agent_prefix:  Ocean
 
 
 #

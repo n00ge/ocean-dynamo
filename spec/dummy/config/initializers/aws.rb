@@ -14,4 +14,10 @@ unless File.exists?(f)
   abort
 end
 
-Aws.config = YAML.load(File.read(f))[Rails.env].except(:user_agent_prefix)
+cfg = YAML.load(File.read(f))[Rails.env]
+
+Aws.config.update(
+  region: cfg["region"],
+  credentials: Aws::Credentials.new(cfg["access_key_id"], cfg["secret_access_key"]),
+  endpoint: cfg["endpoint"]
+)
