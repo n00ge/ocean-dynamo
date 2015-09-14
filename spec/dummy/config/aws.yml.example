@@ -21,10 +21,10 @@ amazon: &amazon
 #
 
 development:
-  <<: *amazon
+  <<: *local
 
 test:
-  <<: *amazon
+  <<: *local
 
 production:
   <<: *amazon

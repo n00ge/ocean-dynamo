@@ -45,8 +45,7 @@ ocean-dynamo is used as a central component: http://wiki.oceanframework.net"
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
 
   
-  s.add_dependency "aws-sdk", '~> 1.0' 
-  s.add_dependency "aws-sdk-core"
+  s.add_dependency "aws-sdk", '~> 2' 
   s.add_dependency "activemodel"
   s.add_dependency "activesupport"
 

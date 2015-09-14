@@ -14,8 +14,4 @@ unless File.exists?(f)
   abort
 end
 
-require "aws-sdk"
-AWS.config YAML.load(File.read(f))[Rails.env]
-
-require "aws-sdk-core"
 Aws.config = YAML.load(File.read(f))[Rails.env].except(:user_agent_prefix)
