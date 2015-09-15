@@ -54,7 +54,7 @@ module OceanDynamo
 
     attr_reader :destroyed      # :nodoc:
     attr_reader :new_record     # :nodoc:
-    attr_reader :dynamo_item    # :nodoc:
+    #attr_reader :dynamo_item    # :nodoc:
 
 
     def initialize(attrs={})

@@ -91,14 +91,14 @@ describe CloudModel do
   end 
 
   it "destroy should not attempt to delete a DynamoDB object when the instance hasn't been persisted" do
-    expect(@i.dynamo_item).to eq nil
+    expect(@i.dynamo_table).not_to receive(:delete_item)
     @i.destroy
   end
 
   it "destroy should attempt to delete a DynamoDB object only if the instance has been persisted" do
     @i.save!
-    expect(@i.dynamo_item).to be_an AWS::DynamoDB::Item
-    expect(@i.dynamo_item).to receive(:delete)
+    expect(@i.persisted?).to eq true
+    expect(@i.dynamo_table).to receive(:delete_item)
     @i.destroy
   end
 
@@ -193,7 +193,6 @@ describe CloudModel do
   it "should have a class method delete" do
     i = CloudModel.create!
     expect(CloudModel.delete(i.id)).to eq true
-    expect(i.dynamo_item.exists?).to eq false
     expect(CloudModel.delete(i.id)).to eq false
   end
 
@@ -243,12 +242,15 @@ describe CloudModel do
     end
   
     it "should remove all items" do
-      CloudModel.create!
-      CloudModel.create!
-      CloudModel.create!
-      expect(CloudModel.count).to eq 3
-      CloudModel.delete_all      
-      expect(CloudModel.count).to eq 0
+      cm1 = CloudModel.create!
+      cm2 = CloudModel.create!
+      cm3 = CloudModel.create!
+      CloudModel.delete_all
+      cm4 = CloudModel.create!
+      expect(CloudModel.delete cm1.id).to eq false  
+      expect(CloudModel.delete cm2.id).to eq false  
+      expect(CloudModel.delete cm3.id).to eq false  
+      expect(CloudModel.delete cm4.id).to eq true  
     end
   end
 
@@ -266,12 +268,13 @@ describe CloudModel do
     end
 
     it "should remove all items" do
-      CloudModel.create!
-      CloudModel.create!
-      CloudModel.create!
-      expect(CloudModel.count).to eq 3
+      cm1 = CloudModel.create!
+      cm2 = CloudModel.create!
+      cm3 = CloudModel.create!
       CloudModel.destroy_all      
-      expect(CloudModel.count).to eq 0
+      expect(CloudModel.delete cm1.id).to eq false  
+      expect(CloudModel.delete cm2.id).to eq false  
+      expect(CloudModel.delete cm3.id).to eq false  
     end
   end
 

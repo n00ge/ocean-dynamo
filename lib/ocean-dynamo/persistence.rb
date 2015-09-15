@@ -30,27 +30,51 @@ module OceanDynamo
       end
 
 
+      #
+      # Class method to delete a record. Returns true if the record existed,
+      # false if it didn't.
+      #
       def delete(hash, range=nil)
-        item = dynamo_items[hash, range]
-        return false unless item.exists?
-        item.delete
-        true
+        _late_connect?
+        keys = { table_hash_key.to_s => hash }
+        keys[table_range_key] = range if table_range_key && range
+        options = { key: keys, 
+                    return_values: "ALL_OLD"
+                  }
+        dynamo_table.delete_item(options).attributes ? true : false
       end
 
 
+      #
+      # Deletes all records without instantiating them first.
+      # TODO: Rewrite to use smart scanner.
+      #
       def delete_all
-        return nil unless dynamo_items
-        dynamo_items.each() do |item|
-          item.delete
+        options = {
+          consistent_read: true,
+          projection_expression: table_hash_key.to_s + (table_range_key ? ", " + table_range_key.to_s : "")
+        }
+        results = dynamo_table.scan(options)
+        results.items.each do |attrs|
+          if table_range_key
+            delete attrs[table_hash_key.to_s], attrs[table_range_key.to_s]
+          else
+            delete attrs[table_hash_key.to_s]
+          end
         end
         nil
       end
 
 
+      #
+      # Destroys all records after first instantiating them.
+      # TODO: Rewrite to use smart scanner.
+      #
       def destroy_all
-        return nil unless dynamo_items
-        dynamo_items.select() do |item_data|
-          new._setup_from_dynamo(item_data).destroy
+        options = { consistent_read: true }
+        results = dynamo_table.scan(options)
+        results.items.each do |attrs|
+          new._setup_from_dynamo(attrs).destroy
         end
         nil
       end
@@ -217,11 +241,21 @@ module OceanDynamo
       _late_connect?
       run_callbacks :touch do
         begin
-          dynamo_item.attributes.update(_handle_locking) do |u|
-            set_timestamps(name).each do |k|
-              u.set(k => serialize_attribute(k, read_attribute(k)))
-            end
+          timestamps = set_timestamps(name)
+          update_expression = []
+          expression_attribute_values = {}
+          timestamps.each_with_index do |ts, i|
+            nomen = ":ts#{i}"
+            expression_attribute_values[nomen] = serialize_attribute(ts, read_attribute(ts))
+            update_expression << "#{ts} = #{nomen}"
           end
+          update_expression = "SET " + update_expression.join(", ")
+          options = { 
+              key: serialized_key_attributes,
+              update_expression: update_expression
+          }.merge(_handle_locking)
+          options[:expression_attribute_values] = (options[:expression_attribute_values] || {}).merge(expression_attribute_values)
+          dynamo_table.update_item(options)
         rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
           raise OceanDynamo::StaleObjectError.new(self)
         end
@@ -231,36 +265,20 @@ module OceanDynamo
 
 
     #
-    # Sets the dynamo_item and deserialises and assigns all its defined 
-    # attributes. Skips undeclared attributes. 
-    #
-    # The arg may be either an Item or an ItemData. If Item, a request will be
-    # made for the attributes from DynamoDB. If ItemData, no DB access will
-    # be made and the existing data will be used.
-    #
-    # The :consistent keyword may only be used when the arg is an Item.
-    #
-    def _setup_from_dynamo(arg, consistent: false)
+    # Deserialises and assigns all defined attributes. Skips undeclared attributes. 
+    # Unlike its predecessor, this version never reads anything from DynamoDB, 
+    # it just processes the results from such reads. Thus, the implementation of 
+    # +consistent+ reads is up to the caller of this method.
+    #    
+    def _setup_from_dynamo(arg)
       case arg
-      when AWS::DynamoDB::Item
-        item = arg
-        item_data = nil
-      when AWS::DynamoDB::ItemData
-        item = arg.item
-        item_data = arg
-        raise ArgumentError, ":consistent may not be specified when passing an ItemData" if consistent
+      when Aws::DynamoDB::Types::GetItemOutput
+        raw_attrs = arg.item
+      when Hash
+        raw_attrs = arg
       else
-        raise ArgumentError, "arg must be an AWS::DynamoDB::Item or an AWS::DynamoDB::ItemData"
+        raise ArgumentError, "arg must be an Aws::DynamoDB::Types::GetItemOutput or a Hash"
       end
-      
-      @dynamo_item = item
-
-      if !item_data
-        raw_attrs = item.attributes.to_hash(consistent_read: consistent)
-      else
-        raw_attrs = item_data.attributes
-      end
-
       dynamo_deserialize_attributes(raw_attrs)
       @new_record = false
       self
@@ -278,8 +296,8 @@ module OceanDynamo
     def dynamo_persist(lock: nil) # :nodoc:
       _late_connect?
       begin
-        options = _handle_locking(lock)
-        @dynamo_item = dynamo_items.put(serialized_attributes, options)
+        options = { item: serialized_attributes }.merge(_handle_locking(lock))
+        dynamo_table.put_item(options)
       rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
         raise OceanDynamo::StaleObjectError.new(self)
       end
@@ -291,8 +309,8 @@ module OceanDynamo
     def dynamo_delete(lock: nil) # :nodoc:
       _late_connect?
       begin
-        options = _handle_locking(lock)
-        @dynamo_item.delete(options)
+        options = { key: serialized_key_attributes }.merge(_handle_locking(lock))
+        dynamo_table.delete_item(options)
       rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
         raise OceanDynamo::StaleObjectError.new(self)
       end
@@ -309,18 +327,28 @@ module OceanDynamo
     end
 
 
-    def dynamo_deserialize_attributes(hash) # :nodoc:
+    def serialized_key_attributes
       result = Hash.new
-      fields.each do |attribute, metadata|
-        next if metadata['no_save']
-        result[attribute] = deserialize_attribute(hash[attribute], metadata)
+      # First the hash key
+      attribute = table_hash_key
+      metadata = fields[attribute]
+      serialized = serialize_attribute(attribute, read_attribute(attribute), metadata)
+      raise "Hash key may not be null" if serialized == nil
+      result[attribute] = serialized
+      # Then the range key, if any
+      if table_range_key
+        attribute = table_range_key
+        metadata = fields[attribute]
+        serialized = serialize_attribute(attribute, read_attribute(attribute), metadata)
+        raise "Range key may not be null" if serialized == nil
+        result[attribute] = serialized
       end
-      assign_attributes(result)
+      result
     end
 
 
     def serialize_attribute(attribute, value, metadata=fields[attribute],
-                            target_class: metadata['target_class'],
+                            target_class: metadata['target_class'],         # Remove?
                             type: metadata['type'])
       return nil if value == nil
       case type
@@ -342,6 +370,16 @@ module OceanDynamo
       else
         raise UnsupportedType.new(type.to_s)
       end
+    end
+
+
+    def dynamo_deserialize_attributes(hash) # :nodoc:
+      result = Hash.new
+      fields.each do |attribute, metadata|
+        next if metadata['no_save']
+        result[attribute] = deserialize_attribute(hash[attribute], metadata)
+      end
+      assign_attributes(result)
     end
 
 
@@ -402,12 +440,18 @@ module OceanDynamo
     end
 
 
+    #
+    # Returns a hash with a condition expression which has to be satisfied 
+    # for the write or delete operation to succeed.
+    #
     def _handle_locking(lock=lock_attribute) # :nodoc:
       _late_connect?
       if lock
         current_v = read_attribute(lock)
         write_attribute(lock, current_v+1) unless frozen?
-        {if: {lock => current_v}}
+        { condition_expression: "attribute_not_exists(#{lock}) OR #{lock} = :cv",
+          expression_attribute_values: { ":cv" => current_v }
+        }
       else
         {}
       end

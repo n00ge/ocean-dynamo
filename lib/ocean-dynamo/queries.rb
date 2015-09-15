@@ -8,15 +8,18 @@ module OceanDynamo
     # ---------------------------------------------------------
 
     def find(hash, range=nil, consistent: false)
-      return hash.collect {|elem| find elem, range, consistent: consistent } if hash.is_a?(Array)
+      return hash.collect {|elem| find elem, consistent: consistent } if hash.is_a?(Array)
       _late_connect?
       hash = hash.id if hash.kind_of?(Table)    # TODO: We have (innocuous) leakage, fix!
       range = range.to_i if range.is_a?(Time)
-      item = dynamo_items[hash, range]
-      unless item.exists?
+      keys = { table_hash_key.to_s => hash }
+      keys[table_range_key] = range if table_range_key && range
+      options = { key: keys, consistent_read: consistent }
+      item = dynamo_table.get_item(options).item
+      unless item
         raise RecordNotFound, "can't find a #{self} with primary key ['#{hash}', #{range.inspect}]" 
       end
-      new._setup_from_dynamo(item, consistent: consistent)
+      new._setup_from_dynamo(item)
     end
 
 
@@ -29,30 +32,28 @@ module OceanDynamo
 
 
     #
-    # The number of records in the table.
+    # The number of records in the table. Updated every 6 hours or so;
+    # thus isn't a reliable real-time measure of the number of table items.
     #
     def count(**options)
       _late_connect?
-      dynamo_items.count(options)
+      dynamo_table.item_count
     end
 
 
     #
     # Returns all records in the table.
+    # TODO: Rewrite to use smart scanner.
     #
     def all(consistent: false, **options)
       _late_connect?
-      result = []
-      if consistent
-        dynamo_items.each(options) do |item|
-          result << new._setup_from_dynamo(item, consistent: consistent)
-        end
-      else
-        dynamo_items.select(options) do |item_data| 
-          result << new._setup_from_dynamo(item_data)
-        end
+      records = []
+      options = { consistent_read: !!consistent }
+      result = dynamo_table.scan(options)
+      result.items.each do |hash|
+        records << new._setup_from_dynamo(hash)
       end
-      result
+      records
     end
 
 
@@ -66,7 +67,7 @@ module OceanDynamo
     def find_each(limit: nil, batch_size: 1000, consistent: false)
       if consistent
         dynamo_items.each(limit: limit, batch_size: batch_size) do |item|
-          yield new._setup_from_dynamo(item, consistent: consistent)
+          yield new._setup_from_dynamo(item, consistent: consistent)  # Handle consistency above
         end
       else
         dynamo_items.select(limit: limit, batch_size: batch_size) do |item_data|
