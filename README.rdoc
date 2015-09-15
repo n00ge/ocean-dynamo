@@ -239,41 +239,29 @@ All contributed code must therefore also be exhaustively tested.
 
 == Running the specs
 
-To run the specs for the OceanDynamo gem, you must first install the bundle. It will download
-a gem called +fake_dynamo+, which runs a local, in-memory functional clone of Amazon DynamoDB.
-We use +fake_dynamo+ during development and testing.
+To run the specs for the OceanDynamo gem, you must first install DynamoDB Local. It's a local, 
+functional clone of Amazon DynamoDB. We use DynamoDB Local during development and testing.
 
-First of all, copy the AWS configuration file from the template:
+Starting with +ocean-dynamo+ 0.8.0, we're using v2 of the AWS SDK Ruby gem and the latest version
+of the DynamoDB API (2012-08-10). This means that we now have access to secondary indices, 
+amongst other things.
+
+Download DynamoDB Local from the following location:
+
+ http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html
+
+Next, copy the AWS configuration file from the template:
 
  cp spec/dummy/config/aws.yml.example spec/dummy/config/aws.yml
 
 NB: +aws.yml+ is excluded from source control. This allows you to enter your AWS credentials
 safely. Note that +aws.yml.example+ is under source control: don't edit it.
 
-Make sure your have version 0.1.3 of the +fake_dynamo+ gem. It implements the +2011-12-05+ version
-of the DynamoDB API. We're not using the +2012-08-10+ version, as the +aws-sdk+ ruby gem
-doesn't fully support it.
+You're now ready to start DynamoDB Local:
 
-Next, start +fake_dynamo+:
+ java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
 
-  fake_dynamo --port 4567
-
-If this returns errors, make sure that <tt>/usr/local/var/fake_dynamo</tt> exists and
-is writable:
-
- sudo mkdir -p /usr/local/var/fake_dynamo
- sudo chown peterb:staff /usr/local/var/fake_dynamo
-
-When +fake_dynamo+ runs normally, open another window and issue the following command:
-
- curl -X DELETE http://localhost:4567
-
-This will reset the +fake_dynamo+ database. It's not a required operation when starting
-+fake_dynamo+; we're just using it here as a test that the installation works. It will
-be issued automatically as part of the test suite, so don't expect test data to survive
-between runs.
-
-With +fake_dynamo+ running, you should now be able to do
+With DynamoDB Local running, you should now be able to do
 
  rspec
 

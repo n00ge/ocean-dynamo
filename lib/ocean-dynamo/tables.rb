@@ -28,6 +28,7 @@ module OceanDynamo
         self.dynamo_client = nil
         self.dynamo_resource = nil
         self.dynamo_table = nil
+        #self.dynamo_items = nil
         self.table_connected = false
         self.table_connect_policy = connect
         self.table_create_policy = create
@@ -52,7 +53,7 @@ module OceanDynamo
           raise(TableNotFound, table_full_name) unless table_create_policy
           create_table
         end
-        set_dynamo_table_keys
+        #set_dynamo_table_keys
       end
 
 
@@ -94,16 +95,16 @@ module OceanDynamo
       end
 
 
-      def set_dynamo_table_keys
-        # hash_key_type = fields[table_hash_key][:type]
-        # hash_key_type = :string if hash_key_type == :reference
-        # dynamo_table.hash_key = [table_hash_key, hash_key_type]
+      # def set_dynamo_table_keys
+      #   hash_key_type = fields[table_hash_key][:type]
+      #   hash_key_type = :string if hash_key_type == :reference
+      #   dynamo_table.hash_key = [table_hash_key, hash_key_type]
 
-        # if table_range_key
-        #   range_key_type = generalise_range_key_type
-        #   dynamo_table.range_key = [table_range_key, range_key_type]
-        # end
-      end
+      #   if table_range_key
+      #     range_key_type = generalise_range_key_type
+      #     dynamo_table.range_key = [table_range_key, range_key_type]
+      #   end
+      # end
 
 
       def create_table
@@ -147,7 +148,8 @@ module OceanDynamo
 
 
       def attribute_type(name)
-        case fields[name][:type]
+        vals = fields[name][:type]
+        case vals
         when :string, :serialized, :reference
           return "S"
         when :integer, :float, :datetime
