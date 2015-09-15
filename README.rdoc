@@ -243,9 +243,7 @@ Starting with +ocean-dynamo+ 0.8.0, we're using v2 of the AWS SDK Ruby gem and t
 of the DynamoDB API (2012-08-10). This means that we now have access to secondary indices, 
 amongst other things.
 
-Download DynamoDB Local from the following location:
-
- http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html
+Download DynamoDB Local from the following location: http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html
 
 Next, copy the AWS configuration file from the template:
 
