@@ -52,7 +52,7 @@ module OceanDynamo
           raise(TableNotFound, table_full_name) unless table_create_policy
           create_table
         end
-        #set_dynamo_table_keys
+        set_dynamo_table_keys
       end
 
 
@@ -78,7 +78,7 @@ module OceanDynamo
         loop do
           case dynamo_table.table_status
           when "ACTIVE"
-            #set_dynamo_table_keys
+            set_dynamo_table_keys
             return
           when "UPDATING", "CREATING"
             sleep 1
@@ -94,16 +94,22 @@ module OceanDynamo
       end
 
 
-      # def set_dynamo_table_keys
-      #   hash_key_type = fields[table_hash_key][:type]
-      #   hash_key_type = :string if hash_key_type == :reference
-      #   dynamo_table.hash_key = [table_hash_key, hash_key_type]
+      # 
+      # We might need to call this method just in case the programmer has changed the
+      # name of the hash or range keys.
+      #
+      def set_dynamo_table_keys
+        # If the keys have changed, do a dynamo_table.update.
 
-      #   if table_range_key
-      #     range_key_type = generalise_range_key_type
-      #     dynamo_table.range_key = [table_range_key, range_key_type]
-      #   end
-      # end
+        #   hash_key_type = fields[table_hash_key][:type]
+        #   hash_key_type = :string if hash_key_type == :reference
+        #   dynamo_table.hash_key = [table_hash_key, hash_key_type]
+        #
+        #   if table_range_key
+        #     range_key_type = generalise_range_key_type
+        #     dynamo_table.range_key = [table_range_key, range_key_type]
+        #   end
+      end
 
 
       def create_table
