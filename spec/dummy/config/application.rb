@@ -9,6 +9,8 @@ require "sprockets/railtie"
 
 Bundler.require(*Rails.groups)
 require "ocean-dynamo"
+require "ocean-rails"
+CHEF_ENV = "master"
 
 module Dummy
   class Application < Rails::Application
