@@ -67,7 +67,6 @@ module OceanDynamo
         end
         return true unless result.last_evaluated_key
         options[:exclusive_start_key] = result.last_evaluated_key
-        puts "==================================== ITERATING ================================"
       end
     end
 
@@ -79,10 +78,14 @@ module OceanDynamo
     # In that case, batch processing methods allow you to work with the records in batches, 
     # thereby greatly reducing memory consumption.
     #
-    def find_each(limit: nil, batch_size: nil, consistent: false)
+    def find_each(limit: nil, batch_size: 1000, consistent: false)
       options = { consistent_read: consistent }
-      options[:limit] = limit if limit   
+      options[:limit] = batch_size if batch_size   
       in_batches :scan, options do |attrs|
+        if limit
+          return true if limit <= 0
+          limit = limit - 1
+        end
         yield new._setup_from_dynamo(attrs)
       end
     end
