@@ -10,7 +10,7 @@ end
 
 
 class Slave < OceanDynamo::Table
-  dynamo_schema(:uuid, create: true, table_name_suffix: Api.basename_suffix) do
+  dynamo_schema(:guid, create: true, table_name_suffix: Api.basename_suffix) do
     attribute :name
   end
   belongs_to :master
@@ -19,7 +19,7 @@ end
 
 
 class Subslave < OceanDynamo::Table
-  dynamo_schema(:uuid, create: true, table_name_suffix: Api.basename_suffix) do
+  dynamo_schema(:guid, create: true, table_name_suffix: Api.basename_suffix) do
     attribute :name
   end
   belongs_to :slave, composite_key: true
@@ -86,8 +86,8 @@ describe Slave do
   end
 
 
-  it "should have a range key named :uuid" do
-    expect(Slave.table_range_key).to eq :uuid
+  it "should have a range key named :guid" do
+    expect(Slave.table_range_key).to eq :guid
   end
 
   it "should have a hash key named :master_id" do
@@ -95,12 +95,12 @@ describe Slave do
   end
 
 
-  it "should have an :uuid attribute" do
-    expect(Slave.fields).to include :uuid
+  it "should have an :guid attribute" do
+    expect(Slave.fields).to include :guid
     i = Slave.new
-    expect(i.uuid).to eq ""            # String because it's an empty UUID
-    i.uuid = "2345"
-    expect(i[:uuid]).to eq "2345"
+    expect(i.guid).to eq ""            # String because it's an empty guid
+    i.guid = "2345"
+    expect(i[:guid]).to eq "2345"
   end
 
   it "should not have a :master attribute" do
@@ -129,7 +129,7 @@ describe Slave do
     i = Slave.new
     i.master_id = "hash key"
     expect(i.attributes).to eq({
-      "uuid"=>"", 
+      "guid"=>"", 
       "created_at"=>nil, 
       "updated_at"=>nil, 
       "lock_version"=>0, 
@@ -145,7 +145,7 @@ describe Slave do
     i = Slave.new
     i.id = "I'm the ID now"
     expect(i.attributes).to eq({
-      "uuid"=>"", 
+      "guid"=>"", 
       "created_at"=>nil, 
       "updated_at"=>nil, 
       "lock_version"=>0, 
@@ -158,7 +158,7 @@ describe Slave do
     i = Slave.new
     i.master_id = "range key"
     expect(i.attributes).to eq({
-      "uuid"=>"", 
+      "guid"=>"", 
       "created_at"=>nil, 
       "updated_at"=>nil, 
       "lock_version"=>0, 
@@ -215,14 +215,14 @@ describe Slave do
 
   it "attr_id should be directly assignable" do
     s = Slave.new
-    s.master_id = "some-uuid"
-    expect(s.master_id).to eq "some-uuid"
+    s.master_id = "some-guid"
+    expect(s.master_id).to eq "some-guid"
     expect(s.instance_variable_get(:@master)).to eq nil
   end
 
   it "attr_id should be mass-assignable" do
-    s = Slave.new master_id: "an-uuid"
-    expect(s.master_id).to eq "an-uuid"
+    s = Slave.new master_id: "an-guid"
+    expect(s.master_id).to eq "an-guid"
     expect(s.instance_variable_get(:@master)).to eq nil
   end
 

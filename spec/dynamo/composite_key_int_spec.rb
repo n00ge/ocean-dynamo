@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class Badabing < OceanDynamo::Table
-  dynamo_schema(:uuid, :digitus, create:true, table_name_suffix: Api.basename_suffix) do
+  dynamo_schema(:guid, :digitus, create:true, table_name_suffix: Api.basename_suffix) do
     attribute :digitus, :integer
   end
 end
@@ -9,12 +9,16 @@ end
 
 describe Badabing do
 
+  before :all do
+    Badabing.establish_db_connection
+  end
+  
   before :each do
     Badabing.delete_all
   end
 
   it "should set the keys correctly" do
-    expect(Badabing.table_hash_key).to eq :uuid
+    expect(Badabing.table_hash_key).to eq :guid
     expect(Badabing.table_range_key).to eq :digitus
     expect(Badabing.fields).to include :digitus
   end
@@ -30,33 +34,33 @@ describe Badabing do
   end
 
   it "should be persistable when both args are specified" do
-    v = Badabing.create! uuid: "foo", digitus: 10000
+    v = Badabing.create! guid: "foo", digitus: 10000
     expect(v).to be_a Badabing
-    expect(v.uuid).to eq "foo"
+    expect(v.guid).to eq "foo"
     expect(v.digitus).to eq 10000
   end
 
-  it "should assign a UUID to the hash key when unspecified" do
+  it "should assign a guid to the hash key when unspecified" do
     v = Badabing.create! digitus: 555
-    expect(v.uuid).to be_a String
-    expect(v.uuid).not_to eq ""
+    expect(v.guid).to be_a String
+    expect(v.guid).not_to eq ""
   end
 
   it "should not persist if the range key is empty or unspecified" do
-    expect { Badabing.create! uuid: "foo", digitus: nil }.to raise_error(OceanDynamo::RecordInvalid)
-    expect { Badabing.create! uuid: "foo", digitus: false }.to raise_error(OceanDynamo::RecordInvalid)
-    expect { Badabing.create! uuid: "foo", digitus: "" }.to raise_error(OceanDynamo::RecordInvalid)
-    expect { Badabing.create! uuid: "foo", digitus: "  " }.to raise_error(OceanDynamo::RecordInvalid)
+    expect { Badabing.create! guid: "foo", digitus: nil }.to raise_error(OceanDynamo::RecordInvalid)
+    expect { Badabing.create! guid: "foo", digitus: false }.to raise_error(OceanDynamo::RecordInvalid)
+    expect { Badabing.create! guid: "foo", digitus: "" }.to raise_error(OceanDynamo::RecordInvalid)
+    expect { Badabing.create! guid: "foo", digitus: "  " }.to raise_error(OceanDynamo::RecordInvalid)
   end
 
   it "instances should be findable" do
     orig = Badabing.create! digitus: 100000
-    found = Badabing.find(orig.uuid, 100000, consistent: true)
+    found = Badabing.find(orig.guid, 100000, consistent: true)
     expect(found).to eq orig
   end
 
   it "instances should be reloadable" do
-    i = Badabing.create! uuid: "quux", digitus: 98765
+    i = Badabing.create! guid: "quux", digitus: 98765
     i.reload
   end
 

@@ -30,7 +30,7 @@ describe CloudModel do
           expect(i.token).to eq "hey"
           i.reload
           expect(i.token).to eq "hey"
-          expect(CloudModel.find(i.uuid, consistent: true).token).to eq "hey"
+          expect(CloudModel.find(i.id, consistent: true).token).to eq "hey"
         end
 
         it "should return a stored empty string" do
@@ -38,7 +38,7 @@ describe CloudModel do
           expect(i.token).to eq ""
           i.reload
           expect(i.token).to eq ""
-          expect(CloudModel.find(i.uuid, consistent: true).token).to eq ""
+          expect(CloudModel.find(i.id, consistent: true).token).to eq ""
         end
       end
     end
@@ -64,7 +64,7 @@ describe CloudModel do
           expect(i.credentials).to eq "hey"
           i.reload
           expect(i.credentials).to eq "hey"
-          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq "hey"
+          expect(CloudModel.find(i.id, consistent: true).credentials).to eq "hey"
         end
 
         it "should return a stored empty string" do
@@ -72,7 +72,7 @@ describe CloudModel do
           expect(i.credentials).to eq ""
           i.reload
           expect(i.credentials).to eq ""
-          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq ""
+          expect(CloudModel.find(i.id, consistent: true).credentials).to eq ""
         end
 
         it "should return a stored nil as the empty string" do
@@ -80,7 +80,7 @@ describe CloudModel do
           expect(i.credentials).to eq nil
           i.reload
           expect(i.credentials).to eq ""
-          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq ""
+          expect(CloudModel.find(i.id, consistent: true).credentials).to eq ""
         end
       end
     end
@@ -108,7 +108,7 @@ describe CloudModel do
           expect(i.token).to eq "hey"
           i.reload
           expect(i.token).to eq "hey"
-          expect(CloudModel.find(i.uuid, consistent: true).token).to eq "hey"
+          expect(CloudModel.find(i.id, consistent: true).token).to eq "hey"
         end
 
         it "should return a stored empty set as the empty string" do
@@ -116,7 +116,7 @@ describe CloudModel do
           expect(i.token).to eq []
           i.reload
           expect(i.token).to eq ""
-          expect(CloudModel.find(i.uuid, consistent: true).token).to eq ""
+          expect(CloudModel.find(i.id, consistent: true).token).to eq ""
         end
       end
     end
@@ -142,7 +142,7 @@ describe CloudModel do
           expect(i.credentials).to eq ["hey", "jude"]
           i.reload
           expect(i.credentials).to eq ["hey", "jude"]
-          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq ["hey", "jude"]
+          expect(CloudModel.find(i.id, consistent: true).credentials).to eq ["hey", "jude"]
         end
 
         it "should return a stored empty set" do
@@ -150,7 +150,7 @@ describe CloudModel do
           expect(i.credentials).to eq []
           i.reload
           expect(i.credentials).to eq ""
-          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq ""
+          expect(CloudModel.find(i.id, consistent: true).credentials).to eq ""
         end
 
         it "should return a stored nil as the empty string" do
@@ -158,7 +158,7 @@ describe CloudModel do
           expect(i.credentials).to eq nil
           i.reload
           expect(i.credentials).to eq ""
-          expect(CloudModel.find(i.uuid, consistent: true).credentials).to eq ""
+          expect(CloudModel.find(i.id, consistent: true).credentials).to eq ""
         end
       end
     end

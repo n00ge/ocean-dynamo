@@ -9,6 +9,10 @@ end
 
 describe VaVaVoom do
 
+  before :all do
+    VaVaVoom.establish_db_connection
+  end
+  
   before :each do
     VaVaVoom.all.each { |vvv| vvv.delete }
   end

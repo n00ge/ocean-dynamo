@@ -13,7 +13,7 @@ end
 
 # The Child class
 class Child < OceanDynamo::Table
-  dynamo_schema(:uuid, create: true, table_name_suffix: Api.basename_suffix) do
+  dynamo_schema(:guid, create: true, table_name_suffix: Api.basename_suffix) do
   end
   belongs_to :parent
 end
@@ -21,7 +21,7 @@ end
 
 # Another child class, Pet
 class Pet < OceanDynamo::Table
-  dynamo_schema(:uuid, create: true, table_name_suffix: Api.basename_suffix) do
+  dynamo_schema(:guid, create: true, table_name_suffix: Api.basename_suffix) do
   end
   belongs_to :parent
 end
@@ -29,7 +29,7 @@ end
 
 # Another child class, Car
 class Car < OceanDynamo::Table
-  dynamo_schema(:uuid, create: true, table_name_suffix: Api.basename_suffix) do
+  dynamo_schema(:guid, create: true, table_name_suffix: Api.basename_suffix) do
   end
   belongs_to :parent
 end
@@ -83,7 +83,7 @@ describe Parent do
 
   it "child class Child should have one extra attribute" do
     expect(Child.new.attributes).to eq({
-      "uuid"=>"", "parent_id"=>nil,
+      "guid"=>"", "parent_id"=>nil,
       "created_at"=>nil, "updated_at"=>nil, "lock_version"=>0 
     })
   end
@@ -222,7 +222,7 @@ describe Parent do
 
     it "should have findable children" do
       expect(@lisa.parent).to eq @homer
-      expect(Child.find(@homer.id, @lisa.uuid)).to eq @lisa
+      expect(Child.find(@homer.id, @lisa.guid)).to eq @lisa
     end
 
 
@@ -291,9 +291,9 @@ describe Parent do
         @peter.save!
         @peter.reload
         expect(@peter.children.length).to eq 1
-        expect(Child.find_by_key(@peter.id, @meg.uuid)).to eq nil
-        expect(Child.find_by_key(@peter.id, @chris.uuid)).to eq @chris
-        expect(Child.find_by_key(@peter.id, @stewie.uuid)).to eq nil
+        expect(Child.find_by_key(@peter.id, @meg.guid)).to eq nil
+        expect(Child.find_by_key(@peter.id, @chris.guid)).to eq @chris
+        expect(Child.find_by_key(@peter.id, @stewie.guid)).to eq nil
       end
     end
 

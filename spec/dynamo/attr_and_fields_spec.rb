@@ -16,7 +16,7 @@ describe CloudModel do
 
 
   it "should have a class method table_hash_key" do
-    expect(CloudModel.table_hash_key).to eq :uuid
+    expect(CloudModel.table_hash_key).to eq :guid
   end
 
   it "should have a class method table_range_key" do
@@ -27,44 +27,44 @@ describe CloudModel do
      expect { CloudModel.new }.not_to raise_error
      CloudModel.table_hash_key = false
      expect { CloudModel.new }.to raise_error OceanDynamo::UnknownPrimaryKey
-     CloudModel.table_hash_key = :uuid   # We restore the expected value, as classes aren't reloaded between tests
+     CloudModel.table_hash_key = :guid   # We restore the expected value, as classes aren't reloaded between tests
   end
 
 
   it "should be possible to refer to the hash_key attribute using #id, regardless of its name" do
-    i = CloudModel.new uuid: "blahonga"
-    expect(i.uuid).to eq "blahonga"
+    i = CloudModel.new guid: "blahonga"
+    expect(i.guid).to eq "blahonga"
     expect(i.id).to eq "blahonga"
-    expect(i[:uuid]).to eq "blahonga"
+    expect(i[:guid]).to eq "blahonga"
     expect(i[:id]).to eq "blahonga"
   end
 
   it "should be possible to set the hash_key attribute using #id, regardless of its name" do
-    i = CloudModel.new uuid: "blahonga"
+    i = CloudModel.new guid: "blahonga"
     expect(i.id).to eq "blahonga"
     i.id = "snyko"
-    expect(i.uuid).to eq "snyko"
-    i.uuid = "moose"
+    expect(i.guid).to eq "snyko"
+    i.guid = "moose"
     expect(i.id).to eq "moose"
-    i[:uuid] = "elk"
-    expect(i.uuid).to eq "elk"
+    i[:guid] = "elk"
+    expect(i.guid).to eq "elk"
     i[:id] = "badger"
     expect(i.id).to eq "badger"
-    expect(i.id).to eq i.uuid
-    expect(i[:id]).to eq i[:uuid]
+    expect(i.id).to eq i.guid
+    expect(i[:id]).to eq i[:guid]
   end
 
-  it "should assign an UUID to the hash_key attribute if nil at create" do
-    i = CloudModel.new uuid: nil
+  it "should assign an guid to the hash_key attribute if nil at create" do
+    i = CloudModel.new guid: nil
     expect(i.save).to eq true
-    expect(i.uuid).not_to eq nil
+    expect(i.guid).not_to eq nil
   end
 
 
   it "should define accessors for all attributes, both explicit and implicit" do
     i = CloudModel.new
     expect(i.attributes.keys).to eq [
-      "uuid", 
+      "guid", 
       "created_at", 
       "updated_at", 
       "lock_version", 
@@ -163,8 +163,8 @@ describe CloudModel do
 
 
   it "should assign the fields values supplied in the call to new" do
-    i = CloudModel.new uuid: "Barack-Obladiobladama", created_by: "http://somewhere"
-    expect(i.uuid).to eq "Barack-Obladiobladama"
+    i = CloudModel.new guid: "Barack-Obladiobladama", created_by: "http://somewhere"
+    expect(i.guid).to eq "Barack-Obladiobladama"
     expect(i.created_by).to eq "http://somewhere"
   end
 
@@ -174,7 +174,7 @@ describe CloudModel do
   end
 
 
-  it "should require the uuid to be present" do
+  it "should require the guid to be present" do
     expect(CloudModel.new(steps: nil).valid?).to eq false
     expect(CloudModel.new(steps: [1,2,3]).valid?).to eq true
   end
@@ -189,7 +189,7 @@ describe CloudModel do
   end
 
   it "should have string keys" do
-    expect(CloudModel.new.attributes).to include 'uuid'
+    expect(CloudModel.new.attributes).to include 'guid'
     expect(CloudModel.new.attributes).to include 'created_at'
   end
 
@@ -202,21 +202,21 @@ describe CloudModel do
   it "to_key should return an array of the present index key when the instance has been persisted" do
     expect_any_instance_of(CloudModel).to receive(:persisted?).and_return(true)
     i = CloudModel.create
-    expect(i.to_key).to eq [i.uuid]
+    expect(i.to_key).to eq [i.guid]
   end
 
   it "@i[:foo] and @i['foo'] should be equivalent to @i.foo" do
-    i = CloudModel.new uuid: "trala"
-    expect(i[:uuid]).to eq "trala"
-    expect(i['uuid']).to eq "trala"
+    i = CloudModel.new guid: "trala"
+    expect(i[:guid]).to eq "trala"
+    expect(i['guid']).to eq "trala"
   end
 
   it "@i[:foo]= and @i['foo']= should be equivalent to @i.foo=" do
-    i = CloudModel.new uuid: "trala"
-    i[:uuid] = "wow"
-    expect(i[:uuid]).to eq "wow"
-    i['uuid'] = "yowza"
-    expect(i['uuid']).to eq "yowza"
+    i = CloudModel.new guid: "trala"
+    i[:guid] = "wow"
+    expect(i[:guid]).to eq "wow"
+    i['guid'] = "yowza"
+    expect(i['guid']).to eq "yowza"
   end
 
   it "should verify that << works normally" do
@@ -278,7 +278,7 @@ describe CloudModel do
     a.save!
     b.save!
     expect(a).not_to eq b
-    c = CloudModel.find(a.uuid)
+    c = CloudModel.find(a.guid)
     expect(c).to eq a
     expect(c).not_to eq b
   end

@@ -8,7 +8,7 @@ module OceanDynamo
     # ---------------------------------------------------------
 
     def find(hash, range=nil, consistent: false)
-      return hash.collect {|elem| find elem, consistent: consistent } if hash.is_a?(Array)
+      return hash.collect {|elem| find elem, range, consistent: consistent } if hash.is_a?(Array)
       _late_connect?
       hash = hash.id if hash.kind_of?(Table)    # TODO: We have (innocuous) leakage, fix!
       range = range.to_i if range.is_a?(Time)

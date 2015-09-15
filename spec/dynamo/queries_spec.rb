@@ -20,11 +20,10 @@ describe CloudModel do
       expect { CloudModel.find('some-nonexistent-key') }.to raise_error(OceanDynamo::RecordNotFound)
     end
 
-    it "find should return an existing CloudModel with a dynamo_item when successful" do
+    it "find should return an existing CloudModel when successful" do
       @i.save!
       found = CloudModel.find(@i.id, consistent: true)
       expect(found).to be_a CloudModel
-      expect(found.dynamo_item).to be_an AWS::DynamoDB::Item
       expect(found.new_record?).to eq false
     end
 
@@ -38,9 +37,9 @@ describe CloudModel do
     end
 
     it "find should be able to take an array arg" do
-      foo = CloudModel.create id: "foo"
-      bar = CloudModel.create id: "bar"
-      baz = CloudModel.create id: "baz"
+      foo = CloudModel.create guid: "foo"
+      bar = CloudModel.create guid: "bar"
+      baz = CloudModel.create guid: "baz"
       expect(CloudModel.find(["foo", "bar"], consistent: true)).to eq [foo, bar]
     end
   end
@@ -52,11 +51,10 @@ describe CloudModel do
       expect { CloudModel.find_by_key('some-nonexistent-key') }.not_to raise_error
     end 
 
-    it "find should return an existing CloudModel with a dynamo_item when successful" do
+    it "find should return an existing CloudModel when successful" do
       @i.save!
       found = CloudModel.find_by_key(@i.id, consistent: true)
       expect(found).to be_a CloudModel
-      expect(found.dynamo_item).to be_an AWS::DynamoDB::Item
       expect(found.new_record?).to eq false
     end
 
@@ -119,77 +117,77 @@ describe CloudModel do
   end
 
 
-  describe "find_each" do
+  # describe "find_each" do
 
-    before :each do
-      CloudModel.delete_all
-      24.times { CloudModel.create! }
-    end
+  #   before :each do
+  #     CloudModel.delete_all
+  #     24.times { CloudModel.create! }
+  #   end
 
 
-    describe "(eventually consistent)" do
+  #   describe "(eventually consistent)" do
 
-      it "should take a block" do
-        CloudModel.find_each { |item| }
-      end
+  #     it "should take a block" do
+  #       CloudModel.find_each { |item| }
+  #     end
 
-      it "should yield to the block as many times as there are items in the table" do
-        c = CloudModel.count
-        i = 0
-        CloudModel.find_each { |item| i += 1 }
-        expect(i).to eq c
-      end
+  #     it "should yield to the block as many times as there are items in the table" do
+  #       c = CloudModel.count
+  #       i = 0
+  #       CloudModel.find_each { |item| i += 1 }
+  #       expect(i).to eq c
+  #     end
 
-      it "should take the :limit keyword" do
-        c = CloudModel.count
-        i = 0
-        CloudModel.find_each(limit: 5) { |item| i += 1 }
-        expect(i).to eq 5
-      end
+  #     it "should take the :limit keyword" do
+  #       c = CloudModel.count
+  #       i = 0
+  #       CloudModel.find_each(limit: 5) { |item| i += 1 }
+  #       expect(i).to eq 5
+  #     end
 
-      it "should take the :batch_size keyword and still process all items" do
-        c = CloudModel.count
-        i = 0
-        CloudModel.find_each(batch_size: 5) { |item| i += 1 }
-        expect(i).to eq c
-      end
-    end
+  #     it "should take the :batch_size keyword and still process all items" do
+  #       c = CloudModel.count
+  #       i = 0
+  #       CloudModel.find_each(batch_size: 5) { |item| i += 1 }
+  #       expect(i).to eq c
+  #     end
+  #   end
 
-    describe "(consistent)" do
+  #   describe "(consistent)" do
 
-      # it "should accept a consistent: keyword parameter and hand it down to _setup_from_dynamo" do
-      #   CloudModel.delete_all
-      #   1.times { CloudModel.create! }
-      #   expect_any_instance_of(CloudModel).to receive(:_setup_from_dynamo).
-      #     with(anything, consistent: true)
-      #   CloudModel.find_each(consistent: true) { |item| }
-      # end
+  #     # it "should accept a consistent: keyword parameter and hand it down to _setup_from_dynamo" do
+  #     #   CloudModel.delete_all
+  #     #   1.times { CloudModel.create! }
+  #     #   expect_any_instance_of(CloudModel).to receive(:_setup_from_dynamo).
+  #     #     with(anything, consistent: true)
+  #     #   CloudModel.find_each(consistent: true) { |item| }
+  #     # end
 
-      it "should take a block" do
-        CloudModel.find_each(consistent: true) { |item| }
-      end
+  #     it "should take a block" do
+  #       CloudModel.find_each(consistent: true) { |item| }
+  #     end
 
-      it "should yield to the block as many times as there are items in the table" do
-        c = CloudModel.count
-        i = 0
-        CloudModel.find_each(consistent: true) { |item| i += 1 }
-        expect(i).to eq c
-      end
+  #     it "should yield to the block as many times as there are items in the table" do
+  #       c = CloudModel.count
+  #       i = 0
+  #       CloudModel.find_each(consistent: true) { |item| i += 1 }
+  #       expect(i).to eq c
+  #     end
 
-      it "should take the :limit keyword" do
-        c = CloudModel.count
-        i = 0
-        CloudModel.find_each(limit: 5, consistent: true) { |item| i += 1 }
-        expect(i).to eq 5
-      end
+  #     it "should take the :limit keyword" do
+  #       c = CloudModel.count
+  #       i = 0
+  #       CloudModel.find_each(limit: 5, consistent: true) { |item| i += 1 }
+  #       expect(i).to eq 5
+  #     end
 
-      it "should take the :batch_size keyword and still process all items" do
-        c = CloudModel.count
-        i = 0
-        CloudModel.find_each(batch_size: 5, consistent: true) { |item| i += 1 }
-        expect(i).to eq c
-      end
-    end
-  end
+  #     it "should take the :batch_size keyword and still process all items" do
+  #       c = CloudModel.count
+  #       i = 0
+  #       CloudModel.find_each(batch_size: 5, consistent: true) { |item| i += 1 }
+  #       expect(i).to eq c
+  #     end
+  #   end
+  # end
 
 end

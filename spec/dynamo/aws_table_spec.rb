@@ -11,7 +11,6 @@ describe CloudModel do
     CloudModel.dynamo_resource = nil
     CloudModel.dynamo_client = nil
     CloudModel.dynamo_table = nil
-    #CloudModel.dynamo_items = nil
     @saved_table_name = CloudModel.table_name
     @saved_prefix = CloudModel.table_name_prefix
     @saved_suffix = CloudModel.table_name_suffix
@@ -68,12 +67,10 @@ describe CloudModel do
     expect(CloudModel.dynamo_resource).to eq nil
     expect(CloudModel.dynamo_client).to eq nil
     expect(CloudModel.dynamo_table).to eq nil
-    #expect(CloudModel.dynamo_items).to eq nil
     CloudModel.establish_db_connection
     expect(CloudModel.dynamo_resource).to be_an Aws::DynamoDB::Resource
     expect(CloudModel.dynamo_client).to be_an Aws::DynamoDB::Client
     expect(CloudModel.dynamo_table).to be_an Aws::DynamoDB::Table
-    #expect(CloudModel.dynamo_items).to be_an Aws::DynamoDB::ItemCollection
   end
 
   it "establish_db_connection should return true if the table exists and is active" do

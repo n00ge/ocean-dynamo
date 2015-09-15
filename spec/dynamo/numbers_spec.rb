@@ -30,7 +30,7 @@ describe CloudModel do
           expect(i.last_completed_step).to eq 12345
           i.reload(consistent: true)
           expect(i.last_completed_step).to eq 12345
-          expect(CloudModel.find(i.uuid, consistent: true).last_completed_step).to eq 12345
+          expect(CloudModel.find(i.guid, consistent: true).last_completed_step).to eq 12345
         end
 
         it "should return a stored nil" do
@@ -38,7 +38,7 @@ describe CloudModel do
           expect(i.last_completed_step).to eq nil
           i.reload(consistent: true)
           expect(i.last_completed_step).to eq nil
-          expect(CloudModel.find(i.uuid, consistent: true).last_completed_step).to eq nil
+          expect(CloudModel.find(i.guid, consistent: true).last_completed_step).to eq nil
         end
 
         it "should convert values to integers" do
@@ -46,7 +46,7 @@ describe CloudModel do
           expect(i.last_completed_step).to eq  86400
           i.reload(consistent: true)
           expect(i.last_completed_step).to eq 86400
-          expect(CloudModel.find(i.uuid, consistent: true).last_completed_step).to eq 86400
+          expect(CloudModel.find(i.guid, consistent: true).last_completed_step).to eq 86400
         end
 
         it "should handle durations" do
@@ -54,7 +54,7 @@ describe CloudModel do
           expect(i.last_completed_step).to eq  1.day
           i.reload(consistent: true)
           expect(i.last_completed_step).to eq 86400
-          expect(CloudModel.find(i.uuid, consistent: true).last_completed_step).to eq 86400
+          expect(CloudModel.find(i.guid, consistent: true).last_completed_step).to eq 86400
         end
       end
     end
@@ -80,7 +80,7 @@ describe CloudModel do
           expect(i.int).to eq 1066
           i.reload(consistent: true)
           expect(i.int).to eq 1066
-          expect(CloudModel.find(i.uuid, consistent: true).int).to eq 1066
+          expect(CloudModel.find(i.guid, consistent: true).int).to eq 1066
         end
 
         it "should return a stored nil" do
@@ -88,7 +88,7 @@ describe CloudModel do
           expect(i.int).to eq nil
           i.reload(consistent: true)
           expect(i.int).to eq nil
-          expect(CloudModel.find(i.uuid, consistent: true).int).to eq nil
+          expect(CloudModel.find(i.guid, consistent: true).int).to eq nil
         end
 
         it "should convert values to integers" do
@@ -96,7 +96,7 @@ describe CloudModel do
           expect(i.int).to eq  86400
           i.reload(consistent: true)
           expect(i.int).to eq 86400
-          expect(CloudModel.find(i.uuid, consistent: true).int).to eq 86400
+          expect(CloudModel.find(i.guid, consistent: true).int).to eq 86400
         end
       end
     end
@@ -124,7 +124,7 @@ describe CloudModel do
           expect(i.last_completed_step).to eq nil
           i.reload(consistent: true)
           expect(i.last_completed_step).to eq nil
-          expect(CloudModel.find(i.uuid, consistent: true).last_completed_step).to eq nil
+          expect(CloudModel.find(i.guid, consistent: true).last_completed_step).to eq nil
         end
 
         it "should return a stored empty set as the empty string" do
@@ -132,7 +132,7 @@ describe CloudModel do
           expect(i.last_completed_step).to eq []
           i.reload(consistent: true)
           expect(i.last_completed_step).to eq nil
-          expect(CloudModel.find(i.uuid, consistent: true).last_completed_step).to eq nil
+          expect(CloudModel.find(i.guid, consistent: true).last_completed_step).to eq nil
         end
       end
     end
@@ -158,7 +158,7 @@ describe CloudModel do
           expect(i.int).to eq [55, -1, 2000]
           i.reload(consistent: true)
           expect(i.int.to_set).to eq [55, -1, 2000].to_set
-          expect(CloudModel.find(i.uuid, consistent: true).int.to_set).to eq [55, -1, 2000].to_set
+          expect(CloudModel.find(i.guid, consistent: true).int.to_set).to eq [55, -1, 2000].to_set
         end
 
         it "should return a stored empty set" do
@@ -166,7 +166,7 @@ describe CloudModel do
           expect(i.int).to eq []
           i.reload(consistent: true)
           expect(i.int).to eq nil
-          expect(CloudModel.find(i.uuid, consistent: true).int).to eq nil
+          expect(CloudModel.find(i.guid, consistent: true).int).to eq nil
         end
 
         it "should return a stored nil" do
@@ -174,7 +174,7 @@ describe CloudModel do
           expect(i.int).to eq nil
           i.reload(consistent: true)
           expect(i.int).to eq nil
-          expect(CloudModel.find(i.uuid, consistent: true).int).to eq nil
+          expect(CloudModel.find(i.guid, consistent: true).int).to eq nil
         end
       end
     end

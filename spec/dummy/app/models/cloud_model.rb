@@ -1,6 +1,6 @@
 class CloudModel < OceanDynamo::Table
 
-dynamo_schema(:id, create: true, table_name_suffix: Api.basename_suffix) do
+dynamo_schema(:guid, create: true, table_name_suffix: Api.basename_suffix) do
     attribute :credentials,          :string,      default: "blah"
     attribute :token,                :string
     attribute :steps,                :serialized,  default: []

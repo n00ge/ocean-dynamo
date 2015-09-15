@@ -5,6 +5,7 @@ describe CloudModel do
 
   before :all do
     CloudModel.establish_db_connection
+    CloudModel.delete_all
   end
 
 
@@ -18,10 +19,10 @@ describe CloudModel do
 
 
   it "should use optimistic locking in update" do
-    uuid = CloudModel.create.uuid
-    one = CloudModel.find uuid
+    guid = CloudModel.create.guid
+    one = CloudModel.find guid
     expect(one.lock_version).to eq 0
-    two = CloudModel.find uuid
+    two = CloudModel.find guid
     expect(two.lock_version).to eq 0
     one.save!
     expect(two.lock_version).to eq 0
@@ -31,10 +32,10 @@ describe CloudModel do
   end
 
   it "should use optimistic locking in destroy" do
-    uuid = CloudModel.create.uuid
-    one = CloudModel.find uuid
+    guid = CloudModel.create.guid
+    one = CloudModel.find guid
     expect(one.lock_version).to eq 0
-    two = CloudModel.find uuid
+    two = CloudModel.find guid
     expect(two.lock_version).to eq 0
     one.save!
     expect(two.lock_version).to eq 0
@@ -44,10 +45,10 @@ describe CloudModel do
   end
 
   it "should use optimistic locking in touch" do
-    uuid = CloudModel.create.uuid
-    one = CloudModel.find uuid
+    guid = CloudModel.create.guid
+    one = CloudModel.find guid
     expect(one.lock_version).to eq 0
-    two = CloudModel.find uuid
+    two = CloudModel.find guid
     expect(two.lock_version).to eq 0
     one.save!
     expect(two.lock_version).to eq 0

@@ -28,7 +28,6 @@ module OceanDynamo
         self.dynamo_client = nil
         self.dynamo_resource = nil
         self.dynamo_table = nil
-        #self.dynamo_items = nil
         self.table_connected = false
         self.table_connect_policy = connect
         self.table_create_policy = create
@@ -178,7 +177,6 @@ module OceanDynamo
     # ---------------------------------------------------------
 
     def initialize(*)
-      @dynamo_item = nil
       super
     end
 
