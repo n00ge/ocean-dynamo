@@ -214,9 +214,6 @@ to both the following locations in your project:
 Enter your AWS credentials in the latter file. Eventually, there
 will be a generator to copy these files for you, but for now you need to do it manually. 
 
-You also need +fake_dynamo+ to run DynamoDB locally: see below for installation instructions.
-NB: You do not need an Amazon AWS account to run OceanDynamo locally.
-
 
 == Documentation
 
@@ -276,7 +273,7 @@ The Rails console is available from the built-in dummy application:
  rails console
 
 This will, amongst other things, also create the CloudModel table if it doesn't already
-exist. On Amazon, this will take a little while. With +fake_dynamo+, it's practically
+exist. On Amazon, this will take a little while. With DynamoDB Local, it's practically
 instant.
 
 When you leave the console, you must navigate back to the top directory (<tt>cd ../..</tt>)
