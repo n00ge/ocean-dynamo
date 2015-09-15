@@ -225,6 +225,8 @@ See also Ocean, a Rails framework for creating highly scalable SOAs in the cloud
 OceanDynamo is used as a central component:
 * http://wiki.oceanframework.net
 
+* AWS Ruby SDK v2 for DynamoDB: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB.html
+
 
 == Contributing
 
