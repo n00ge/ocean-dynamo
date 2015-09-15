@@ -48,11 +48,11 @@ module OceanDynamo
         if table_exists?(dynamo_table)
           wait_until_table_is_active
           self.table_connected = true
+          update_table_if_required
         else
           raise(TableNotFound, table_full_name) unless table_create_policy
           create_table
         end
-        set_dynamo_table_keys
       end
 
 
@@ -78,7 +78,7 @@ module OceanDynamo
         loop do
           case dynamo_table.table_status
           when "ACTIVE"
-            set_dynamo_table_keys
+            update_table_if_required
             return
           when "UPDATING", "CREATING"
             sleep 1
@@ -94,38 +94,10 @@ module OceanDynamo
       end
 
 
-      # 
-      # We might need to call this method just in case the programmer has changed the
-      # name of the hash or range keys.
-      #
-      def set_dynamo_table_keys
-        # If the keys have changed, do a dynamo_table.update.
-
-        #   hash_key_type = fields[table_hash_key][:type]
-        #   hash_key_type = :string if hash_key_type == :reference
-        #   dynamo_table.hash_key = [table_hash_key, hash_key_type]
-        #
-        #   if table_range_key
-        #     range_key_type = generalise_range_key_type
-        #     dynamo_table.range_key = [table_range_key, range_key_type]
-        #   end
-      end
-
-
-      def create_table
-        hash_key_type = fields[table_hash_key][:type]
-        hash_key_type = :string if hash_key_type == :reference
-        range_key_type = generalise_range_key_type
-
-        attrs = []
-        attrs << { attribute_name: table_hash_key.to_s, attribute_type: attribute_type(table_hash_key) }
-        attrs << { attribute_name: table_range_key.to_s, attribute_type: attribute_type(table_range_key) }  if range_key_type
-
-        keys = []
-        keys << { attribute_name: table_hash_key.to_s, key_type: "HASH" }
-        keys << { attribute_name: table_range_key.to_s, key_type: "RANGE" } if range_key_type
-
-        dynamo_resource.create_table(
+       def create_table
+        attrs = table_attribute_definitions
+        keys = table_key_schema
+        options = {
           table_name: table_full_name,
           provisioned_throughput: {
             read_capacity_units: table_read_capacity_units,
@@ -133,22 +105,39 @@ module OceanDynamo
           },
           attribute_definitions: attrs,
           key_schema: keys
-        )
-
+        }
+        dynamo_resource.create_table(options)
         sleep 1 until dynamo_table.table_status == "ACTIVE"
         setup_dynamo
         true
       end
 
 
-      def generalise_range_key_type
-        return false unless table_range_key
-        t = fields[table_range_key][:type]
-        return :string if t == :string
-        return :number if t == :integer
-        return :number if t == :float
-        return :number if t == :datetime
-        raise "Unsupported range key type: #{t}"
+     def update_table_if_required
+        attrs = table_attribute_definitions
+        active_attrs = []
+        dynamo_table.attribute_definitions.each do |k| 
+          active_attrs << { attribute_name: k.attribute_name, attribute_type: k.attribute_type }
+        end
+        return false if active_attrs == attrs
+        options = { attribute_definitions: attrs }
+        dynamo_table.update(options)
+        true
+      end
+
+
+      def table_attribute_definitions
+        attrs = []
+        attrs << { attribute_name: table_hash_key.to_s, attribute_type: attribute_type(table_hash_key) }
+        attrs << { attribute_name: table_range_key.to_s, attribute_type: attribute_type(table_range_key) }  if table_range_key
+        attrs
+      end
+
+      def table_key_schema
+        keys = []
+        keys << { attribute_name: table_hash_key.to_s, key_type: "HASH" }
+        keys << { attribute_name: table_range_key.to_s, key_type: "RANGE" } if table_range_key
+        keys
       end
 
 

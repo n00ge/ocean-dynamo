@@ -47,15 +47,13 @@ module OceanDynamo
 
       #
       # Deletes all records without instantiating them first.
-      # TODO: Rewrite to use smart scanner.
       #
       def delete_all
         options = {
           consistent_read: true,
           projection_expression: table_hash_key.to_s + (table_range_key ? ", " + table_range_key.to_s : "")
         }
-        results = dynamo_table.scan(options)
-        results.items.each do |attrs|
+        in_batches :scan, options do |attrs|
           if table_range_key
             delete attrs[table_hash_key.to_s], attrs[table_range_key.to_s]
           else
@@ -68,12 +66,9 @@ module OceanDynamo
 
       #
       # Destroys all records after first instantiating them.
-      # TODO: Rewrite to use smart scanner.
       #
       def destroy_all
-        options = { consistent_read: true }
-        results = dynamo_table.scan(options)
-        results.items.each do |attrs|
+        in_batches :scan, { consistent_read: true } do |attrs|
           new._setup_from_dynamo(attrs).destroy
         end
         nil

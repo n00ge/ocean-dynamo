@@ -12,7 +12,6 @@ describe CloudModel do
   end
 
 
-
   it "should have a predicate destroyed?" do
     expect(@i.destroyed?).to eq false
   end

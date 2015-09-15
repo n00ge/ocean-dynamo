@@ -43,17 +43,32 @@ module OceanDynamo
 
     #
     # Returns all records in the table.
-    # TODO: Rewrite to use smart scanner.
     #
     def all(consistent: false, **options)
       _late_connect?
       records = []
-      options = { consistent_read: !!consistent }
-      result = dynamo_table.scan(options)
-      result.items.each do |hash|
-        records << new._setup_from_dynamo(hash)
+      in_batches :scan, { consistent_read: !!consistent } do |attrs|
+        records << new._setup_from_dynamo(attrs)
       end
       records
+    end
+
+
+    #
+    # This method takes a block and yields it to every record in a table.
+    # +message+ must be either :scan or :query.
+    # +options+ is the hash of options to 
+    #
+    def in_batches(message, options, &block)
+      loop do
+        result = dynamo_table.send message, options
+        result.items.each do |hash|
+          yield hash
+        end
+        return true unless result.last_evaluated_key
+        options[:exclusive_start_key] = result.last_evaluated_key
+        puts "==================================== ITERATING ================================"
+      end
     end
 
 
@@ -64,19 +79,13 @@ module OceanDynamo
     # In that case, batch processing methods allow you to work with the records in batches, 
     # thereby greatly reducing memory consumption.
     #
-    def find_each(limit: nil, batch_size: 1000, consistent: false)
-      if consistent
-        dynamo_items.each(limit: limit, batch_size: batch_size) do |item|
-          yield new._setup_from_dynamo(item, consistent: consistent)  # Handle consistency above
-        end
-      else
-        dynamo_items.select(limit: limit, batch_size: batch_size) do |item_data|
-          yield new._setup_from_dynamo(item_data)
-        end
+    def find_each(limit: nil, batch_size: nil, consistent: false)
+      options = { consistent_read: consistent }
+      options[:limit] = limit if limit   
+      in_batches :scan, options do |attrs|
+        yield new._setup_from_dynamo(attrs)
       end
-      true
     end
-
 
     # #
     # # Yields each batch of records that was found by the find options as an array. The size of 

@@ -40,7 +40,7 @@ describe VaVaVoom do
     expect(v.range).to eq "bar"
   end
 
-  it "should assign an UUID to the hash key when unspecified" do
+  it "should assign a UUID to the hash key when unspecified" do
     v = VaVaVoom.create! range: "bar"
     expect(v.hash).to be_a String
     expect(v.hash).not_to eq ""
