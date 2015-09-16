@@ -272,7 +272,7 @@ module OceanDynamo
       when Hash
         raw_attrs = arg
       else
-        raise ArgumentError, "arg must be an Aws::DynamoDB::Types::GetItemOutput or a Hash"
+        raise ArgumentError, "arg must be an Aws::DynamoDB::Types::GetItemOutput or a Hash (was #{arg.class})"
       end
       dynamo_deserialize_attributes(raw_attrs)
       @new_record = false
@@ -291,8 +291,10 @@ module OceanDynamo
     def dynamo_persist(lock: nil) # :nodoc:
       _late_connect?
       begin
-        options = { item: serialized_attributes }.merge(_handle_locking(lock))
+        options = _handle_locking(lock).merge(item: serialized_attributes)
         dynamo_table.put_item(options)
+        # current_v = read_attribute(lock_attribute)
+        # write_attribute(lock_attribute, current_v+1) unless frozen?
       rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
         raise OceanDynamo::StaleObjectError.new(self)
       end
@@ -306,6 +308,8 @@ module OceanDynamo
       begin
         options = { key: serialized_key_attributes }.merge(_handle_locking(lock))
         dynamo_table.delete_item(options)
+        # current_v = read_attribute(lock_attribute)
+        # write_attribute(lock_attribute, current_v+1) unless frozen?
       rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
         raise OceanDynamo::StaleObjectError.new(self)
       end
@@ -438,6 +442,8 @@ module OceanDynamo
     #
     # Returns a hash with a condition expression which has to be satisfied 
     # for the write or delete operation to succeed.
+    # Remember that care must be taken to decrement the lock attribute in
+    # case the subsequent operation is stale.
     #
     def _handle_locking(lock=lock_attribute) # :nodoc:
       _late_connect?

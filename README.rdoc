@@ -73,8 +73,8 @@ value will return the empty string, <tt>""</tt>.
 +dynamo_schema+ takes args and many options. Here's the full syntax:
 
  dynamo_schema(
-   table_hash_key = :id,                   # The name of the hash key attribute
-   table_range_key = nil,                  # The name of the range key attribute (or nil)
+   table_hash_key: = :id,                  # The name of the hash key attribute
+   table_range_key: = nil,                 # The name of the range key attribute (or nil)
    table_name: compute_table_name,         # The basename of the DynamoDB table
    table_name_prefix: nil,                 # A basename prefix string or nil
    table_name_suffix: nil,                 # A basename suffix string or nil

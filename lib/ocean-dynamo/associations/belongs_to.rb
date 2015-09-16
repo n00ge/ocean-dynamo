@@ -26,7 +26,7 @@ module OceanDynamo
       #  end
       #  
       # class Topic < OceanDynamo::Table
-      #   dynamo_schema(:uuid) do
+      #   dynamo_schema(:guid) do
       #     attribute :title
       #   end
       #   belongs_to :forum
@@ -34,7 +34,7 @@ module OceanDynamo
       # end
       #  
       # class Post < OceanDynamo::Table
-      #   dynamo_schema(:uuid) do
+      #   dynamo_schema(:guid) do
       #     attribute :body
       #   end
       #   belongs_to :topic, composite_key: true

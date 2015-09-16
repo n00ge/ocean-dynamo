@@ -109,6 +109,13 @@ module OceanDynamo
 
     protected
 
+
+    def condition_options(child_class)
+      { key_condition_expression: "#{child_class.table_hash_key} = :hashval AND #{child_class.table_range_key} >= :rangeval",
+        expression_attribute_values: { ":hashval" => id, ":rangeval" => "0" }
+      }
+    end
+
     #
     # Reads all children of a has_many relation.
     #
@@ -118,10 +125,8 @@ module OceanDynamo
       else
         result = Array.new
         _late_connect?
-        child_items = child_class.dynamo_items
-        child_items.present? && child_items.query(hash_value: id, range_gte: "0",
-                          batch_size: 1000, select: :all) do |item_data|
-          result << child_class.new._setup_from_dynamo(item_data)
+        child_class.in_batches :query, condition_options(child_class) do |attrs|
+          result << child_class.new._setup_from_dynamo(attrs)
         end
         result
       end
@@ -146,11 +151,8 @@ module OceanDynamo
     #
     def map_children(child_class)
       return if new_record?
-      child_items = child_class.dynamo_items
-      return if child_items.blank?
-      child_items.query(hash_value: id, range_gte: "0", 
-                        batch_size: 1000, select: :all) do |item_data|
-        yield child_class.new._setup_from_dynamo(item_data)
+      child_class.in_batches :query, condition_options(child_class) do |attrs|
+        yield child_class.new._setup_from_dynamo(attrs)
       end
     end
 
@@ -160,11 +162,8 @@ module OceanDynamo
     # 
     def delete_children(child_class)
       return if new_record?
-      child_items = child_class.dynamo_items
-      return if child_items.blank?
-      child_items.query(hash_value: id, range_gte: "0", 
-                        batch_size: 1000) do |item|
-        item.delete
+      child_class.in_batches :query, condition_options(child_class) do |attrs|
+        child_class.delete attrs[table_hash_key.to_s], attrs[table_range_key.to_s]
       end
     end
 
@@ -176,14 +175,10 @@ module OceanDynamo
     #
     def nullify_children(child_class)
       return if new_record?
-      child_items = child_class.dynamo_items
-      return if child_items.blank?
-      child_items.query(hash_value: id, range_gte: "0", 
-                        batch_size: 1000, select: :all) do |item_data|
-        attrs = item_data.attributes
-        item_data.item.delete
-        attrs[child_class.table_hash_key.to_s] = "NULL"
-        child_items.create attrs
+      opts = condition_options(child_class)
+      opts[:projection_expression] = child_class.table_hash_key.to_s + ", " + child_class.table_range_key.to_s
+      child_class.in_batches :query, opts do |attrs|
+        khbclhzbclhbzbchvbcvbcbzjcbvhjzbcxjbvzhxjcbkvjzbcxkhbvzkhxcbv
       end
     end
 

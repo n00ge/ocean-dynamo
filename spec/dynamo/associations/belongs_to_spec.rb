@@ -51,17 +51,6 @@ describe Slave do
   end
 
 
-  it "should match the DynamoDB hash_key" do
-    Slave.establish_db_connection
-    expect(Slave.table_hash_key.to_s).to eq Slave.dynamo_table.hash_key.name
-  end
-
-  it "should match the DynamoDB range_key" do
-    Slave.establish_db_connection
-    expect(Slave.table_range_key.to_s).to eq Slave.dynamo_table.range_key.name
-  end
-
-
   it "should barf on an explicitly specified range key" do
     expect { 
       class IllegalOne < OceanDynamo::Table
