@@ -163,7 +163,8 @@ module OceanDynamo
     def delete_children(child_class)
       return if new_record?
       child_class.in_batches :query, condition_options(child_class) do |attrs|
-        child_class.delete attrs[child_class.table_hash_key.to_s], attrs[child_class.table_range_key.to_s]
+        child_class.delete attrs[child_class.table_hash_key.to_s], 
+                           attrs[child_class.table_range_key.to_s]
       end
     end
 
@@ -176,9 +177,14 @@ module OceanDynamo
     def nullify_children(child_class)
       return if new_record?
       opts = condition_options(child_class)
-      opts[:projection_expression] = child_class.table_hash_key.to_s + ", " + child_class.table_range_key.to_s
       child_class.in_batches :query, opts do |attrs|
-        khbclhzbclhbzbchvbcvbcbzjcbvhjzbcxjbvzhxjcbkvjzbcxkhbvzkhxcbv
+        child_hash_key = child_class.table_hash_key.to_s
+        child_range_key = child_class.table_range_key && child_class.table_range_key.to_s
+        # There is no way in the DynamoDB API to update a key attribute. Delete the child item.
+        child_class.delete attrs[child_hash_key], attrs[child_range_key]
+        # Create a new one with NULL for key
+        attrs[child_hash_key] = "NULL"
+        child_class.dynamo_table.put_item(item: attrs)
       end
     end
 
