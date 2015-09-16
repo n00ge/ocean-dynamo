@@ -446,15 +446,19 @@ module OceanDynamo
     #
     # Returns a hash with a condition expression which has to be satisfied 
     # for the write or delete operation to succeed.
-    # Remember that care must be taken to decrement the lock attribute in
-    # case the subsequent write/delete operation fails or throws an exception.
+    # Note that this method will increment the lock attribute. This means
+    # two things:
+    #   1. Collect the instance attributes after this method has been called.
+    #   2. Remember that care must be taken to decrement the lock attribute in
+    #      case the subsequent write/delete operation fails or throws an 
+    #      exception, such as +StaleObjectError+.
     #
     def _handle_locking(lock=lock_attribute) # :nodoc:
       _late_connect?
       if lock
         current_v = read_attribute(lock)
         write_attribute(lock, current_v+1) unless frozen?
-        { condition_expression: "attribute_not_exists(#{lock}) OR #{lock} = :cv",
+        { condition_expression: "#{lock} = :cv",
           expression_attribute_values: { ":cv" => current_v }
         }
       else

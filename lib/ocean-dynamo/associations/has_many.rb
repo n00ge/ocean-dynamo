@@ -163,7 +163,7 @@ module OceanDynamo
     def delete_children(child_class)
       return if new_record?
       child_class.in_batches :query, condition_options(child_class) do |attrs|
-        child_class.delete attrs[table_hash_key.to_s], attrs[table_range_key.to_s]
+        child_class.delete attrs[child_class.table_hash_key.to_s], attrs[child_class.table_range_key.to_s]
       end
     end
 
