@@ -283,7 +283,7 @@ block. It deletes all test tables before your test suite is run:
     end
   end
 
-You can add an +after(:suite)+ block too if you like, to remove all test tables after
+You can add an <tt>after(:suite)</tt> block too if you like, to remove all test tables after
 the suite has run. Later, we will add automatic removal of only those tables created 
 by the test run itself, which is required when tests are done in parallel against 
 the real AWS service. Until then, you might want to modify the above code to do nothing 
