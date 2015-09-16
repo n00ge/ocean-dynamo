@@ -265,6 +265,20 @@ With DynamoDB Local running, you should now be able to do
 All tests should pass.
 
 
+=== Resetting the DynamoDB Local database
+
+You might want to add the following to your spec_helper.rb file, inside the +RSpec.configure+
+block:
+
+  # To clear the DB before and/or after each run, uncomment as desired:
+  config.before(:suite) { c = Aws::DynamoDB::Client.new
+                          c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) }
+                        }
+  # config.after(:suite)  { c = Aws::DynamoDB::Client.new
+  #                         c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) }
+  #                       }
+
+
 == Rails console
 
 The Rails console is available from the built-in dummy application:
