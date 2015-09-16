@@ -252,6 +252,7 @@ module OceanDynamo
           options[:expression_attribute_values] = (options[:expression_attribute_values] || {}).merge(expression_attribute_values)
           dynamo_table.update_item(options)
         rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
+          write_attribute(lock_attribute, read_attribute(lock_attribute)-1) unless frozen?
           raise OceanDynamo::StaleObjectError.new(self)
         end
         self
@@ -291,11 +292,13 @@ module OceanDynamo
     def dynamo_persist(lock: nil) # :nodoc:
       _late_connect?
       begin
-        options = _handle_locking(lock).merge(item: serialized_attributes)
+        options = _handle_locking(lock)                       # This might increment an attr...
+        options = options.merge(item: serialized_attributes)  # ... which we serialise here.
         dynamo_table.put_item(options)
-        # current_v = read_attribute(lock_attribute)
-        # write_attribute(lock_attribute, current_v+1) unless frozen?
       rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
+        if lock
+          write_attribute(lock, read_attribute(lock)-1) unless frozen?
+        end
         raise OceanDynamo::StaleObjectError.new(self)
       end
       @new_record = false
@@ -308,9 +311,10 @@ module OceanDynamo
       begin
         options = { key: serialized_key_attributes }.merge(_handle_locking(lock))
         dynamo_table.delete_item(options)
-        # current_v = read_attribute(lock_attribute)
-        # write_attribute(lock_attribute, current_v+1) unless frozen?
       rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException
+        if lock
+          write_attribute(lock, read_attribute(lock)-1) unless frozen?
+        end
         raise OceanDynamo::StaleObjectError.new(self)
       end
     end
@@ -443,7 +447,7 @@ module OceanDynamo
     # Returns a hash with a condition expression which has to be satisfied 
     # for the write or delete operation to succeed.
     # Remember that care must be taken to decrement the lock attribute in
-    # case the subsequent operation is stale.
+    # case the subsequent write/delete operation fails or throws an exception.
     #
     def _handle_locking(lock=lock_attribute) # :nodoc:
       _late_connect?

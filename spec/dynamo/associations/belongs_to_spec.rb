@@ -84,7 +84,7 @@ describe Slave do
   end
 
 
-  it "should have an :guid attribute" do
+  it "should have a :guid attribute" do
     expect(Slave.fields).to include :guid
     i = Slave.new
     expect(i.guid).to eq ""            # String because it's an empty guid

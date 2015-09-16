@@ -29,9 +29,13 @@ RSpec.configure do |config|
   # Make "FactoryGirl" superfluous
   config.include FactoryGirl::Syntax::Methods
 
-  # To clear the fake_dynamo DB before and/or after each run, uncomment as desired:
-  config.before(:suite) { `curl -s -X DELETE http://localhost:4567` }
-  config.after(:suite)  { `curl -s -X DELETE http://localhost:4567` }
+  # To clear the DB before and/or after each run, uncomment as desired:
+  config.before(:suite) { c = Aws::DynamoDB::Client.new
+                          c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) }
+                        }
+  # config.after(:suite)  { c = Aws::DynamoDB::Client.new
+  #                         c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) }
+  #                       }
 end
 
 

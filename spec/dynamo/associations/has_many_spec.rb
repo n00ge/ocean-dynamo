@@ -301,37 +301,37 @@ describe Parent do
     describe "destroying:" do
 
       it "children should implement dependent: destroy" do
-        expect(Child.count).to eq 6
+        expect(Child.all.length).to eq 6
         expect(@homer).to receive(:map_children).with(Child).and_call_original
         @homer.destroy
         expect { @homer.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @bart.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @lisa.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @maggie.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-        expect(Child.count).to eq 3
+        expect(Child.all.length).to eq 3
         expect(@peter).to receive(:map_children).with(Child).and_call_original
         @peter.destroy
         expect { @peter.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @meg.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @chris.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @stewie.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-        expect(Child.count).to eq 0
+        expect(Child.all.length).to eq 0
       end
 
       it "cars should implement dependent: :delete" do
-        expect(Car.count).to eq 2
+        expect(Car.all.length).to eq 2
         expect(@marge).to receive(:delete_children).with(Car).and_call_original
         expect(@marge).not_to receive(:map_children).with(Car)
         @marge.destroy
         expect { @volvo.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect { @saab.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
-        expect(Car.count).to eq 0
+        expect(Car.all.length).to eq 0
       end
 
       it "pets should implement dependent: :nullify" do
-        expect(Pet.count).to eq 1
+        expect(Pet.all.length).to eq 1
         @lois.destroy
-        expect(Pet.count).to eq 1
+        expect(Pet.all.length).to eq 1
         expect { @brian.reload(consistent: true) }.to raise_error(OceanDynamo::RecordNotFound)
         expect(Pet.find("NULL", @brian.range_key)).to be_a Pet
       end
