@@ -35,9 +35,9 @@ The following example shows the basic syntax for declaring a DynamoDB-based sche
 
   class AsyncJob < OceanDynamo::Table
 
-    dynamo_schema(:uuid) do
+    dynamo_schema(:guid) do
       attribute :credentials,          :string
-      attribute :token,                :string,     default: Proc { SecureRandom.uuid }
+      attribute :token,                :string,     default: Proc { SecureRandom.guid }
       attribute :steps,                :serialized, default: []
       attribute :max_seconds_in_queue, :integer,    default: 1.day
       attribute :default_poison_limit, :integer,    default: 5
@@ -59,7 +59,7 @@ The following example shows the basic syntax for declaring a DynamoDB-based sche
 
 Each attribute has a name, a type (+:string+, +:integer+, +:float+, +:datetime+, +:boolean+, 
 or +:serialized+) where +:string+ is the default. Each attribute also optionally has a default 
-value, which can be a Proc. The hash key attribute is by default +:id+ (overridden as +:uuid+ in
+value, which can be a Proc. The hash key attribute is by default +:id+ (overridden as +:guid+ in
 the example above) and is a +:string+.
 
 The +:string+, +:integer+, +:float+ and +:datetime+ types can also store sets of their type.
@@ -106,7 +106,7 @@ The following example shows how to set up +has_many+ / +belongs_to+ relations:
  
  
  class Topic < OceanDynamo::Table
-   dynamo_schema(:uuid) do
+   dynamo_schema(:guid) do
      attribute :title
    end
    belongs_to :forum
@@ -115,7 +115,7 @@ The following example shows how to set up +has_many+ / +belongs_to+ relations:
  
 
  class Post < OceanDynamo::Table
-   dynamo_schema(:uuid) do
+   dynamo_schema(:guid) do
      attribute :body
    end
    belongs_to :topic, composite_key: true
@@ -142,10 +142,10 @@ relation in a very efficient and massively scalable way.
 
 ==== Implementation
 
-+belongs_to+ claims the range key and uses it to store its own UUID, which normally
++belongs_to+ claims the range key and uses it to store its own id, which normally
 would be stored in the hash key attribute. Instead, the hash key attribute holds the
-UUID of the parent. We have thus reversed the roles of these two fields. As a result, 
-all children have their parent UUID as their hash key, and their own UUID in their 
+guid of the parent. We have thus reversed the roles of these two fields. As a result, 
+all children store their parent id in the hash key, and their own id in the 
 range key.
 
 This type of relation is even more efficient than its ActiveRecord counterpart as
@@ -162,6 +162,9 @@ which means that secondary indices won't be necessary for the vast majority of
 DynamoDB tables. This ultimately means reduced operational costs, as well as
 reduced complexity.
 
+Nevertheless, as we now have switched to v2 of the DynamoDB API, we will be adding
+the possibility to define both local and secondary indices for Tables. 
+
 
 === Current State
 
@@ -170,7 +173,8 @@ controllers. OceanDynamo implements much of the infrastructure of ActiveRecord;
 for instance, +read_attribute+, +write_attribute+, and much of the control logic and
 internal organisation.
 
-* <tt>belongs_to :thingy</tt> now defines <tt>.build_thingy</tt> and <tt>.create_thingy</tt>.
+* Version 2 of the AWS Ruby SDK is now used. This required an internal reorganisation, 
+  but it also gives us access to local and global secondary indices.
 * Work begun on collection proxies, etc.
 
 === Future milestones
@@ -220,12 +224,12 @@ will be a generator to copy these files for you, but for now you need to do it m
 * Ocean-dynamo gem on Rubygems: https://rubygems.org/gems/ocean-dynamo
 * Ocean-dynamo gem API: http://rubydoc.info/gems/ocean-dynamo/frames
 * Ocean-dynamo source and wiki: https://github.org/OceanDev/ocean-dynamo
+* AWS DynamoDB Ruby SDK v2: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB.html
 
-See also Ocean, a Rails framework for creating highly scalable SOAs in the cloud, in which
-OceanDynamo is used as a central component:
+You might also want to take a look at Ocean, a Rails framework and development pipeline
+for creating highly scalable HATEOAS microservice SOAs in the cloud. Ocean uses 
+OceanDynamo as a central component:
 * http://wiki.oceanframework.net
-
-* AWS Ruby SDK v2 for DynamoDB: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB.html
 
 
 == Contributing
@@ -238,12 +242,9 @@ All contributed code must therefore also be exhaustively tested.
 
 == Running the specs
 
-To run the specs for the OceanDynamo gem, you must first install DynamoDB Local. It's a local, 
-functional clone of Amazon DynamoDB. We use DynamoDB Local during development and testing.
-
-Starting with +ocean-dynamo+ 0.8.0, we're using v2 of the AWS SDK Ruby gem and the latest version
-of the DynamoDB API (2012-08-10). This means that we now have access to secondary indices, 
-amongst other things.
+To run the specs for the OceanDynamo gem, you must first install DynamoDB Local. 
+It's a Java clone of Amazon DynamoDB which runs locally on your computer. We use 
+it for development and testing.
 
 Download DynamoDB Local from the following location: http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html
 
@@ -251,12 +252,15 @@ Next, copy the AWS configuration file from the template:
 
  cp spec/dummy/config/aws.yml.example spec/dummy/config/aws.yml
 
-NB: +aws.yml+ is excluded from source control. This allows you to enter your AWS credentials
-safely. Note that +aws.yml.example+ is under source control: don't edit it.
+NB: +aws.yml+ should be excluded from source control. This allows you to enter your AWS 
+credentials safely. On the other hand, +aws.yml.example+ SHOULD be under source control. 
+Don't put sensitive information in it.
 
 You're now ready to start DynamoDB Local:
 
  java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
+
+Replace +-sharedDb+ with +-inMemory+ to run the DB in RAM.
 
 With DynamoDB Local running, you should now be able to do
 
@@ -268,18 +272,23 @@ All tests should pass.
 === Resetting the DynamoDB Local database
 
 You might want to add the following to your spec_helper.rb file, inside the +RSpec.configure+
-block:
+block. It deletes all test tables before your test suite is run:
 
-  # To clear the DB before and/or after each run, uncomment as desired:
-  config.before(:suite) { c = Aws::DynamoDB::Client.new
-                          c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) }
-                        }
-  # config.after(:suite)  { c = Aws::DynamoDB::Client.new
-  #                         c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) }
-  #                       }
+  config.before(:suite) do 
+    c = Aws::DynamoDB::Client.new
+    regexp = Regexp.new("^.+_[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}_test$")
+    c.list_tables.table_names.each do |t| 
+      next unless t =~ regexp
+      c.delete_table({table_name: t})
+    end
+  end
 
-Just make sure you don't run the above code when running your tests against the live DynamoDB
-service on AWS, as it will erase all your DynamoDB tables.
+You can add an +after(:suite)+ block too if you like, to remove all test tables after
+the suite has run. Later, we will add automatic removal of only those tables created 
+by the test run itself, which is required when tests are done in parallel against 
+the real AWS service. Until then, you might want to modify the above code to do nothing 
+when running against AWS and clear your test tables manually. (If you're running Ocean, 
+an Ocean CronJob will already take care of this for you each night.)
 
 == Rails console
 

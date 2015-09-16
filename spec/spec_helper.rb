@@ -29,13 +29,24 @@ RSpec.configure do |config|
   # Make "FactoryGirl" superfluous
   config.include FactoryGirl::Syntax::Methods
 
-  # To clear the DB before and/or after each run, uncomment as desired:
-  config.before(:suite) { c = Aws::DynamoDB::Client.new
-                          c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) }
-                        }
-  # config.after(:suite)  { c = Aws::DynamoDB::Client.new
-  #                         c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) }
-  #                       }
+  # To clear the DB before each run:
+  config.before(:suite) do 
+    c = Aws::DynamoDB::Client.new
+    regexp = Regexp.new("^.+_[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}_test$")
+    c.list_tables.table_names.each do |t| 
+      next unless t =~ regexp
+      c.delete_table({table_name: t})
+    end
+  end
+  # To clear the DB after each run:
+  config.after(:suite) do 
+    c = Aws::DynamoDB::Client.new
+    regexp = Regexp.new("^.+_[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}_test$")
+    c.list_tables.table_names.each do |t| 
+      next unless t =~ regexp
+      c.delete_table({table_name: t})
+    end
+  end
 end
 
 

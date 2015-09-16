@@ -1,3 +1,9 @@
+== v1.0.2
+
+* The code in spec/spec_helper.rb to clear the DynamoDB tables before and after
+  each test run is now smarter. It's also given in the updated README. This in 
+  itself merits a new release.
+
 == v1.0.1
 
 * Small refactoring.
