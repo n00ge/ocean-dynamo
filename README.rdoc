@@ -278,6 +278,8 @@ block:
   #                         c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) }
   #                       }
 
+Just make sure you don't run the above code when running your tests against the live DynamoDB
+service on AWS, as it will erase all your DynamoDB tables.
 
 == Rails console
 
