@@ -1,3 +1,7 @@
+== v1.0.3
+
+* The spec_helper.rb cleaner is now suitable for running on AWS.
+
 == v1.0.2
 
 * The code in spec/spec_helper.rb to clear the DynamoDB tables before and after
