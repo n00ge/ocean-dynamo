@@ -18,12 +18,10 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 # DynamoDB table cleaner
 CHEF_ENV = "master" unless defined?(CHEF_ENV)
+regexp = Regexp.new("^.+_#{CHEF_ENV}_[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}_test$")
 cleaner = lambda { 
   c = Aws::DynamoDB::Client.new
-  c.list_tables.table_names.each do |t|
-    next unless t =~ Regexp.new("^.+_#{CHEF_ENV}_[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}_test$")
-    c.delete_table({table_name: t})
-  end
+  c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) if t =~ regexp }
 }
 
 RSpec.configure do |config|

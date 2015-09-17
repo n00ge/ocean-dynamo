@@ -1,3 +1,7 @@
+== v1.0.4
+
+* More spec_helper.rb and README changes.
+
 == v1.0.3
 
 * The spec_helper.rb cleaner is now suitable for running on AWS.
