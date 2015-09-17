@@ -1,6 +1,7 @@
 == v1.0.8
 
-* Attribute names no longer collide with v2 DynamoDB reserved words.
+* Attribute names no longer collide with v2 DynamoDB reserved words for tables with
+  +has_many+ relations.
 
 == v1.0.7
 
