@@ -144,7 +144,7 @@ relation in a very efficient and massively scalable way.
 
 +belongs_to+ claims the range key and uses it to store its own id, which normally
 would be stored in the hash key attribute. Instead, the hash key attribute holds the
-guid of the parent. We have thus reversed the roles of these two fields. As a result, 
+id of the parent. We have thus reversed the roles of these two fields. As a result, 
 all children store their parent id in the hash key, and their own id in the 
 range key.
 
