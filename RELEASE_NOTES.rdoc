@@ -1,3 +1,7 @@
+== v1.0.8
+
+* Attribute names no longer collide with v2 DynamoDB reserved words.
+
 == v1.0.7
 
 * late_connect? added in a few places.
