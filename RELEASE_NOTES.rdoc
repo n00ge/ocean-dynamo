@@ -1,3 +1,7 @@
+== v1.0.6
+
+* +touch+ now does nothing unless there is one or more timestamp attributes to modify.
+
 == v1.0.5
 
 * Expression attribute names are now used to avoid collisions with DynamoDB reserved words

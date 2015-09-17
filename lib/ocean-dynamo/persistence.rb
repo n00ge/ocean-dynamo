@@ -240,6 +240,7 @@ module OceanDynamo
       run_callbacks :touch do
         begin
           timestamps = set_timestamps(name)
+          return self if timestamps.blank?
           update_expression = []
           expression_attribute_values = {}
           timestamps.each_with_index do |ts, i|
