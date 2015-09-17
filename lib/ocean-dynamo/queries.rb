@@ -60,6 +60,7 @@ module OceanDynamo
     # +options+ is the hash of options to pass to the scan or query operation.
     #
     def in_batches(message, options, &block)
+      _late_connect?
       loop do
         result = dynamo_table.send message, options
         result.items.each do |hash|

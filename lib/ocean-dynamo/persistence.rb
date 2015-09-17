@@ -49,6 +49,7 @@ module OceanDynamo
       # Deletes all records without instantiating them first.
       #
       def delete_all
+        _late_connect?
         ean = { "#H" => table_hash_key.to_s }
         ean["#R"] = table_range_key.to_s if table_range_key
         options = {
@@ -71,6 +72,7 @@ module OceanDynamo
       # Destroys all records after first instantiating them.
       #
       def destroy_all
+        _late_connect?
         in_batches :scan, { consistent_read: true } do |attrs|
           new._setup_from_dynamo(attrs).destroy
         end

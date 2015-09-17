@@ -1,6 +1,10 @@
+== v1.0.7
+
+* late_connect? added in a few places.
+
 == v1.0.6
 
-* +touch+ now does nothing unless there is one or more timestamp attributes to modify.
+* +touch+ now does nothing unless there's one or more timestamp attributes to modify.
 
 == v1.0.5
 
