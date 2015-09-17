@@ -37,7 +37,7 @@ The following example shows the basic syntax for declaring a DynamoDB-based sche
 
     dynamo_schema(:guid) do
       attribute :credentials,          :string
-      attribute :token,                :string,     default: Proc { SecureRandom.guid }
+      attribute :token,                :string,     default: Proc { SecureRandom.uuid }
       attribute :steps,                :serialized, default: []
       attribute :max_seconds_in_queue, :integer,    default: 1.day
       attribute :default_poison_limit, :integer,    default: 5
