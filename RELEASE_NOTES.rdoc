@@ -1,3 +1,8 @@
+== v1.0.5
+
+* Expression attribute names are now used to avoid collisions with DynamoDB reserved words
+  such as UUID.
+
 == v1.0.4
 
 * More spec_helper.rb and README changes.

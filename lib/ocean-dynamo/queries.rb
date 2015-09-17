@@ -57,7 +57,7 @@ module OceanDynamo
     #
     # This method takes a block and yields it to every record in a table.
     # +message+ must be either :scan or :query.
-    # +options+ is the hash of options to 
+    # +options+ is the hash of options to pass to the scan or query operation.
     #
     def in_batches(message, options, &block)
       loop do
@@ -80,6 +80,7 @@ module OceanDynamo
     #
     def find_each(limit: nil, batch_size: 1000, consistent: false)
       options = { consistent_read: consistent }
+      batch_size = limit if limit && limit < batch_size
       options[:limit] = batch_size if batch_size   
       in_batches :scan, options do |attrs|
         if limit

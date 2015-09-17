@@ -49,9 +49,12 @@ module OceanDynamo
       # Deletes all records without instantiating them first.
       #
       def delete_all
+        ean = { "#H" => table_hash_key.to_s }
+        ean["#R"] = table_range_key.to_s if table_range_key
         options = {
           consistent_read: true,
-          projection_expression: table_hash_key.to_s + (table_range_key ? ", " + table_range_key.to_s : "")
+          projection_expression: "#H" + (table_range_key ? ", #R" : ""),
+          expression_attribute_names: ean
         }
         in_batches :scan, options do |attrs|
           if table_range_key
