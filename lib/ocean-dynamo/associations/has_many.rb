@@ -113,10 +113,7 @@ module OceanDynamo
     def condition_options(child_class)
       hash_key = child_class.table_hash_key
       range_key = child_class.table_range_key
-      ean = {}
-      ean["#H"] = hash_key.to_s
-      ean["#R"] = range_key.to_s if range_key
-      { expression_attribute_names: ean,
+      { expression_attribute_names: { "#H" => hash_key, "#R" => range_key },
         key_condition_expression: "#H = :hashval AND #R >= :rangeval",
         expression_attribute_values: { ":hashval" => id, ":rangeval" => "0" }
       }

@@ -50,8 +50,8 @@ module OceanDynamo
       #
       def delete_all
         _late_connect?
-        ean = { "#H" => table_hash_key.to_s }
-        ean["#R"] = table_range_key.to_s if table_range_key
+        ean = { "#H" => table_hash_key }
+        ean["#R"] = table_range_key if table_range_key
         options = {
           consistent_read: true,
           projection_expression: "#H" + (table_range_key ? ", #R" : ""),
