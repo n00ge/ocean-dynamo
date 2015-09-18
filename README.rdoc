@@ -33,7 +33,7 @@ with FactoryGirl.
 
 === Current State
 
-* Local secondary indices are now supported! See below for more information.
+* Secondary indices are now supported! See below for more information.
 * Version 2 of the AWS Ruby SDK is now used. This required an internal reorganisation, 
   but it also gives us access to local and global secondary indices.
 * Work begun on association proxies, etc.
@@ -214,16 +214,24 @@ reduced complexity.
 Nevertheless, as we now have switched to v2 of the DynamoDB API, we will be adding
 the possibility to define both local and secondary indices for Tables. 
 
+== Secondary Indices
 
-== Local Secondary Indices
+We now have basic support for secondary indices. 
 
-We now have basic support for local secondary indices. Up to five attributes can
-be declared as local secondary indices, in the following manner:
+We will add high-level support for specifying that a secondary index is to be used 
+in +in_batches+ and +find_each+ etc, but for now you will have to specify that a
+secondary index is to be used explicitly in the options passed to +in_batches+, 
++query+, and +scan+. 
+* +query+: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB/Table.html#query-instance_method
+* +scan+: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB/Table.html#scan-instance_method
+* +in_batches+, +find_each+: lib/ocean-dynamo/queries.rb
+
+=== Local Secondary Indices
+
+Up to five attributes can be declared as local secondary indices, in the following manner:
 
   class Authentication < OceanDynamo::Table
-    dynamo_schema(:username, :expires_at,
-                  timestamps: nil, locking: false
-                  table_name_suffix: Api.basename_suffix) do
+    dynamo_schema(:username, :expires_at) do
       attribute :token,       :string,   local_secondary_index: true
       attribute :max_age,     :integer
       attribute :created_at,  :datetime
@@ -243,12 +251,31 @@ combination of keys. Secondary indices don't require the range key to be unique 
 the same hash key. This means that secondary index searches always will return a
 collection.
 
-We will add support for specifying that a secondary index is to be used in +find_each+ 
-and its derivatives, but for now you will have to specify this explicitly in the
-options passed to +in_batches+, +query+, and +scan+. 
-* +query+: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB/Table.html#query-instance_method
-* +scan+: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB/Table.html#scan-instance_method
-* +in_batches+, +find_each+: lib/ocean-dynamo/queries.rb
+=== Global Secondary Indices
+
+Global secondary indices are declared after all attributes, but still within the +do+
+block:
+
+  class Authentication < OceanDynamo::Table
+    dynamo_schema(:username, :expires_at) do
+      attribute :token,       :string,   local_secondary_index: true
+      attribute :max_age,     :integer
+      attribute :created_at,  :datetime
+      attribute :expires_at,  :datetime
+      attribute :api_user_id, :string
+
+      global_secondary_index :token, projection: :all
+      global_secondary_index :api_user_id, :expires_at, read_capacity_units: 100
+      global_secondary_index :expires_at, write_capacity_units: 50
+    end
+  end
+
+Each +global_secondary_index+ clause takes the following arguments:
+* +hash_value+ (required), 
+* +range_value+ (optional), 
+* +:projection (default :keys_only, :all for all attributes)
+* read_capacity_units (default 10)
+* write_capacity_units (default 5)
 
 
 == Installation

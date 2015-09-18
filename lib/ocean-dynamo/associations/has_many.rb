@@ -119,6 +119,7 @@ module OceanDynamo
       }
     end
 
+
     #
     # Reads all children of a has_many relation.
     #
@@ -184,9 +185,9 @@ module OceanDynamo
       child_hash_key = child_class.table_hash_key.to_s
       child_range_key = child_class.table_range_key && child_class.table_range_key.to_s
       child_class.in_batches :query, opts do |attrs|
-        # There is no way in the DynamoDB API to update a key attribute. Delete the child item.
+        # There is no way in the DynamoDB API to update a primary key attribute. 
+        # Delete the child item and recreate it with the updated key.
         child_class.delete attrs[child_hash_key], child_range_key && attrs[child_range_key]
-        # Create a new one with NULL for key
         attrs[child_hash_key] = "NULL"
         child_class.dynamo_table.put_item(item: attrs)
       end

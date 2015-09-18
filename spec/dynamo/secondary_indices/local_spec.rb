@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-class Authentication < OceanDynamo::Table
+class Auth1 < OceanDynamo::Table
   dynamo_schema(:username, :expires_at,
                 table_name_suffix: Api.basename_suffix, 
                 create: true,
@@ -16,10 +16,10 @@ end
 
 
 
-describe Authentication do
+describe Auth1 do
 
-  it "should have extra information in fields" do
-    expect(Authentication.fields).to eq({
+  it "should have extra information in .fields" do
+    expect(Auth1.fields).to eq({
       "username" =>    {"type"=>:string,   "default"=>""}, 
       "expires_at" =>  {"type"=>:datetime, "default"=>nil}, 
       "token" =>       {"type"=>:string,   "default"=>nil, "local_secondary_index"=>true}, 
@@ -28,20 +28,20 @@ describe Authentication do
       "api_user_id" => {"type"=>:string,   "default"=>nil}})
   end
 
-  it "should set local_secondary_indexes for the class" do
-    expect(Authentication.local_secondary_indexes).to eq(["token"])
+  it "should set .local_secondary_indexes for the class" do
+    expect(Auth1.local_secondary_indexes).to eq(["token"])
   end
 
-  it "should return table_attribute_definitions for all indices" do
-    expect(Authentication.table_attribute_definitions).
+  it "should return .table_attribute_definitions for all indices" do
+    expect(Auth1.table_attribute_definitions).
       to eq [{:attribute_name=>"username",   :attribute_type=>"S"}, 
              {:attribute_name=>"expires_at", :attribute_type=>"N"}, 
              {:attribute_name=>"token",      :attribute_type=>"S"}]
   end
 
-  it "should call create_table with the proper options" do
-    Authentication.establish_db_connection
-    lsis = Authentication.dynamo_table.local_secondary_indexes
+  it "should create the table with the proper options" do
+    Auth1.establish_db_connection
+    lsis = Auth1.dynamo_table.local_secondary_indexes
     expect(lsis).to be_an Array
     expect(lsis.length).to eq 1
     lsi = lsis.first.to_hash

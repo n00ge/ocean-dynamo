@@ -25,6 +25,7 @@ module OceanDynamo
         # Init
         self.fields = HashWithIndifferentAccess.new
         attribute(table_hash_key, :string, default: "")
+        self.global_secondary_indexes = Hash.new
         if table_range_key
           attribute(table_range_key, :string, default: "")
           self.validates(table_range_key, presence: true)

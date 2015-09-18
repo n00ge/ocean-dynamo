@@ -78,17 +78,17 @@ module OceanDynamo
 
     #
     # Looping through a collection of records from the database (using the +all+ method, 
-    # for example) is very inefficient since it will try to instantiate all the objects at once.
-    # Batch processing methods allow you to work with the records in batches, 
+    # for example) is very inefficient since it will try to instantiate all the objects at 
+    # once. Batch processing methods allow you to work with the records in batches, 
     # thereby greatly reducing memory consumption.
     #
     # TODO: Add support for
     #   index_name: "IndexName",
     #   select: "ALL_ATTRIBUTES", # ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT
     #
-    def find_each(limit: nil, batch_size: 1000, consistent: false)
+    def find_each(consistent: false, limit: nil, batch_size: nil)
       options = { consistent_read: consistent }
-      batch_size = limit if limit && limit < batch_size
+      batch_size = limit if limit && batch_size && limit < batch_size
       options[:limit] = batch_size if batch_size   
       in_batches :scan, options do |attrs|
         if limit

@@ -1,3 +1,7 @@
+== v1.2.0
+
+* Global secondary indices implemented. See the README for documentation.
+
 == v1.1.0
 
 * Local secondary indices implemented. See the README for documentation.

@@ -94,7 +94,7 @@ module OceanDynamo
       end
 
 
-       def create_table
+      def create_table
         attrs = table_attribute_definitions  # This already includes secondary indices
         keys = table_key_schema
         options = {
@@ -108,6 +108,8 @@ module OceanDynamo
         }
         lsi = local_secondary_indexes.collect { |n| local_secondary_index_declaration n }
         options[:local_secondary_indexes] = lsi unless lsi.blank?
+        gsi = global_secondary_indexes.collect { |k, v| global_secondary_index_declaration k, v }
+        options[:global_secondary_indexes] = gsi unless gsi.blank?
         dynamo_resource.create_table(options)
         sleep 1 until dynamo_table.table_status == "ACTIVE"
         setup_dynamo
@@ -134,6 +136,12 @@ module OceanDynamo
         attrs << { attribute_name: table_range_key.to_s, attribute_type: attribute_type(table_range_key) }  if table_range_key
         local_secondary_indexes.each do |name|
           attrs << { attribute_name: name, attribute_type: attribute_type(name) }
+        end
+        global_secondary_indexes.each do |index_name, data|
+          data["keys"].each do |name| 
+            next if attrs.any? { |a| a[:attribute_name] == name }
+            attrs << { attribute_name: name, attribute_type: attribute_type(name) }
+          end
         end
         attrs
       end
@@ -162,6 +170,20 @@ module OceanDynamo
         { index_name: name,
           key_schema: table_key_schema(range_key: name),
           projection: { projection_type: "KEYS_ONLY" }
+        }
+      end
+
+
+      def global_secondary_index_declaration(index_name, data)
+        hash_key, range_key = data["keys"]
+        key_schema = table_key_schema(hash_key: hash_key, range_key: range_key)
+        { index_name: index_name,
+          key_schema: key_schema,
+          projection: { projection_type: data["projection_type"] },
+          provisioned_throughput: {
+            read_capacity_units: data["read_capacity_units"],
+            write_capacity_units: data["write_capacity_units"]
+          }
         }
       end
 

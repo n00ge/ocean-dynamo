@@ -52,5 +52,8 @@ module OceanDynamo
     class_attribute :relations, instance_writer: false
     self.relations = nil
 
+    class_attribute :global_secondary_indexes, instance_writer: false
+    self.global_secondary_indexes = nil
+
   end
 end
