@@ -2,7 +2,7 @@ require 'spec_helper'
 
 
 describe CloudModel do
-
+  
   before :all do
     CloudModel.establish_db_connection
   end
@@ -14,9 +14,6 @@ describe CloudModel do
     @saved_table_name = CloudModel.table_name
     @saved_prefix = CloudModel.table_name_prefix
     @saved_suffix = CloudModel.table_name_suffix
-    #CloudModel.table_name = "cloud_models"
-    #CloudModel.table_name_prefix = nil
-    #CloudModel.table_name_suffix = nil
   end
 
   after :each do

@@ -2,11 +2,10 @@ require 'spec_helper'
 
 
 describe CloudModel do
-
+  
   before :all do
     CloudModel.establish_db_connection
   end
-
 
   describe "single integer attributes" do
     describe "without defaults" do

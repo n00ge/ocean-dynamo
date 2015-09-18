@@ -44,7 +44,7 @@ module OceanDynamo
 
 
       def establish_db_connection
-        setup_dynamo  
+        setup_dynamo
         if table_exists?(dynamo_table)
           wait_until_table_is_active
           self.table_connected = true
@@ -95,17 +95,19 @@ module OceanDynamo
 
 
        def create_table
-        attrs = table_attribute_definitions
+        attrs = table_attribute_definitions  # This already includes secondary indices
         keys = table_key_schema
         options = {
           table_name: table_full_name,
+          attribute_definitions: attrs,
+          key_schema: keys,
           provisioned_throughput: {
             read_capacity_units: table_read_capacity_units,
             write_capacity_units: table_write_capacity_units
-          },
-          attribute_definitions: attrs,
-          key_schema: keys
+          }
         }
+        lsi = local_secondary_indexes.collect { |n| local_secondary_index_declaration n }
+        options[:local_secondary_indexes] = lsi unless lsi.blank?
         dynamo_resource.create_table(options)
         sleep 1 until dynamo_table.table_status == "ACTIVE"
         setup_dynamo
@@ -126,10 +128,33 @@ module OceanDynamo
       end
 
 
+      def local_secondary_indexes
+        @local_secondary_indexes ||= begin
+          result = []
+          fields.each do |name, metadata|
+            (result << name) if metadata["local_secondary_index"]
+          end
+          result
+        end
+      end
+
+
+      def local_secondary_index_declaration(name)
+        { index_name: name,
+          key_schema: [{ attribute_name: table_hash_key.to_s, key_type: "HASH" },
+                       { attribute_name: name.to_s, key_type: "RANGE" }],
+          projection: { projection_type: "KEYS_ONLY" }
+        }
+      end
+
+
       def table_attribute_definitions
         attrs = []
         attrs << { attribute_name: table_hash_key.to_s, attribute_type: attribute_type(table_hash_key) }
         attrs << { attribute_name: table_range_key.to_s, attribute_type: attribute_type(table_range_key) }  if table_range_key
+        local_secondary_indexes.each do |name|
+          attrs << { attribute_name: name, attribute_type: attribute_type(name) }
+        end
         attrs
       end
 

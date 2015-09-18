@@ -9,10 +9,6 @@ end
 
 describe Kaching do
 
-  before :all do
-    Kaching.establish_db_connection
-  end
-
   before :each do
     Kaching.delete_all
   end

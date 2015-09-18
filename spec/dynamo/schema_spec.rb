@@ -60,7 +60,7 @@ describe Idi do
     expect(i.attributes['id']).to eq ""
   end
 
-  it "the persisted :id table_hash_key must be an UUID" do
+  it "the persisted :id table_hash_key must be a UUID" do
     i = Idi.create!
     expect(i.attributes['id']).to be_a String
     expect(i.attributes['id']).not_to eq ""

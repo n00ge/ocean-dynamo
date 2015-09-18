@@ -9,10 +9,6 @@ end
 
 describe Ragadish do
 
-  before :all do
-    Ragadish.establish_db_connection
-  end
-
   before :each do
     Ragadish.delete_all
   end

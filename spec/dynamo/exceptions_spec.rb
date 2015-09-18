@@ -4,9 +4,8 @@ require 'spec_helper'
 describe CloudModel do
 
   before :all do
-  	CloudModel.establish_db_connection
+    CloudModel.establish_db_connection
   end
-
 
   it "save should not raise an exception for a valid model" do
   	i = CloudModel.new

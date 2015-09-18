@@ -9,10 +9,6 @@ end
 
 describe Badabing do
 
-  before :all do
-    Badabing.establish_db_connection
-  end
-  
   before :each do
     Badabing.delete_all
   end

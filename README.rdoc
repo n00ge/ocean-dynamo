@@ -18,16 +18,65 @@ closely and is of course based on ActiveModel.
 
 The attribute and persistence layer of OceanDynamo is modeled on that of ActiveRecord:
 there's +save+, +save!+, +create+, +update+, +update!+, +update_attributes+, +find_each+,
-+destroy_all+, +delete_all+ and all the other methods you're used to. The design goal 
-is always to implement as much of the ActiveRecord interface as possible, without 
-compromising scalability. This makes the task of switching from SQL to no-SQL much easier.
-
-Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
++destroy_all+, +delete_all+, +read_attribute+, +write_attribute+ and all the other 
+methods you're used to. The design goal is always to implement as much of the ActiveRecord
+interface as possible, without compromising scalability. This makes the task of switching 
+from SQL to no-SQL much easier.
 
 OceanDynamo uses only primary indices to retrieve related table items and collections, 
 which means it will scale without limits.
 
-=== Example
+OceanDynamo is fully usable as an ActiveModel and can be used by Rails
+controllers. Thanks to its structural similarity to ActiveRecord, OceanDynamo works 
+with FactoryGirl.
+
+
+=== Current State
+
+* Local secondary indices are now supported! See below for more information.
+* Version 2 of the AWS Ruby SDK is now used. This required an internal reorganisation, 
+  but it also gives us access to local and global secondary indices.
+* Work begun on association proxies, etc.
+
+
+=== Future milestones
+
+* Association proxies, to implement ActiveRecord-style method chaining, e.g.: 
+  <code>blog_entry.comments.build(body: "Cool!").save!</code>
+* The +has_and_belongs_to_many+ assocation. 
+* A generator to install the <tt>config/aws.yml</tt> file.
+
+
+=== Current use
+
+OceanDynamo is used as a central component in Ocean, a Rails framework and development 
+pipeline for creating highly scalable HATEOAS microservice SOAs in the cloud.
+* http://wiki.oceanframework.net
+
+Ocean uses OceanDynamo to implement highly scalable job queues and authentication. 
+It will be used increasingly as features are added to OceanDynamo and will eventually 
+replace all ActiveRecord tables in Ocean. 
+
+However, OceanDynamo can of course also be used stand-alone.
+
+
+== Documentation
+
+* Ocean-dynamo gem on Rubygems: https://rubygems.org/gems/ocean-dynamo
+* Ocean-dynamo gem API: http://rubydoc.info/gems/ocean-dynamo/frames
+* Ocean-dynamo source and wiki: https://github.org/OceanDev/ocean-dynamo
+* AWS DynamoDB Ruby SDK v2: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB.html
+
+
+== Contributing
+
+Contributions are welcome. Fork in the usual way. OceanDynamo is developed using
+TDD: the specs are extensive and test coverage is very near to 100 percent. Pull requests
+will not be considered unless all tests pass and coverage is equally high or higher.
+All contributed code must therefore also be exhaustively tested.
+
+
+=== Examples
 
 ==== Basic syntax
 
@@ -45,7 +94,7 @@ The following example shows the basic syntax for declaring a DynamoDB-based sche
       attribute :started_at,           :datetime
       attribute :last_completed_step,  :integer
       attribute :finished_at,          :datetime
-      attribute :destroy_at,           :datetime
+      attribute :destroy_at,           :datetime,   local_secondary_index: true
       attribute :created_by
       attribute :updated_by
       attribute :succeeded,            :boolean,    default: false
@@ -73,8 +122,8 @@ value will return the empty string, <tt>""</tt>.
 +dynamo_schema+ takes args and many options. Here's the full syntax:
 
  dynamo_schema(
-   table_hash_key: = :id,                  # The name of the hash key attribute
-   table_range_key: = nil,                 # The name of the range key attribute (or nil)
+   table_hash_key = :id,                   # The name of the hash key attribute
+   table_range_key = nil,                  # The name of the range key attribute (or nil)
    table_name: compute_table_name,         # The basename of the DynamoDB table
    table_name_prefix: nil,                 # A basename prefix string or nil
    table_name_suffix: nil,                 # A basename suffix string or nil
@@ -166,32 +215,40 @@ Nevertheless, as we now have switched to v2 of the DynamoDB API, we will be addi
 the possibility to define both local and secondary indices for Tables. 
 
 
-=== Current State
+=== Local Secondary Indices
 
-OceanDynamo is fully usable as an ActiveModel and can be used by Rails
-controllers. OceanDynamo implements much of the infrastructure of ActiveRecord;
-for instance, +read_attribute+, +write_attribute+, and much of the control logic and
-internal organisation.
+We now have basic support for local secondary indices. Up to five attributes can
+be declared as local secondary indices, in the following manner:
 
-* Version 2 of the AWS Ruby SDK is now used. This required an internal reorganisation, 
-  but it also gives us access to local and global secondary indices.
-* Work begun on collection proxies, etc.
+  class Authentication < OceanDynamo::Table
+    dynamo_schema(:username, :expires_at,
+                  timestamps: nil, locking: false
+                  table_name_suffix: Api.basename_suffix) do
+      attribute :token,       :string,   local_secondary_index: true
+      attribute :max_age,     :integer
+      attribute :created_at,  :datetime
+      attribute :expires_at,  :datetime
+      attribute :api_user_id, :string
+    end
+  end
 
-=== Future milestones
+The items of the above table can be accessed by using the hash key :username and
+the range key :expires_at. The +local_secondary_index+ declaration makes it possible
+to access items using the same hash key :username but with :token as an alternate
+range key. Local secondary indices all use the same hash key as the primary index,
+substituting another attribute instead as the range key.
 
-* Association proxies, to implement ActiveRecord-style method chaining, e.g.: 
-  <code>blog_entry.comments.build(body: "Cool!").save!</code>
+NB: The primary index [:username, :expires_at] requires all items to have a unique
+combination of keys. Secondary indices don't require the range key to be unique for
+the same hash key. This means that secondary index searches always will return a
+collection.
 
-* The +has_and_belongs_to_many+ assocation. 
-
-* A generator to install the <tt>config/aws.yml</tt> file.
-
-
-=== Current use
-
-OceanDynamo is currently used in the Ocean framework (http://wiki.oceanframework.net)
-e.g. to implement highly scalable job queues. It will be used increasingly as features are
-added to OceanDynamo and will eventually replace all ActiveRecord tables in Ocean.
+We will add support for specifying that a secondary index is to be used in +find_each+ 
+and its derivatives, but for now you will have to specify this explicitly in the
+options passed to +in_batches+, +query+, and +scan+. 
+* +query+: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB/Table.html#query-instance_method.
+* +scan+: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB/Table.html#scan-instance_method
+* +in_batches+, +find_each+: lib/ocean-dynamo/queries.rb
 
 
 == Installation
@@ -217,27 +274,6 @@ to both the following locations in your project:
 
 Enter your AWS credentials in the latter file. Eventually, there
 will be a generator to copy these files for you, but for now you need to do it manually. 
-
-
-== Documentation
-
-* Ocean-dynamo gem on Rubygems: https://rubygems.org/gems/ocean-dynamo
-* Ocean-dynamo gem API: http://rubydoc.info/gems/ocean-dynamo/frames
-* Ocean-dynamo source and wiki: https://github.org/OceanDev/ocean-dynamo
-* AWS DynamoDB Ruby SDK v2: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB.html
-
-You might also want to take a look at Ocean, a Rails framework and development pipeline
-for creating highly scalable HATEOAS microservice SOAs in the cloud. Ocean uses 
-OceanDynamo as a central component:
-* http://wiki.oceanframework.net
-
-
-== Contributing
-
-Contributions are welcome. Fork in the usual way. OceanDynamo is developed using
-TDD: the specs are extensive and test coverage is very near to 100 percent. Pull requests
-will not be considered unless all tests pass and coverage is equally high or higher.
-All contributed code must therefore also be exhaustively tested.
 
 
 == Running the specs

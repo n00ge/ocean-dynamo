@@ -4,7 +4,6 @@ require 'spec_helper'
 describe CloudModel do
 
   before :all do
-    CloudModel.establish_db_connection
     CloudModel.delete_all
     3.times { CloudModel.create! }
   end
