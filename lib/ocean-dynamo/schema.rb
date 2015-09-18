@@ -41,8 +41,8 @@ module OceanDynamo
 
     def global_secondary_index(hash_key, range_key=nil, 
                                projection: :keys_only,
-                               read_capacity_units: 10,
-                               write_capacity_units: 5)
+                               read_capacity_units: table_read_capacity_units,
+                               write_capacity_units: table_write_capacity_units)
       if range_key
         name = "#{hash_key}_#{range_key}"
         keys = [hash_key.to_s, range_key.to_s]

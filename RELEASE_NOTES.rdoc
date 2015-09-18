@@ -1,3 +1,8 @@
+== v1.2.1
+
+* The read and write capacity for global secondary indices is now inherited from the
+  tables main index read and write capacity, respectively.
+
 == v1.2.0
 
 * Global secondary indices implemented. See the README for documentation.

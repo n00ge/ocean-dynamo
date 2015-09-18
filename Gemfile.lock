@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ocean-dynamo (1.2.0)
+    ocean-dynamo (1.2.1)
       activemodel
       activesupport
       aws-sdk (~> 2)
