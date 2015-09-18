@@ -22,7 +22,7 @@ describe Authentication do
     expect(Authentication.fields).to eq({
       "username" =>    {"type"=>:string,   "default"=>""}, 
       "expires_at" =>  {"type"=>:datetime, "default"=>nil}, 
-      "token" =>       {"type"=>:string,   "default"=>nil,   "local_secondary_index"=>true}, 
+      "token" =>       {"type"=>:string,   "default"=>nil, "local_secondary_index"=>true}, 
       "max_age" =>     {"type"=>:integer,  "default"=>nil}, 
       "created_at" =>  {"type"=>:datetime, "default"=>nil}, 
       "api_user_id" => {"type"=>:string,   "default"=>nil}})

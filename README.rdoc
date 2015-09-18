@@ -76,9 +76,9 @@ will not be considered unless all tests pass and coverage is equally high or hig
 All contributed code must therefore also be exhaustively tested.
 
 
-=== Examples
+== Examples
 
-==== Basic syntax
+=== Basic syntax
 
 The following example shows the basic syntax for declaring a DynamoDB-based schema. 
 
@@ -104,7 +104,7 @@ The following example shows the basic syntax for declaring a DynamoDB-based sche
     
   end
 
-==== Attributes
+=== Attributes
 
 Each attribute has a name, a type (+:string+, +:integer+, +:float+, +:datetime+, +:boolean+, 
 or +:serialized+) where +:string+ is the default. Each attribute also optionally has a default 
@@ -117,7 +117,7 @@ Sets are represented as arrays, may not contain duplicates and may not be empty.
 All attributes except the +:string+ type can take the value +nil+. Storing +nil+ for a string
 value will return the empty string, <tt>""</tt>.
 
-==== Schema args and options
+=== Schema args and options
 
 +dynamo_schema+ takes args and many options. Here's the full syntax:
 
@@ -139,9 +139,9 @@ value will return the empty string, <tt>""</tt>.
    ...
  end
 
-=== +has_many+ and +belongs_to+
+== +has_many+ and +belongs_to+
 
-==== Example
+=== Example
 
 The following example shows how to set up +has_many+ / +belongs_to+ relations:
  
@@ -175,7 +175,7 @@ is required as the Topic class itself has a +belongs_to+ relation and thus has
 a composite key. This must be declared in the child class as it needs to know
 how to retrieve its parent.
 
-==== Restrictions
+=== Restrictions
 
 Restrictions for +belongs_to+ tables: 
 * The hash key must be specified and must not be +:id+. 
@@ -189,7 +189,7 @@ Restrictions for +has_many+ tables:
 These restrictions allow OceanDynamo to implement the +has_many+ / +belongs_to+ 
 relation in a very efficient and massively scalable way. 
 
-==== Implementation
+=== Implementation
 
 +belongs_to+ claims the range key and uses it to store its own id, which normally
 would be stored in the hash key attribute. Instead, the hash key attribute holds the
@@ -215,7 +215,7 @@ Nevertheless, as we now have switched to v2 of the DynamoDB API, we will be addi
 the possibility to define both local and secondary indices for Tables. 
 
 
-=== Local Secondary Indices
+== Local Secondary Indices
 
 We now have basic support for local secondary indices. Up to five attributes can
 be declared as local secondary indices, in the following manner:
