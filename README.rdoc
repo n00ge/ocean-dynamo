@@ -232,13 +232,13 @@ be declared as local secondary indices, in the following manner:
     end
   end
 
-The items of the above table can be accessed by using the hash key :username and
-the range key :expires_at. The +local_secondary_index+ declaration makes it possible
-to access items using the same hash key :username but with :token as an alternate
+The items of the above table can be accessed by using the hash key +:username+ and
+the range key +:expires_at+. The +local_secondary_index+ declaration makes it possible
+to access items using the same hash key +:username+ but with +:token+ as an alternate
 range key. Local secondary indices all use the same hash key as the primary index,
 substituting another attribute instead as the range key.
 
-NB: The primary index [:username, :expires_at] requires all items to have a unique
+NB: The primary index <tt>[:username, :expires_at]</tt> requires all items to have a unique
 combination of keys. Secondary indices don't require the range key to be unique for
 the same hash key. This means that secondary index searches always will return a
 collection.
