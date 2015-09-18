@@ -128,6 +128,25 @@ module OceanDynamo
       end
 
 
+      def table_attribute_definitions
+        attrs = []
+        attrs << { attribute_name: table_hash_key.to_s, attribute_type: attribute_type(table_hash_key) }
+        attrs << { attribute_name: table_range_key.to_s, attribute_type: attribute_type(table_range_key) }  if table_range_key
+        local_secondary_indexes.each do |name|
+          attrs << { attribute_name: name, attribute_type: attribute_type(name) }
+        end
+        attrs
+      end
+
+
+      def table_key_schema(hash_key: table_hash_key, range_key: table_range_key)
+        keys = []
+        keys << { attribute_name: hash_key.to_s, key_type: "HASH" }
+        keys << { attribute_name: range_key.to_s, key_type: "RANGE" } if range_key
+        keys
+      end
+
+
       def local_secondary_indexes
         @local_secondary_indexes ||= begin
           result = []
@@ -141,28 +160,9 @@ module OceanDynamo
 
       def local_secondary_index_declaration(name)
         { index_name: name,
-          key_schema: [{ attribute_name: table_hash_key.to_s, key_type: "HASH" },
-                       { attribute_name: name.to_s, key_type: "RANGE" }],
+          key_schema: table_key_schema(range_key: name),
           projection: { projection_type: "KEYS_ONLY" }
         }
-      end
-
-
-      def table_attribute_definitions
-        attrs = []
-        attrs << { attribute_name: table_hash_key.to_s, attribute_type: attribute_type(table_hash_key) }
-        attrs << { attribute_name: table_range_key.to_s, attribute_type: attribute_type(table_range_key) }  if table_range_key
-        local_secondary_indexes.each do |name|
-          attrs << { attribute_name: name, attribute_type: attribute_type(name) }
-        end
-        attrs
-      end
-
-      def table_key_schema
-        keys = []
-        keys << { attribute_name: table_hash_key.to_s, key_type: "HASH" }
-        keys << { attribute_name: table_range_key.to_s, key_type: "RANGE" } if table_range_key
-        keys
       end
 
 

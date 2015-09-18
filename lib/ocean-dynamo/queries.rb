@@ -59,6 +59,10 @@ module OceanDynamo
     # +message+ must be either :scan or :query.
     # +options+ is the hash of options to pass to the scan or query operation.
     #
+    # TODO: Add support for
+    #   index_name: "IndexName",
+    #   select: "ALL_ATTRIBUTES", # ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT
+    #
     def in_batches(message, options, &block)
       _late_connect?
       loop do
@@ -75,9 +79,12 @@ module OceanDynamo
     #
     # Looping through a collection of records from the database (using the +all+ method, 
     # for example) is very inefficient since it will try to instantiate all the objects at once.
-    #
-    # In that case, batch processing methods allow you to work with the records in batches, 
+    # Batch processing methods allow you to work with the records in batches, 
     # thereby greatly reducing memory consumption.
+    #
+    # TODO: Add support for
+    #   index_name: "IndexName",
+    #   select: "ALL_ATTRIBUTES", # ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT
     #
     def find_each(limit: nil, batch_size: 1000, consistent: false)
       options = { consistent_read: consistent }

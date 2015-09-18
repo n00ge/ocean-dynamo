@@ -15,9 +15,6 @@ ActiveRecord."
   s.description = 
 "== OceanDynamo
 
-OceanDynamo is a massively scalable Amazon DynamoDB near drop-in replacement for 
-ActiveRecord.
-
 As one important use case for OceanDynamo is to facilitate the conversion of SQL
 databases to no-SQL DynamoDB databases, it is important that the syntax and semantics
 of OceanDynamo are as close as possible to those of ActiveRecord. This includes
@@ -25,16 +22,18 @@ callbacks, exceptions and method chaining semantics. OceanDynamo follows this pa
 closely and is of course based on ActiveModel.
 
 The attribute and persistence layer of OceanDynamo is modeled on that of ActiveRecord:
-+save+, +save!+, +create+, +update+, +update!+, +update_attributes+, +find_each+,
-+destroy_all+, +delete_all+ and all the other methods you're used to are available. 
-The design goal is always to implement as much of the ActiveRecord interface as possible, 
-without compromising scalability. This makes the task of switching from SQL to no-SQL 
-much easier.
+there's +save+, +save!+, +create+, +update+, +update!+, +update_attributes+, +find_each+,
++destroy_all+, +delete_all+, +read_attribute+, +write_attribute+ and all the other 
+methods you're used to. The design goal is always to implement as much of the ActiveRecord
+interface as possible, without compromising scalability. This makes the task of switching 
+from SQL to no-SQL much easier.
 
-Thanks to its structural similarity to ActiveRecord, OceanDynamo works with FactoryGirl.
+OceanDynamo uses only primary indices to retrieve related table items and collections, 
+which means it will scale without limits.
 
-OceanDynamo uses primary indices to retrieve related table items, meaning it scales without 
-limits.
+OceanDynamo is fully usable as an ActiveModel and can be used by Rails
+controllers. Thanks to its structural similarity to ActiveRecord, OceanDynamo works 
+with FactoryGirl.
 
 See also Ocean, a Rails framework for creating highly scalable SOAs in the cloud, in which
 ocean-dynamo is used as a central component: http://wiki.oceanframework.net"

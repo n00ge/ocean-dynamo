@@ -41,16 +41,14 @@ describe Authentication do
 
   it "should call create_table with the proper options" do
     Authentication.establish_db_connection
-    expect(Authentication.dynamo_table.local_secondary_indexes.collect(&:to_hash)).
-      to eq [{ :index_name=>"token", 
-               :key_schema=>[{:attribute_name=>"username", :key_type=>"HASH"}, 
-                             {:attribute_name=>"token", :key_type=>"RANGE"}], 
-               :projection=>{:projection_type=>"KEYS_ONLY"}, 
-               :index_size_bytes=>0, 
-               :item_count=>0, 
-               :index_arn=>"arn:aws:dynamodb:ddblocal:000000000000:table/authentications_master_10-0-1-13_test/index/token"
-             }
-            ]
+    lsis = Authentication.dynamo_table.local_secondary_indexes
+    expect(lsis).to be_an Array
+    expect(lsis.length).to eq 1
+    lsi = lsis.first.to_hash
+    expect(lsi[:index_name]).to eq "token"
+    expect(lsi[:key_schema]).to eq [{:attribute_name=>"username", :key_type=>"HASH"}, 
+                                    {:attribute_name=>"token", :key_type=>"RANGE"}]
+    expect(lsi[:projection]).to eq({:projection_type=>"KEYS_ONLY"})
   end
 
 end
