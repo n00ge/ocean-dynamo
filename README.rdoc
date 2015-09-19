@@ -210,12 +210,8 @@ which means that secondary indices won't be necessary for the vast majority of
 DynamoDB tables. This ultimately means reduced operational costs, as well as
 reduced complexity.
 
-Nevertheless, as we now have switched to v2 of the DynamoDB API, we will be adding
-the possibility to define both local and secondary indices for Tables. 
 
 == Secondary Indices
-
-We now have support for secondary indices.
 
 === Local Secondary Indices
 
@@ -242,9 +238,9 @@ combination of keys. Secondary indices don't require the range key to be unique 
 the same hash key. This means that secondary index searches always will return a
 collection.
 
-High-level support for local secondary indices is now available through
-+find_local_each+ and +find_local+. They take the same arguments; the former
-yields to a block for each item, the other returns all items in an array.
+Local secondary indices are queried through +find_local_each+ and +find_local+. 
+They take the same arguments; the former yields to a block for each item, 
+the other returns all items in an array.
 
 The following finds all Authentications where +:username+ is "joe" and +:token+ is "quux":
 
@@ -258,9 +254,6 @@ The same thing but with the only the item with the highest token value:
 
  Authentication.find_local(:username, "joe", :token, ">=", "0",
                            scan_index_forward: false, limit: 1)
-
-For more information, see the documentation for
-+find_local_each+ and +find_local+.
 
 
 === Global Secondary Indices
@@ -282,16 +275,17 @@ block:
     end
   end
 
-Each +global_secondary_index+ clause takes the following arguments:
+Each +global_secondary_index+ clause (there can be a maximum of 5 per table) takes 
+the following arguments:
 * +hash_value+ (required), 
 * +range_value+ (optional), 
 * +:projection+ (default :keys_only, :all for all attributes)
 * +:read_capacity_units+ (defaults to the table's read capacity, normally 10)
 * +:write_capacity_units+ (default to the table's write capacity, normally 5)
 
-High-level support for global secondary indices is now available through
-+find_global_each+ and +find_global+. They take the same arguments; the former
-yields to a block for each item, the other returns all items in an array.
+Global secondary indices are queried through +find_global_each+ and +find_global+. 
+They take the same arguments; the former yields to a block for each item, 
+the other returns all items in an array.
 
 The following finds all Authentications whose +:token+ is "quux"
 
@@ -308,10 +302,6 @@ To get the highest +:expires_at+ record, execute the following:
  Authentication.find_global(:api_user_id, "dfstw-ruyhdf-ewijf", 
                             :expires_at, ">=", 0,
                             scan_index_forward: false, limit: 1)
-
-The combination of hash and range key must have been explicitly declared using
-+global_secondary_index+. For more information, see the documentation for
-+find_global_each+ and +find_global+.
 
 
 == Installation
