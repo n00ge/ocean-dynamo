@@ -364,7 +364,14 @@ block:
   regexp = Regexp.new("^.+_#{CHEF_ENV}_[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}_test$")
   cleaner = lambda { 
     c = Aws::DynamoDB::Client.new
-    c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) if t =~ regexp }
+    c.list_tables.table_names.each do |t| 
+      begin
+        c.delete_table({table_name: t}) if t =~ regexp
+      rescue Aws::DynamoDB::Errors::LimitExceededException
+        sleep 1
+        retry
+      end
+    end
   }
 
 Then, inside the +RSpec.configure+ block:
@@ -372,8 +379,8 @@ Then, inside the +RSpec.configure+ block:
   config.before(:suite) { cleaner.call }
   config.after(:suite) { cleaner.call }
 
-This will remove only those tables created by the specs on this particular machine and
-environment. This is safe even on AWS and for parallel testing.
+This will remove only those test tables created by the specs on this particular machine and
+environment. This is safe even on AWS and in parallel with other machines.
 
 
 == Rails console

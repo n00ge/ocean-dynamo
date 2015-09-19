@@ -42,6 +42,7 @@ end
 
 
 describe Zulu do
+  
   it "the default key must be :id" do
     expect(Zulu.table_hash_key).to eq :id
   end

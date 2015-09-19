@@ -21,7 +21,14 @@ CHEF_ENV = "master" unless defined?(CHEF_ENV)
 regexp = Regexp.new("^.+_#{CHEF_ENV}_[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}_test$")
 cleaner = lambda { 
   c = Aws::DynamoDB::Client.new
-  c.list_tables.table_names.each { |t| c.delete_table({table_name: t}) if t =~ regexp }
+  c.list_tables.table_names.each do |t| 
+    begin
+      c.delete_table({table_name: t}) if t =~ regexp
+    rescue Aws::DynamoDB::Errors::LimitExceededException
+      sleep 1
+      retry
+    end
+  end
 }
 
 RSpec.configure do |config|

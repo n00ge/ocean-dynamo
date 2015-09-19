@@ -13,6 +13,7 @@ describe Badabing do
     Badabing.delete_all
   end
 
+
   it "should set the keys correctly" do
     expect(Badabing.table_hash_key).to eq :guid
     expect(Badabing.table_range_key).to eq :digitus

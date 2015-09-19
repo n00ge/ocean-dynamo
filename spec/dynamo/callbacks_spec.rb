@@ -6,6 +6,7 @@ describe Voom do
     @i = Voom.new
   end
 
+
   it "should have :id as its key" do
     expect(Voom.table_hash_key).to eq :id
   end

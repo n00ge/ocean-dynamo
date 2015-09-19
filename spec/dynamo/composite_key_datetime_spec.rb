@@ -13,6 +13,7 @@ describe Ragadish do
     Ragadish.delete_all
   end
 
+
   it "should set the keys correctly" do
     expect(Ragadish.table_hash_key).to eq :guid
     expect(Ragadish.table_range_key).to eq :tempus

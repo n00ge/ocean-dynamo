@@ -13,6 +13,7 @@ describe Kaching do
     Kaching.delete_all
   end
 
+
   it "should set the keys correctly" do
     expect(Kaching.table_hash_key).to eq :guid
     expect(Kaching.table_range_key).to eq :digitus

@@ -13,6 +13,7 @@ describe VaVaVoom do
     VaVaVoom.delete_all
   end
 
+
   it "should set the keys correctly" do
     expect(VaVaVoom.table_hash_key).to eq :hash
     expect(VaVaVoom.table_range_key).to eq :range

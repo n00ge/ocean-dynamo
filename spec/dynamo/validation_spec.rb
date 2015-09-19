@@ -55,9 +55,5 @@ describe Bang do
     expect(@i.valid?).to eq false
   end
 
-
-
-
-
 end
 
