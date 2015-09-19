@@ -111,5 +111,89 @@ module OceanDynamo
     # def find_in_batches(start: nil, batch_size: 1000)
     #   []
     # end
+
+
+    def condition_builder(hash_key, hash_value,
+                          range_key=nil, comparator=nil, range_value=nil,
+                          limit: nil, consistent: false, scan_index_forward: true)
+      if range_key
+        options = { 
+          expression_attribute_names: { "#H" => hash_key, "#R" => range_key },
+          key_condition_expression: "#H = :hashval AND #R #{comparator} :rangeval",
+          expression_attribute_values: { ":hashval" => hash_value, ":rangeval" => range_value }
+        }
+      else
+        options = { 
+          expression_attribute_names: { "#H" => hash_key },
+          key_condition_expression: "#H = :hashval",
+          expression_attribute_values: { ":hashval" => hash_value }
+        }
+      end
+      options[:limit] = limit if limit
+      options[:consistent_read] = consistent if consistent
+      options[:scan_index_forward] = scan_index_forward if !scan_index_forward
+      options
+    end
+
+
+    #
+    # This method finds each item of a global secondary index, sequentially yielding each item
+    # to the given block (required). The parameters are as follows:
+    #
+    # +hash_key+    The name of the hash key to use (required).
+    # +hash_value+  The value of the hash key to match (required).
+    # +range_key+   The name of the range key to use (optional).
+    # +comparator+  The comparator to use. "=", "<", ">", "<=", ">=". (optional).
+    # +range-value+ The value of the range key to match (optional).
+    # 
+    # Note that +range_key+ is optional, but if it's present, then the +comparator+ and
+    # the +range_value+ must also be given. They must either all be present or absent.
+    #
+    # The following keyword arguments are accepted:
+    # 
+    # +:limit+              The maximum number of items to read.
+    # +:scan_index_forward+ If false, items will be in reverse order.
+    #
+    # If the index contains all attributes, no extra read will be performed. If it doesn't,
+    # the entire item will be fetched using an extra read operation.
+    #
+    def find_global_each(hash_key, hash_value,
+                         range_key=nil, comparator=nil, range_value=nil,
+                         limit: nil, scan_index_forward: true,
+                         &block)
+      hash_value = hash_value.to_i if hash_value.is_a?(Time)
+      range_value = range_value.to_i if range_value.is_a?(Time)
+      options = condition_builder(hash_key, hash_value, range_key, comparator, range_value,
+                                  limit: limit, scan_index_forward: scan_index_forward)
+      index_name = (range_key ? "#{hash_key}_#{range_key}" : hash_key.to_s) + "_global"
+      options[:index_name] = index_name
+      raise "Undefined global index: #{index_name}" unless global_secondary_indexes[index_name]
+      all_projected = global_secondary_indexes[index_name]["projection_type"] == "ALL"
+      in_batches :query, options do |attrs|
+        if limit
+          return if limit <= 0
+          limit = limit - 1
+        end
+        if all_projected
+          yield new._setup_from_dynamo(attrs)
+        else
+          yield find(attrs[table_hash_key.to_s], table_range_key && attrs[table_range_key.to_s])
+        end
+      end
+    end
+
+
+    #
+    # This method takes the same args as +find_global_each+ but returns all found items as
+    # an array.
+    #
+    def find_global(*args)
+      result = []
+      find_global_each(*args) do |item|
+        result << item
+      end
+      result
+    end
+
   end
 end

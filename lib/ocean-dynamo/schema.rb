@@ -44,10 +44,10 @@ module OceanDynamo
                                read_capacity_units: table_read_capacity_units,
                                write_capacity_units: table_write_capacity_units)
       if range_key
-        name = "#{hash_key}_#{range_key}"
+        name = "#{hash_key}_#{range_key}_global"
         keys = [hash_key.to_s, range_key.to_s]
       else
-        name = "#{hash_key}"
+        name = "#{hash_key}_global"
         keys = [hash_key.to_s]
       end
       self.global_secondary_indexes[name] = { 

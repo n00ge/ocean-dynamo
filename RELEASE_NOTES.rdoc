@@ -1,3 +1,8 @@
+== v1.2.2
+
+* High-level support for global secondary indexes added. See the README for more information;
+  also refer to the auto-generated documentation for +find_global+ and +find_global_each+.
+
 == v1.2.1
 
 * The read and write capacity for global secondary indices is now inherited from the

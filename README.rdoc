@@ -216,12 +216,10 @@ the possibility to define both local and secondary indices for Tables.
 
 == Secondary Indices
 
-We now have basic support for secondary indices. 
-
-We will add high-level support for specifying that a secondary index is to be used 
-in +in_batches+ and +find_each+ etc, but for now you will have to specify that a
-secondary index is to be used explicitly in the options passed to +in_batches+, 
-+query+, and +scan+. 
+We now have basic support for secondary indices. High-level support for global secondary indices
+is also available; we will add high-level support for local secondary indices very soon.
+For now you will have to specify that a secondary index is to be used explicitly in the options 
+passed to +in_batches+, +query+, and +scan+. 
 * +query+: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB/Table.html#query-instance_method
 * +scan+: http://docs.aws.amazon.com/sdkforruby/api/Aws/DynamoDB/Table.html#scan-instance_method
 * +in_batches+, +find_each+: lib/ocean-dynamo/queries.rb
@@ -276,6 +274,30 @@ Each +global_secondary_index+ clause takes the following arguments:
 * +:projection+ (default :keys_only, :all for all attributes)
 * +:read_capacity_units+ (defaults to the table's read capacity, normally 10)
 * +:write_capacity_units+ (default to the table's write capacity, normally 5)
+
+High-level support for global secondary indices is now available through
++find_global_each+ and +find_global+. They take the same arguments; the former
+yields to a block for each item, the other returns all items in an array.
+
+The following finds all Authentications whose +:token+ is "quux"
+
+ Authentication.find_global(:token, "quux")
+
+This retrieves all Authentications belonging to the user with the ID "dfstw-ruyhdf-ewijf", 
+sorted in ascending order of the +:expires_at+ attribute:
+
+ Authentication.find_global(:api_user_id, "dfstw-ruyhdf-ewijf", 
+                            :expires_at, ">=", 0)
+
+To get the highest +:expires_at+ record, execute the following:
+
+ Authentication.find_global(:api_user_id, "dfstw-ruyhdf-ewijf", 
+                            :expires_at, ">=", 0,
+                            scan_index_forward: false, limit: 1)
+
+The combination of hash and range key must have been explicitly declared using
++global_secondary_index+. For more information, see the documentation of
++find_global_each+ and +find_global+.
 
 
 == Installation
