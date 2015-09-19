@@ -1,8 +1,16 @@
+== v1.2.4
+
+* High-level support for local secondary indexes added. See the README for more information;
+  also refer to the auto-generated documentation for +find_local+ and +find_local_each+.
+
 == v1.2.3
 
 * The specs can now be run on AWS as well as using DynamoDB Local.
-* Updating of tables commented out - smarter logic to add and remove global secondary
-  indices is needed, otherwise AWS will barf (where DynamoDB Local does not...).
+* Updating of table structure commented out - smarter logic to add and remove global 
+  secondary indices is needed, otherwise AWS will barf (where DynamoDB Local does not...).
+  This is no great matter, as adding and removing secondary indices individually on
+  existing tables is nice, but not really needed on AWS, where we prefer to make such
+  changes manually for security reasons, amongst other things.
 
 == v1.2.2
 

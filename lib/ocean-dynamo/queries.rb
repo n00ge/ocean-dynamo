@@ -113,9 +113,15 @@ module OceanDynamo
     # end
 
 
+    #
+    # This helper constructs the +options+ hash for a subsequent call to +in_batches+ and friends.
+    # It takes care of creating expression attributes names and values for all data and takes
+    # parameters to control scan direction and limits, etc.
+    #
     def condition_builder(hash_key, hash_value,
                           range_key=nil, comparator=nil, range_value=nil,
-                          limit: nil, consistent: false, scan_index_forward: true)
+                          limit: nil, consistent: false, scan_index_forward: true,
+                          select: nil)
       if range_key
         options = { 
           expression_attribute_names: { "#H" => hash_key, "#R" => range_key },
@@ -132,6 +138,7 @@ module OceanDynamo
       options[:limit] = limit if limit
       options[:consistent_read] = consistent if consistent
       options[:scan_index_forward] = scan_index_forward if !scan_index_forward
+      options[:select] = select.to_s.upcase if select
       options
     end
 
@@ -194,6 +201,62 @@ module OceanDynamo
       end
       result
     end
+
+
+    #
+    # This method finds each item of a local secondary index, sequentially yielding each item
+    # to the given block (required). The parameters are as follows:
+    #
+    # +hash_key+    The name of the hash key to use (required, must be the table's hash_key).
+    # +hash_value+  The value of the hash key to match (required).
+    # +range_key+   The name of the range key to use (required).
+    # +comparator+  The comparator to use. "=", "<", ">", "<=", ">=". (required).
+    # +range-value+ The value of the range key to match (required).
+    # 
+    # Note that +range_key+ must all be present.
+    #
+    # The following keyword arguments are accepted:
+    # 
+    # +:limit+              The maximum number of items to read.
+    # +:scan_index_forward+ If false, items will be in reverse order.
+    # +:consistent+         If true, consistent reads will be used. Default false.
+    #
+    def find_local_each(hash_key, hash_value,
+                        range_key, comparator, range_value,
+                        limit: nil, scan_index_forward: true, consistent: false,
+                        &block)
+      raise "The hash_key is #{hash_key.inspect} but must be #{table_hash_key.inspect}" unless hash_key == table_hash_key
+      hash_value = hash_value.to_i if hash_value.is_a?(Time)
+      range_value = range_value.to_i if range_value.is_a?(Time)
+      options = condition_builder(hash_key, hash_value, range_key, comparator, range_value,
+                                  select: :all_attributes,
+                                  limit: limit, scan_index_forward: scan_index_forward,
+                                  consistent: consistent)
+      index_name = range_key.to_s
+      options[:index_name] = index_name
+      raise "Undefined local index: #{index_name}" unless local_secondary_indexes.include?(index_name)
+      in_batches :query, options do |attrs|
+        if limit
+          return if limit <= 0
+          limit = limit - 1
+        end
+        yield new._setup_from_dynamo(attrs)
+      end
+    end
+
+
+    #
+    # This method takes the same args as +find_local_each+ but returns all found items as
+    # an array.
+    #
+    def find_local(*args)
+      result = []
+      find_local_each(*args) do |item|
+        result << item
+      end
+      result
+    end
+
 
   end
 end
