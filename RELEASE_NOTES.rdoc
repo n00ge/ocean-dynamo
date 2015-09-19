@@ -1,3 +1,9 @@
+== v1.2.3
+
+* The specs can now be run on AWS as well as using DynamoDB Local.
+* Updating of tables commented out - smarter logic to add and remove global secondary
+  indices is needed, otherwise AWS will barf (where DynamoDB Local does not...).
+
 == v1.2.2
 
 * High-level support for global secondary indexes added. See the README for more information;
