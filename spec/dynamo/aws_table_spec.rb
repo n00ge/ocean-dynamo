@@ -58,8 +58,8 @@ describe CloudModel do
 
 
   it "establish_db_connection should set dynamo_resource, dynamo_client, and dynamo_table" do
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).and_return(true)
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).and_return("ACTIVE")
+    expect(CloudModel).to receive(:table_exists?).and_return(true)
+    expect(CloudModel).to receive(:fresh_table_status).and_return("ACTIVE")
     expect(CloudModel).not_to receive(:create_table)
     expect(CloudModel.dynamo_resource).to eq nil
     expect(CloudModel.dynamo_client).to eq nil
@@ -71,15 +71,15 @@ describe CloudModel do
   end
 
   it "establish_db_connection should return true if the table exists and is active" do
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).and_return(true)
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).and_return("ACTIVE")
+    expect(CloudModel).to receive(:table_exists?).and_return(true)
+    expect(CloudModel).to receive(:fresh_table_status).and_return("ACTIVE")
     expect(CloudModel).not_to receive(:create_table)
     CloudModel.establish_db_connection
   end
 
   it "establish_db_connection should wait for the table to complete creation" do
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).and_return(true)
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).
+    expect(CloudModel).to receive(:table_exists?).and_return(true)
+    expect(CloudModel).to receive(:fresh_table_status).
       and_return("CREATING", "CREATING", "CREATING", "CREATING", "ACTIVE")
     expect_any_instance_of(Object).to receive(:sleep).with(1).exactly(4).times
     expect(CloudModel).not_to receive(:create_table)
@@ -87,8 +87,8 @@ describe CloudModel do
   end
 
   it "establish_db_connection should wait for the table to delete before trying to create it again" do
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).and_return("DELETING")
     expect(CloudModel).to receive(:table_exists?).and_return(true, true, true, false)
+    expect(CloudModel).to receive(:fresh_table_status).exactly(3).times.and_return("DELETING")
     expect_any_instance_of(Object).to receive(:sleep).with(1).exactly(4).times  
     expect(CloudModel).to receive(:create_table).and_return(true)  
     CloudModel.establish_db_connection
@@ -101,8 +101,8 @@ describe CloudModel do
   end
 
   it "establish_db_connection should barf on an unknown table status" do
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).and_return(true)
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).twice.and_return("SYPHILIS")
+    expect(CloudModel).to receive(:table_exists?).and_return(true)
+    expect(CloudModel).to receive(:fresh_table_status).and_return("SYPHILIS")
     expect(CloudModel).not_to receive(:create_table)
     expect { CloudModel.establish_db_connection }. 
       to raise_error(OceanDynamo::UnknownTableStatus, "Unknown DynamoDB table status 'SYPHILIS'")
@@ -111,24 +111,24 @@ describe CloudModel do
   it "create_table should sleep until the table becomes active after creating it" do
     expect(CloudModel).to receive(:table_exists?).and_return(false)
     expect_any_instance_of(Aws::DynamoDB::Resource).to receive(:create_table)
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).and_return("CREATING", "CREATING", "CREATING", "ACTIVE")
+    expect(CloudModel).to receive(:fresh_table_status).and_return("CREATING", "CREATING", "CREATING", "ACTIVE")
     expect_any_instance_of(Object).to receive(:sleep).with(1).exactly(3).times
     CloudModel.establish_db_connection
   end
 
 
   it "delete_table should return true if the table was :active" do
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).twice.and_return(true)
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).twice.and_return("ACTIVE")
+    expect(CloudModel).to receive(:table_exists?).and_return(true)
+    expect(CloudModel).to receive(:fresh_table_status).twice.and_return("ACTIVE")
     expect(CloudModel).not_to receive(:create_table)
     expect_any_instance_of(Aws::DynamoDB::Table).to receive(:delete)
     CloudModel.establish_db_connection
     expect(CloudModel.delete_table).to eq true
   end
 
-  it "delete_table should return false if the table wasn't :active" do
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:data_loaded?).twice.and_return(true)
-    expect_any_instance_of(Aws::DynamoDB::Table).to receive(:table_status).and_return("ACTIVE", "DELETING")
+  it "delete_table should return false if the table wasn't ACTIVE" do
+    expect(CloudModel).to receive(:table_exists?).and_return(true)
+    expect(CloudModel).to receive(:fresh_table_status).and_return("ACTIVE", "DELETING")
     CloudModel.establish_db_connection
     expect(CloudModel.delete_table).to eq false
   end

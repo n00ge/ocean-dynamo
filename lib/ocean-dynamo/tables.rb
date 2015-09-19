@@ -64,8 +64,9 @@ module OceanDynamo
 
 
       def table_exists?(table)
-        return true if table.data_loaded?
         begin
+          fresh_table_status
+          return true if table.data_loaded?
           table.load
         rescue Aws::DynamoDB::Errors::ResourceNotFoundException
           return false
@@ -74,9 +75,14 @@ module OceanDynamo
       end
 
 
+      def fresh_table_status
+        dynamo_client.describe_table(table_name: table_full_name).table.table_status
+      end
+
+
       def wait_until_table_is_active
         loop do
-          case dynamo_table.table_status
+          case st = fresh_table_status
           when "ACTIVE"
             update_table_if_required
             return
@@ -84,11 +90,11 @@ module OceanDynamo
             sleep 1
             next
           when "DELETING"
-            sleep 1 while table_exists?(dynamo_table)
+            sleep 1 while table_exists?(dynamo_table) && fresh_table_status == "DELETING"
             create_table
             return
           else
-            raise UnknownTableStatus.new("Unknown DynamoDB table status '#{dynamo_table.table_status}'")
+            raise UnknownTableStatus.new("Unknown DynamoDB table status '#{st}'")
           end
         end
       end
@@ -111,21 +117,26 @@ module OceanDynamo
         gsi = global_secondary_indexes.collect { |k, v| global_secondary_index_declaration k, v }
         options[:global_secondary_indexes] = gsi unless gsi.blank?
         dynamo_resource.create_table(options)
-        sleep 1 until dynamo_table.table_status == "ACTIVE"
+        loop do
+          ts = fresh_table_status
+          break if ts == "ACTIVE"
+          sleep 1
+        end
         setup_dynamo
         true
       end
 
 
      def update_table_if_required
-        attrs = table_attribute_definitions
-        active_attrs = []
-        dynamo_table.attribute_definitions.each do |k| 
-          active_attrs << { attribute_name: k.attribute_name, attribute_type: k.attribute_type }
-        end
-        return false if active_attrs == attrs
-        options = { attribute_definitions: attrs }
-        dynamo_table.update(options)
+        #puts "Updating table #{table_full_name}"
+        # attrs = table_attribute_definitions
+        # active_attrs = []
+        # dynamo_table.attribute_definitions.each do |k| 
+        #   active_attrs << { attribute_name: k.attribute_name, attribute_type: k.attribute_type }
+        # end
+        # return false if active_attrs == attrs
+        # options = { attribute_definitions: attrs }
+        # dynamo_table.update(options)
         true
       end
 
@@ -204,7 +215,7 @@ module OceanDynamo
 
 
       def delete_table
-        return false unless dynamo_table.data_loaded? && dynamo_table.table_status == "ACTIVE"
+        return false unless fresh_table_status == "ACTIVE"
         dynamo_table.delete
         true
       end
