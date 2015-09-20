@@ -99,6 +99,8 @@ The following example shows the basic syntax for declaring a DynamoDB-based sche
       attribute :succeeded,            :boolean,    default: false
       attribute :failed,               :boolean,    default: false
       attribute :poison,               :boolean,    default: false
+      
+      global_secondary_index :token, projection: :all
     end
     
   end
