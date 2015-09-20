@@ -289,17 +289,17 @@ Global secondary indices are queried through +find_global_each+ and +find_global
 They take the same arguments; the former yields to a block for each item, 
 the other returns all items in an array.
 
-The following finds all Authentications whose +:token+ is "quux"
+The following finds all Authentications whose +:token+ is +"quux"+:
 
  Authentication.find_global(:token, "quux")
 
-This retrieves all Authentications belonging to the user with the ID "dfstw-ruyhdf-ewijf", 
+This retrieves all Authentications belonging to the user with the ID +"dfstw-ruyhdf-ewijf"+, 
 sorted in ascending order of the +:expires_at+ attribute:
 
  Authentication.find_global(:api_user_id, "dfstw-ruyhdf-ewijf", 
                             :expires_at, ">=", 0)
 
-To get the highest +:expires_at+ record, execute the following:
+To get the highest +:expires_at+ record:
 
  Authentication.find_global(:api_user_id, "dfstw-ruyhdf-ewijf", 
                             :expires_at, ">=", 0,
