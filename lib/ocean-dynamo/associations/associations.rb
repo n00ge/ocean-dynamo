@@ -1,3 +1,13 @@
+#
+# The class structure is exactly like in ActiveRecord:
+#
+#   Associations
+#     Association
+#       CollectionAssociation
+#         HasAndBelongsToManyAssociation
+#         HasManyAssociation
+#
+
 module OceanDynamo
   module Associations
 

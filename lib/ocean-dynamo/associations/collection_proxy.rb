@@ -19,9 +19,8 @@ module OceanDynamo
     # <tt>@owner</tt>, the collection of its posts as <tt>@target</tt>, and
     # the <tt>@reflection</tt> object represents a <tt>:has_many</tt> macro.
     #
-    # This class delegates unknown methods to <tt>@target</tt> NOT via
-    # <tt>method_missing</tt> (as the ActiveRecord documentation falsely states),
-    # but through explicit proxy methods for each separate operation.
+    # This class delegates unknown methods to <tt>@target</tt> through explicit 
+    # proxy methods for each separate operation.
     #
     # The <tt>@target</tt> object is not \loaded until needed. As it turns out,
     # the key to this lazy loading scheme is <tt>to_ary</tt>.

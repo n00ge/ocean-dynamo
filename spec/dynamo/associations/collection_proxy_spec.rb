@@ -1,9 +1,10 @@
 require 'spec_helper'
 
-#
-# Relation             (@klass, @loaded)
-#   CollectionProxy    (@association)
-#
+    #
+    #   Relation             (@klass, @loaded)
+    #     CollectionProxy    (@association)
+    #
+
 
 class Target < OceanDynamo::Table
   dynamo_schema(create: true, table_name_suffix: Api.basename_suffix) do

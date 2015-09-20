@@ -1,5 +1,16 @@
 require 'spec_helper'
 
+    #
+    # This is the root class of all Associations.
+    # The class structure is exactly like in ActiveRecord:
+    #
+    #   Associations
+    #     Association
+    #       CollectionAssociation
+    #         HasAndBelongsToManyAssociation
+    #         HasManyAssociation
+    #
+
 class Owner < OceanDynamo::Table
   dynamo_schema(create: true, table_name_suffix: Api.basename_suffix) do
     attribute :thing

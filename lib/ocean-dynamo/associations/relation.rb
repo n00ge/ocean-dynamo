@@ -12,7 +12,6 @@ module OceanDynamo
   #     CollectionProxy    (@association)
   #
   #
-
   class Relation
 
   	attr_reader :klass

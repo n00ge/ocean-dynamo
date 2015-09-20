@@ -1,13 +1,15 @@
 module OceanDynamo
   module Associations
+
     #
     # This is the root class of all Associations.
     # The class structure is exactly like in ActiveRecord:
     #
-    #   Association
-    #     CollectionAssociation
-    #       HasAndBelongsToManyAssociation
-    #       HasManyAssociation
+    #   Associations
+    #     Association
+    #       CollectionAssociation
+    #         HasAndBelongsToManyAssociation
+    #         HasManyAssociation
     #
     # It should be noted, however, that the ActiveRecord documentation  
     # is misleading: belongs_to and has_one no longer are implemented using

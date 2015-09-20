@@ -1,15 +1,17 @@
 module OceanDynamo 
   module Associations 
+    
     #
     # CollectionAssociation is an abstract class that provides common stuff to
     # ease the implementation of association proxies that represent
     # collections. See the class hierarchy in AssociationProxy.
     #
-    #  Association
-    #    CollectionAssociation:
-    #      HasAndBelongsToManyAssociation => has_and_belongs_to_many
-    #      HasManyAssociation => has_many
-    #        HasManyThroughAssociation + ThroughAssociation => has_many :through
+    #  Associations
+    #    Association
+    #      CollectionAssociation:
+    #        HasAndBelongsToManyAssociation => has_and_belongs_to_many
+    #        HasManyAssociation => has_many
+    #          HasManyThroughAssociation + ThroughAssociation => has_many :through
     #
     # CollectionAssociation class provides common methods to the collections
     # defined by +has_and_belongs_to_many+, +has_many+ or +has_many+ with

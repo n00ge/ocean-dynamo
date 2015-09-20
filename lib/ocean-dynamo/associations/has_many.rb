@@ -23,7 +23,7 @@ module OceanDynamo
       #
       # Using +:nullify+ is a Bad Idea on DynamoDB, as it has to first read, 
       # then delete, and finally recreate each record. You should redesign your 
-      # application to user either +:delete? (the default) or +:destroy+ instead. 
+      # application to user either +:delete+ (the default) or +:destroy+ instead. 
       #
       def has_many(children, dependent: :delete)             # :children
         children_attr = children.to_s.underscore             # "children"

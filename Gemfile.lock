@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     ocean-dynamo (1.2.4)
-      activemodel
-      activesupport
+      activemodel (~> 4)
+      activesupport (~> 4)
       aws-sdk (~> 2)
 
 GEM
@@ -166,7 +166,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  factory_girl_rails (~> 4.0)
+  factory_girl_rails (~> 4)
   ocean-dynamo!
   ocean-rails
   rails (~> 4)
