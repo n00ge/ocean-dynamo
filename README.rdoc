@@ -281,7 +281,7 @@ Each +global_secondary_index+ clause (there can be a maximum of 5 per table) tak
 the following arguments:
 * +hash_value+ (required), 
 * +range_value+ (optional), 
-* +:projection+ (default :keys_only, :all for all attributes)
+* +:projection+ (default +:keys_only+, +:all+ for all attributes)
 * +:read_capacity_units+ (defaults to the table's read capacity, normally 10)
 * +:write_capacity_units+ (default to the table's write capacity, normally 5)
 
