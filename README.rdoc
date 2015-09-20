@@ -41,7 +41,7 @@ with FactoryGirl.
 === Future milestones
 
 * Direct support for the DynamoDB JSON attribute types for arrays and hashes
-* Association proxies, to implement ActiveRecord-style method chaining, e.g.: 
+* Collection proxies, to implement ActiveRecord-style method chaining, e.g.: 
   <code>blog_entry.comments.build(body: "Cool!").save!</code>
 * The +has_and_belongs_to_many+ assocation. 
 
@@ -49,7 +49,7 @@ with FactoryGirl.
 === Current use
 
 OceanDynamo is used as a central component in Ocean, a Rails framework and development 
-pipeline for creating highly scalable HATEOAS microservice SOAs in the cloud.
+pipeline for creating massively scalable HATEOAS microservice SOAs in the cloud.
 * http://wiki.oceanframework.net
 
 Ocean uses OceanDynamo to implement highly scalable job queues and authentication. 

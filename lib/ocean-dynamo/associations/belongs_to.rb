@@ -151,7 +151,7 @@ module OceanDynamo
       #
       def assert_range_key_not_specified!  # :nodoc:
         raise RangeKeyMustNotBeSpecified, 
-              "Tables with belongs_to relations may not specify the range key" if table_range_key
+              "Tables with belongs_to relations may not specify a range key" if table_range_key
       end
 
 

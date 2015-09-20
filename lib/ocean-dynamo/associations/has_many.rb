@@ -19,11 +19,13 @@ module OceanDynamo
       # Defines a +has_many+ relation to a +belongs_to+ class.
       #
       # The +dependent:+ keyword arg may be +:destroy+, +:delete+ or +:nullify+
-      # and have the same semantics as in ActiveRecord. With +:nullify+, however,
-      # the hash key is set to the string "NULL" rather than binary NULL, as
-      # DynamoDB doesn't permit storing empty fields.
+      # and have the same semantics as in ActiveRecord.
       #
-      def has_many(children, dependent: :nullify)            # :children
+      # Using +:nullify+ is a Bad Idea on DynamoDB, as it has to first read, 
+      # then delete, and finally recreate each record. You should redesign your 
+      # application to user either +:delete? (the default) or +:destroy+ instead. 
+      #
+      def has_many(children, dependent: :delete)             # :children
         children_attr = children.to_s.underscore             # "children"
         class_name = children_attr.classify                  # "Child"
         define_class_if_not_defined(class_name)
@@ -175,6 +177,10 @@ module OceanDynamo
     # Set the hash key values of all children to the string "NULL", thereby turning them
     # into orphans. Note that we're not setting the key to NULL as this isn't possible
     # in DynamoDB. Instead, we're using the literal string "NULL".
+    #
+    # Using +:nullify+ is a Bad Idea on DynamoDB, as it has to first read, then delete, and
+    # then recreate each record. You should redesign your application to user either
+    # +:delete? (the default) or +:destroy+ instead. 
     #
     def nullify_children(child_class)
       return if new_record?

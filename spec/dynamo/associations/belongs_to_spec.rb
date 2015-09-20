@@ -59,7 +59,7 @@ describe Slave do
         belongs_to :something
       end
     }.to raise_error(OceanDynamo::RangeKeyMustNotBeSpecified, 
-                     "Tables with belongs_to relations may not specify the range key")
+                     "Tables with belongs_to relations may not specify a range key")
   end
 
 
@@ -210,8 +210,8 @@ describe Slave do
   end
 
   it "attr_id should be mass-assignable" do
-    s = Slave.new master_id: "an-guid"
-    expect(s.master_id).to eq "an-guid"
+    s = Slave.new master_id: "a-guid"
+    expect(s.master_id).to eq "a-guid"
     expect(s.instance_variable_get(:@master)).to eq nil
   end
 
@@ -273,7 +273,7 @@ describe Slave do
   it "the attr should be cached" do
     s = Slave.create! master: @m
     s.reload
-    expect(Master).to receive(:find).and_return @m
+    expect(Master).to receive(:find).once.and_return @m
     expect(s.master).to eq @m
     expect(s.master).to eq @m
     expect(s.master).to eq @m
