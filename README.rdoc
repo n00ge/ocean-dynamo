@@ -40,10 +40,10 @@ with FactoryGirl.
 
 === Future milestones
 
+* Direct support for the DynamoDB JSON attribute types for arrays and hashes
 * Association proxies, to implement ActiveRecord-style method chaining, e.g.: 
   <code>blog_entry.comments.build(body: "Cool!").save!</code>
 * The +has_and_belongs_to_many+ assocation. 
-* A generator to install the <tt>config/aws.yml</tt> file.
 
 
 === Current use
@@ -327,8 +327,7 @@ to both the following locations in your project:
  config/aws.yml.example
  config/aws.yml
 
-Enter your AWS credentials in the latter file. Eventually, there
-will be a generator to copy these files for you, but for now you need to do it manually. 
+Enter your AWS credentials in the latter file.
 
 
 == Running the specs
