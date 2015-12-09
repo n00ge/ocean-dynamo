@@ -184,6 +184,7 @@ module OceanDynamo
         return true if value == "true"
         false
       when :datetime
+        return value.to_time(:utc) if value.is_a?(String)
         return nil if value == nil || !value.kind_of?(Time)
         value
       when :serialized

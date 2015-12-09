@@ -54,7 +54,7 @@ describe CloudModel do
     expect(i[:id]).to eq i[:guid]
   end
 
-  it "should assign an guid to the hash_key attribute if nil at create" do
+  it "should assign a UUID to the hash_key attribute if nil at create" do
     i = CloudModel.new guid: nil
     expect(i.save).to eq true
     expect(i.guid).not_to eq nil
@@ -307,6 +307,15 @@ describe CloudModel do
       end
     }.to raise_error(OceanDynamo::DangerousAttributeError,
                      "belongs_to is defined by OceanDynamo")
+  end
+
+  it "should convert string dates when assigning them to a datetime attribute" do
+    i = CloudModel.new 
+    i.destroy_at = "2015-12-09T21:37:00Z"
+    expect(i.destroy_at).to be_a Time
+    i.save!
+    i.reload
+    expect(i.destroy_at).to be_a Time
   end
 
 end

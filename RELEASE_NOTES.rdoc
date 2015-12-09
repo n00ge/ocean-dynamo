@@ -1,3 +1,8 @@
+== v1.3.0
+
+* :datetime attributes now can be set to string values, which transparently triggers a 
+  conversion to a Time object in UTC. This simplifies controller code in Rails.
+
 == v1.2.4
 
 * High-level support for local secondary indexes added. See the README for more information;
