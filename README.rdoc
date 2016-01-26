@@ -366,7 +366,7 @@ block:
 
   # DynamoDB table cleaner
   CHEF_ENV = "master" unless defined?(CHEF_ENV)
-  regexp = Regexp.new("^.+_#{CHEF_ENV}_[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}_test$")
+  regexp = Regexp.new("^.+_#{CHEF_ENV}_[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}_(test|dev)$")
   cleaner = lambda { 
     c = Aws::DynamoDB::Client.new
     c.list_tables.table_names.each do |t| 
