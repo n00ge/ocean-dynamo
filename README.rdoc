@@ -139,6 +139,15 @@ value will return the empty string, <tt>""</tt>.
    ...
    ...
  end
+ 
+ Tip: you might want to use the following idiom when declaring a +dynamo_schema+. It is used everywhere in ocean-rails:
+ 
+ dynamo_schema(:id, table_name_suffix: Api.basename_suffix, 
+                    create: Rails.env != "production") do
+   ...
+ end
+ 
+This will auto-create the DynamoDB table in all environments except production, and it will also add a suffix to the table name so tests never collide. Cf +Api.basename_suffix+ for more information.
 
 == +has_many+ and +belongs_to+
 
@@ -357,36 +366,6 @@ With DynamoDB Local running, you should now be able to do
  rspec
 
 All tests should pass.
-
-
-=== Cleaning up the DB
-
-You might want to add the following to your spec_helper.rb file, before the +RSpec.configure+
-block:
-
-  # DynamoDB table cleaner
-  CHEF_ENV = "master" unless defined?(CHEF_ENV)
-  regexp = Regexp.new("^.+_#{CHEF_ENV}_[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}_(test|dev)$")
-  cleaner = lambda { 
-    c = Aws::DynamoDB::Client.new
-    c.list_tables.table_names.each do |t| 
-      begin
-        c.delete_table({table_name: t}) if t =~ regexp
-      rescue Aws::DynamoDB::Errors::LimitExceededException
-        sleep 1
-        retry
-      end
-    end
-  }
-
-Then, inside the +RSpec.configure+ block:
-
-  config.before(:suite) { cleaner.call }
-  config.after(:suite) { cleaner.call }
-
-This will remove only those test tables created by the specs on this particular machine and
-environment. This is safe even on AWS and in parallel with other machines.
-
 
 == Rails console
 
