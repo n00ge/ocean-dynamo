@@ -147,7 +147,7 @@ Tip: you might want to use the following idiom when declaring a +dynamo_schema+.
    ...
  end
  
-This will auto-create the DynamoDB table in all environments except production, and it will also add a suffix to the table name in order to prevent tests from colliding. Cf +Api.basename_suffix+ for more information.
+This will auto-create the DynamoDB table in all environments except production, and it will also add a suffix to the table name in order to prevent tests from colliding. Cf +Api.basename_suffix+ in the +ocean-rails+ gem for more information.
 
 == +has_many+ and +belongs_to+
 
