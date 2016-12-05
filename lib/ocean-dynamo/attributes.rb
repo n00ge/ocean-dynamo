@@ -4,7 +4,7 @@ module OceanDynamo
     def self.included(base)
       base.extend(ClassMethods)
     end
-  
+
 
     # ---------------------------------------------------------
     #
@@ -14,7 +14,7 @@ module OceanDynamo
 
     module ClassMethods
 
-      def dynamo_schema(table_hash_key=:id, 
+      def dynamo_schema(table_hash_key=:id,
                         table_range_key=nil,
                         locking: :lock_version,
                         timestamps: [:created_at, :updated_at],
@@ -59,7 +59,7 @@ module OceanDynamo
 
     def initialize(attrs={})
       @attributes = Hash.new
-      fields.each do |name, md| 
+      fields.each do |name, md|
         write_attribute(name, evaluate_default(md[:default], md[:type]))
       end
       raise UnknownPrimaryKey unless table_hash_key
@@ -68,6 +68,10 @@ module OceanDynamo
       attrs && attrs.delete_if { |k, v| !fields.has_key?(k) }
       super(attrs)
       yield self if block_given?
+    end
+
+    def attrs_initialized?
+      @attrs_initialized || false
     end
 
 

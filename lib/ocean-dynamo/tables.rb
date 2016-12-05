@@ -4,7 +4,7 @@ module OceanDynamo
     def self.included(base)
       base.extend(ClassMethods)
     end
-  
+
 
     # ---------------------------------------------------------
     #
@@ -14,7 +14,7 @@ module OceanDynamo
 
     module ClassMethods
 
-      def dynamo_schema(table_hash_key=:id, 
+      def dynamo_schema(table_hash_key=:id,
                         table_range_key=nil,
                         table_name: compute_table_name,
                         table_name_prefix: nil,
@@ -131,7 +131,7 @@ module OceanDynamo
         #puts "Updating table #{table_full_name}"
         # attrs = table_attribute_definitions
         # active_attrs = []
-        # dynamo_table.attribute_definitions.each do |k| 
+        # dynamo_table.attribute_definitions.each do |k|
         #   active_attrs << { attribute_name: k.attribute_name, attribute_type: k.attribute_type }
         # end
         # return false if active_attrs == attrs
@@ -149,7 +149,7 @@ module OceanDynamo
           attrs << { attribute_name: name, attribute_type: attribute_type(name) }
         end
         global_secondary_indexes.each do |index_name, data|
-          data["keys"].each do |name| 
+          data["keys"].each do |name|
             next if attrs.any? { |a| a[:attribute_name] == name }
             attrs << { attribute_name: name, attribute_type: attribute_type(name) }
           end
@@ -221,7 +221,7 @@ module OceanDynamo
       end
 
     end
-  
+
 
     # ---------------------------------------------------------
     #

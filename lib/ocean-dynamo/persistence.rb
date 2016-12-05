@@ -4,7 +4,7 @@ module OceanDynamo
     def self.included(base)
       base.extend(ClassMethods)
     end
-  
+
 
     # ---------------------------------------------------------
     #
@@ -38,7 +38,7 @@ module OceanDynamo
         _late_connect?
         keys = { table_hash_key.to_s => hash }
         keys[table_range_key] = range if table_range_key && range
-        options = { key: keys, 
+        options = { key: keys,
                     return_values: "ALL_OLD"
                   }
         dynamo_table.delete_item(options).attributes ? true : false
@@ -127,7 +127,7 @@ module OceanDynamo
       context ||= (new_record? ? :create : :update)
       output = super(context)
       errors.empty? && output
-    end 
+    end
 
 
     def save(options={})
@@ -251,7 +251,7 @@ module OceanDynamo
             update_expression << "#{ts} = #{nomen}"
           end
           update_expression = "SET " + update_expression.join(", ")
-          options = { 
+          options = {
               key: serialized_key_attributes,
               update_expression: update_expression
           }.merge(_handle_locking)
@@ -267,11 +267,11 @@ module OceanDynamo
 
 
     #
-    # Deserialises and assigns all defined attributes. Skips undeclared attributes. 
-    # Unlike its predecessor, this version never reads anything from DynamoDB, 
-    # it just processes the results from such reads. Thus, the implementation of 
+    # Deserialises and assigns all defined attributes. Skips undeclared attributes.
+    # Unlike its predecessor, this version never reads anything from DynamoDB,
+    # it just processes the results from such reads. Thus, the implementation of
     # +consistent+ reads is up to the caller of this method.
-    #    
+    #
     def _setup_from_dynamo(arg)
       case arg
       when Aws::DynamoDB::Types::GetItemOutput
@@ -283,6 +283,7 @@ module OceanDynamo
       end
       dynamo_deserialize_attributes(raw_attrs)
       @new_record = false
+      @attrs_initialized = true
       self
     end
 
@@ -450,13 +451,13 @@ module OceanDynamo
 
 
     #
-    # Returns a hash with a condition expression which has to be satisfied 
+    # Returns a hash with a condition expression which has to be satisfied
     # for the write or delete operation to succeed.
     # Note that this method will increment the lock attribute. This means
     # two things:
     #   1. Collect the instance attributes after this method has been called.
     #   2. Remember that care must be taken to decrement the lock attribute in
-    #      case the subsequent write/delete operation fails or throws an 
+    #      case the subsequent write/delete operation fails or throws an
     #      exception, such as +StaleObjectError+.
     #
     def _handle_locking(lock=lock_attribute) # :nodoc:
